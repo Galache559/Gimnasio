@@ -1,1013 +1,496 @@
-<!DOCTYPE HTML>
-<HTML lang=¨es¨>
-<HEAD>
-	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
-	<TITLE></TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice 4.1.16  (Win32)">
-	<META NAME="AUTHOR" CONTENT="Galache ">
-	<META NAME="CREATED" CONTENT="20260820;10364808">
-	<META NAME="CHANGEDBY" CONTENT="Galache ">
-	<META NAME="CHANGED" CONTENT="20260820;10382332">
-	<STYLE TYPE="text/css">
-	<!--
-		@page { margin: 2cm }
-		P { margin-bottom: 0.21cm }
-	-->
-	</STYLE>
-</HEAD>
-<BODY LANG="es-ES" DIR="LTR">
-<P STYLE="margin-bottom: 0cm">&lt;!DOCTYPE html&gt;</P>
-<P STYLE="margin-bottom: 0cm">&lt;html lang=&quot;es&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">&lt;head&gt;</P>
-<P STYLE="margin-bottom: 0cm">  &lt;meta charset=&quot;UTF-8&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">  &lt;meta name=&quot;viewport&quot;
-content=&quot;width=device-width, initial-scale=1.0&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">  &lt;title&gt;Gym Tracker - Resumen
-Quincenal y Mensual&lt;/title&gt;</P>
-<P STYLE="margin-bottom: 0cm">  &lt;script
-src=&quot;https://cdn.tailwindcss.com&quot;&gt;&lt;/script&gt;</P>
-<P STYLE="margin-bottom: 0cm">&lt;/head&gt;</P>
-<P STYLE="margin-bottom: 0cm">&lt;body class=&quot;bg-slate-900
-text-white min-h-screen p-4 font-sans max-w-md mx-auto pb-16&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">  &lt;!-- Encabezado --&gt;</P>
-<P STYLE="margin-bottom: 0cm">  &lt;header class=&quot;flex
-justify-between items-center mb-4&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;div&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;h1 class=&quot;text-2xl
-font-bold text-emerald-400&quot;&gt;GymTracker Pro &#128170;&lt;/h1&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;p class=&quot;text-xs
-text-slate-400&quot;&gt;Progreso Quincenal y Mensual&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;span id=&quot;fecha&quot;
-class=&quot;text-xs text-slate-400 font-medium bg-slate-800 px-2.5
-py-1 rounded-full border border-slate-700&quot;&gt;&lt;/span&gt;</P>
-<P STYLE="margin-bottom: 0cm">  &lt;/header&gt;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">  &lt;!-- Navegaci&oacute;n por
-pesta&ntilde;as --&gt;</P>
-<P STYLE="margin-bottom: 0cm">  &lt;nav class=&quot;flex bg-slate-800
-rounded-xl p-1 mb-4 border border-slate-700&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;button id=&quot;tab-entrenar-btn&quot;
-onclick=&quot;switchTab('entrenar')&quot; class=&quot;flex-1 py-2
-text-xs font-bold rounded-lg bg-emerald-500 text-slate-900
-transition&quot;&gt;&#127947;&#65039; Entrenar&lt;/button&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;button id=&quot;tab-resumen-btn&quot;
-onclick=&quot;switchTab('resumen')&quot; class=&quot;flex-1 py-2
-text-xs font-bold rounded-lg text-slate-400 hover:text-white
-transition&quot;&gt;&#128202; Resumen&lt;/button&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;button id=&quot;tab-rutinas-btn&quot;
-onclick=&quot;switchTab('rutinas')&quot; class=&quot;flex-1 py-2
-text-xs font-bold rounded-lg text-slate-400 hover:text-white
-transition&quot;&gt;&#128203; Rutinas&lt;/button&gt;</P>
-<P STYLE="margin-bottom: 0cm">  &lt;/nav&gt;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">  &lt;!-- PESTA&Ntilde;A 1:
-ENTRENAMIENTO --&gt;</P>
-<P STYLE="margin-bottom: 0cm">  &lt;div id=&quot;tab-entrenar&quot;
-class=&quot;space-y-4&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    &lt;!-- Selector de Rutina --&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;section class=&quot;bg-slate-800
-p-3 rounded-xl border border-slate-700 flex items-center
-justify-between&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;div&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;p class=&quot;text-xs
-text-slate-400&quot;&gt;Rutina Activa&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;p id=&quot;rutina-activa-nombre&quot;
-class=&quot;text-sm font-semibold text-emerald-400&quot;&gt;Selecciona
-un D&iacute;a&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;select
-id=&quot;select-rutina-carga&quot;
-onchange=&quot;cargarEjerciciosDeRutina(this.value)&quot;
-class=&quot;bg-slate-700 text-xs border border-slate-600 rounded-lg
-p-2 text-slate-200 focus:outline-none max-w-[170px]&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;option value=&quot;&quot;&gt;--
-Seleccionar D&iacute;a --&lt;/option&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;/select&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;/section&gt;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    &lt;!-- Cron&oacute;metro de
-Descanso --&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;section class=&quot;bg-slate-800
-p-4 rounded-xl shadow-lg border border-emerald-500/30 text-center&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;p class=&quot;text-xs
-text-slate-400 uppercase tracking-wider mb-1&quot;&gt;Descanso entre
-series&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;div id=&quot;timer-display&quot;
-class=&quot;text-3xl font-mono font-bold
-text-emerald-400&quot;&gt;00:00&lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;div class=&quot;flex
-justify-center gap-2 mt-2&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;button
-onclick=&quot;startTimer(60)&quot; class=&quot;bg-slate-700
-hover:bg-slate-600 active:scale-95 text-xs py-1 px-3 rounded-full
-transition&quot;&gt;60s&lt;/button&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;button
-onclick=&quot;startTimer(90)&quot; class=&quot;bg-slate-700
-hover:bg-slate-600 active:scale-95 text-xs py-1 px-3 rounded-full
-transition&quot;&gt;90s&lt;/button&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;button
-onclick=&quot;startTimer(120)&quot; class=&quot;bg-slate-700
-hover:bg-slate-600 active:scale-95 text-xs py-1 px-3 rounded-full
-transition&quot;&gt;120s&lt;/button&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;button
-onclick=&quot;stopTimer()&quot; class=&quot;bg-rose-900/50
-hover:bg-rose-800 text-rose-300 text-xs py-1 px-3 rounded-full
-transition&quot;&gt;Parar&lt;/button&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;/section&gt;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    &lt;!-- Resumen Hoy --&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;section class=&quot;grid
-grid-cols-2 gap-3&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;div class=&quot;bg-slate-800
-p-3 rounded-xl border border-slate-700&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;p class=&quot;text-xs
-text-slate-400&quot;&gt;Volumen Hoy&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;p id=&quot;volumen-total&quot;
-class=&quot;text-lg font-bold text-indigo-400&quot;&gt;0 kg&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;div class=&quot;bg-slate-800
-p-3 rounded-xl border border-slate-700&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;p class=&quot;text-xs
-text-slate-400&quot;&gt;Series Hoy&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;p id=&quot;total-series&quot;
-class=&quot;text-lg font-bold text-emerald-400&quot;&gt;0&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;/section&gt;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    &lt;!-- Formulario Serie --&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;section class=&quot;bg-slate-800
-p-4 rounded-xl shadow-lg border border-slate-700&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;h2 class=&quot;text-sm
-font-semibold mb-3 text-slate-200&quot;&gt;A&ntilde;adir Serie&lt;/h2&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;form id=&quot;gym-form&quot;
-class=&quot;space-y-3&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;div&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;label class=&quot;block
-text-xs text-slate-400 mb-1&quot;&gt;Ejercicio&lt;/label&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;input type=&quot;text&quot;
-id=&quot;ejercicio&quot; placeholder=&quot;Ej: Press Banca&quot;
-list=&quot;sugerencias-ejercicios&quot; required 
-</P>
-<P STYLE="margin-bottom: 0cm">                 class=&quot;w-full
-bg-slate-700 border border-slate-600 rounded-lg p-2.5 text-sm
-focus:outline-none focus:border-emerald-400 transition&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;datalist
-id=&quot;sugerencias-ejercicios&quot;&gt;&lt;/datalist&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;div class=&quot;grid
-grid-cols-2 gap-3&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;div&gt;</P>
-<P STYLE="margin-bottom: 0cm">            &lt;label class=&quot;block
-text-xs text-slate-400 mb-1&quot;&gt;Peso (kg)&lt;/label&gt;</P>
-<P STYLE="margin-bottom: 0cm">            &lt;input type=&quot;number&quot;
-id=&quot;peso&quot; placeholder=&quot;80&quot; step=&quot;0.5&quot;
-required 
-</P>
-<P STYLE="margin-bottom: 0cm">                   class=&quot;w-full
-bg-slate-700 border border-slate-600 rounded-lg p-2.5 text-sm
-focus:outline-none focus:border-emerald-400 transition&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;div&gt;</P>
-<P STYLE="margin-bottom: 0cm">            &lt;label class=&quot;block
-text-xs text-slate-400 mb-1&quot;&gt;Reps&lt;/label&gt;</P>
-<P STYLE="margin-bottom: 0cm">            &lt;input type=&quot;number&quot;
-id=&quot;reps&quot; placeholder=&quot;10&quot; required 
-</P>
-<P STYLE="margin-bottom: 0cm">                   class=&quot;w-full
-bg-slate-700 border border-slate-600 rounded-lg p-2.5 text-sm
-focus:outline-none focus:border-emerald-400 transition&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;button type=&quot;submit&quot;
-class=&quot;w-full bg-emerald-500 hover:bg-emerald-600 text-slate-900
-font-bold py-2.5 rounded-lg transition duration-200 mt-2&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">          Guardar Serie + Cron&oacute;metro</P>
-<P STYLE="margin-bottom: 0cm">        &lt;/button&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;/form&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;/section&gt;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    &lt;!-- Registro de Hoy --&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;section&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;div class=&quot;flex
-justify-between items-center mb-3&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;h2 class=&quot;text-sm
-font-semibold text-slate-200&quot;&gt;Series Recientes&lt;/h2&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;div class=&quot;flex
-gap-3&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;button id=&quot;export-btn&quot;
-class=&quot;text-xs text-emerald-400 hover:underline
-font-medium&quot;&gt;Exportar CSV&lt;/button&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;button id=&quot;clear-btn&quot;
-class=&quot;text-xs text-rose-400 hover:underline&quot;&gt;Borrar
-todo&lt;/button&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;div id=&quot;lista-series&quot;
-class=&quot;space-y-2&quot;&gt;&lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;/section&gt;</P>
-<P STYLE="margin-bottom: 0cm">  &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">  &lt;!-- PESTA&Ntilde;A 2: RESUMEN
-QUINCENAL Y MENSUAL --&gt;</P>
-<P STYLE="margin-bottom: 0cm">  &lt;div id=&quot;tab-resumen&quot;
-class=&quot;hidden space-y-4&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">    
-</P>
-<P STYLE="margin-bottom: 0cm">    &lt;!-- Resumen Quincenal (15 D&iacute;as)
---&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;section class=&quot;bg-slate-800
-p-4 rounded-xl shadow-lg border border-indigo-500/40 space-y-3&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;div class=&quot;flex
-justify-between items-center&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;h2 class=&quot;text-sm
-font-bold text-indigo-400 flex items-center gap-1.5&quot;&gt;&#128197;
-Resumen Quincenal &lt;span class=&quot;text-[10px] bg-indigo-900/60
-text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-700&quot;&gt;15
-D&iacute;as&lt;/span&gt;&lt;/h2&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;div class=&quot;grid
-grid-cols-2 gap-3&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;div class=&quot;bg-slate-900/60
-p-2.5 rounded-lg border border-slate-700&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;p class=&quot;text-[11px]
-text-slate-400&quot;&gt;Volumen Total&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;p id=&quot;quin-volumen&quot;
-class=&quot;text-base font-bold text-white&quot;&gt;0 kg&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;div class=&quot;bg-slate-900/60
-p-2.5 rounded-lg border border-slate-700&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;p class=&quot;text-[11px]
-text-slate-400&quot;&gt;Total Series&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;p id=&quot;quin-series&quot;
-class=&quot;text-base font-bold text-emerald-400&quot;&gt;0&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;/section&gt;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    &lt;!-- Resumen Mensual (30 D&iacute;as)
---&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;section class=&quot;bg-slate-800
-p-4 rounded-xl shadow-lg border border-emerald-500/40 space-y-3&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;div class=&quot;flex
-justify-between items-center&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;h2 class=&quot;text-sm
-font-bold text-emerald-400 flex items-center gap-1.5&quot;&gt;&#128467;&#65039;
-Resumen Mensual &lt;span class=&quot;text-[10px] bg-emerald-900/60
-text-emerald-300 px-2 py-0.5 rounded-full border
-border-emerald-700&quot;&gt;30 D&iacute;as&lt;/span&gt;&lt;/h2&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;div class=&quot;grid
-grid-cols-2 gap-3&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;div class=&quot;bg-slate-900/60
-p-2.5 rounded-lg border border-slate-700&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;p class=&quot;text-[11px]
-text-slate-400&quot;&gt;Volumen Total&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;p id=&quot;mes-volumen&quot;
-class=&quot;text-base font-bold text-white&quot;&gt;0 kg&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;div class=&quot;bg-slate-900/60
-p-2.5 rounded-lg border border-slate-700&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;p class=&quot;text-[11px]
-text-slate-400&quot;&gt;Total Series&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;p id=&quot;mes-series&quot;
-class=&quot;text-base font-bold text-emerald-400&quot;&gt;0&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;/section&gt;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    &lt;!-- Top Ejercicios del Mes --&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;section class=&quot;bg-slate-800
-p-4 rounded-xl border border-slate-700&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;h3 class=&quot;text-xs
-font-semibold text-slate-300 mb-2&quot;&gt;&#127947;&#65039; Carga
-por Ejercicio (&Uacute;ltimos 30 D&iacute;as)&lt;/h3&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;div
-id=&quot;desglose-ejercicios-mes&quot; class=&quot;space-y-2&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;p class=&quot;text-xs
-text-slate-500&quot;&gt;Sin datos acumulados a&uacute;n.&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;/section&gt;</P>
-<P STYLE="margin-bottom: 0cm">  &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">  &lt;!-- PESTA&Ntilde;A 3: EDITAR Y
-A&Ntilde;ADIR RUTINAS --&gt;</P>
-<P STYLE="margin-bottom: 0cm">  &lt;div id=&quot;tab-rutinas&quot;
-class=&quot;hidden space-y-4&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">    
-</P>
-<P STYLE="margin-bottom: 0cm">    &lt;!-- Modal/Formulario de Edici&oacute;n
---&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;section id=&quot;seccion-editar&quot;
-class=&quot;hidden bg-slate-800 p-4 rounded-xl shadow-lg border
-border-amber-500/50&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;div class=&quot;flex
-justify-between items-center mb-3&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;h2 class=&quot;text-sm
-font-bold text-amber-400&quot;&gt;&#9999;&#65039; Editar Ejercicios
-de la Rutina&lt;/h2&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;button
-onclick=&quot;cancelarEdicion()&quot; class=&quot;text-xs
-text-slate-400 hover:text-white&quot;&gt;Cancelar&lt;/button&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;form id=&quot;edit-routine-form&quot;
-class=&quot;space-y-3&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;input type=&quot;hidden&quot;
-id=&quot;edit-rutina-id&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;div&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;label class=&quot;block
-text-xs text-slate-400 mb-1&quot;&gt;Nombre de la Rutina&lt;/label&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;input type=&quot;text&quot;
-id=&quot;edit-nombre-rutina&quot; required 
-</P>
-<P STYLE="margin-bottom: 0cm">                 class=&quot;w-full
-bg-slate-700 border border-slate-600 rounded-lg p-2.5 text-sm
-focus:outline-none focus:border-amber-400 transition&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;div&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;label class=&quot;block
-text-xs text-slate-400 mb-1&quot;&gt;Ejercicios (separados por
-coma)&lt;/label&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;textarea
-id=&quot;edit-lista-ejercicios&quot; required rows=&quot;6&quot;</P>
-<P STYLE="margin-bottom: 0cm">                    class=&quot;w-full
-bg-slate-700 border border-slate-600 rounded-lg p-2.5 text-sm
-focus:outline-none focus:border-amber-400 transition font-mono
-text-xs&quot;&gt;&lt;/textarea&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;div class=&quot;flex
-gap-2&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;button type=&quot;submit&quot;
-class=&quot;flex-1 bg-amber-500 hover:bg-amber-600 text-slate-900
-font-bold py-2 rounded-lg transition text-xs&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">            Guardar Cambios</P>
-<P STYLE="margin-bottom: 0cm">          &lt;/button&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;button type=&quot;button&quot;
-onclick=&quot;cancelarEdicion()&quot; class=&quot;bg-slate-700
-hover:bg-slate-600 text-slate-300 font-semibold px-4 py-2 rounded-lg
-transition text-xs&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">            Cancelar</P>
-<P STYLE="margin-bottom: 0cm">          &lt;/button&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;/form&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;/section&gt;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    &lt;!-- Crear Nueva Rutina --&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;section class=&quot;bg-slate-800
-p-4 rounded-xl shadow-lg border border-slate-700&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;h2 class=&quot;text-sm
-font-semibold mb-3 text-slate-200&quot;&gt;&#10133; Crear Nueva
-Rutina&lt;/h2&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;form id=&quot;routine-form&quot;
-class=&quot;space-y-3&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;div&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;label class=&quot;block
-text-xs text-slate-400 mb-1&quot;&gt;Nombre&lt;/label&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;input type=&quot;text&quot;
-id=&quot;nombre-rutina&quot; placeholder=&quot;Ej: D&iacute;a Extra -
-Fullbody&quot; required 
-</P>
-<P STYLE="margin-bottom: 0cm">                 class=&quot;w-full
-bg-slate-700 border border-slate-600 rounded-lg p-2.5 text-sm
-focus:outline-none focus:border-emerald-400 transition&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;div&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;label class=&quot;block
-text-xs text-slate-400 mb-1&quot;&gt;Ejercicios (separados por
-coma)&lt;/label&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;textarea
-id=&quot;lista-ejercicios-rutina&quot; placeholder=&quot;Ej: Press
-Banca, Sentadilla, Peso Muerto&quot; required rows=&quot;3&quot;</P>
-<P STYLE="margin-bottom: 0cm">                    class=&quot;w-full
-bg-slate-700 border border-slate-600 rounded-lg p-2.5 text-sm
-focus:outline-none focus:border-emerald-400 transition&quot;&gt;&lt;/textarea&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">        &lt;button type=&quot;submit&quot;
-class=&quot;w-full bg-indigo-500 hover:bg-indigo-600 text-white
-font-bold py-2.5 rounded-lg transition duration-200 text-xs&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">          Guardar Nueva Rutina</P>
-<P STYLE="margin-bottom: 0cm">        &lt;/button&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;/form&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;/section&gt;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    &lt;!-- Listado de Rutinas
-Guardadas --&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;section&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;h2 class=&quot;text-sm
-font-semibold text-slate-200 mb-3&quot;&gt;Tus Rutinas
-Disponibles&lt;/h2&gt;</P>
-<P STYLE="margin-bottom: 0cm">      &lt;div
-id=&quot;lista-rutinas-guardadas&quot; class=&quot;space-y-3&quot;&gt;&lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">    &lt;/section&gt;</P>
-<P STYLE="margin-bottom: 0cm">  &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">  &lt;script&gt;</P>
-<P STYLE="margin-bottom: 0cm">   
-document.getElementById('fecha').textContent = new
-Date().toLocaleDateString('es-ES', { weekday: 'short', day:
-'numeric', month: 'short' });</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    const form =
-document.getElementById('gym-form');</P>
-<P STYLE="margin-bottom: 0cm">    const routineForm =
-document.getElementById('routine-form');</P>
-<P STYLE="margin-bottom: 0cm">    const editRoutineForm =
-document.getElementById('edit-routine-form');</P>
-<P STYLE="margin-bottom: 0cm">    const listaSeries =
-document.getElementById('lista-series');</P>
-<P STYLE="margin-bottom: 0cm">    const clearBtn =
-document.getElementById('clear-btn');</P>
-<P STYLE="margin-bottom: 0cm">    const exportBtn =
-document.getElementById('export-btn');</P>
-<P STYLE="margin-bottom: 0cm">    let timerInterval = null;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    const rutina4DiasBase = [</P>
-<P STYLE="margin-bottom: 0cm">      {</P>
-<P STYLE="margin-bottom: 0cm">        id: 'dia-1',</P>
-<P STYLE="margin-bottom: 0cm">        nombre: 'D&iacute;a 1: Pecho y
-Tr&iacute;ceps',</P>
-<P STYLE="margin-bottom: 0cm">        ejercicios: [</P>
-<P STYLE="margin-bottom: 0cm">          'Press de Banca con Barra',
-'Press Inclinado con Mancuernas', 'Aperturas en Polea (Crossover)',
-'Fondos en Paralelas', 'Pecho en M&aacute;quina (Pec Deck)',</P>
-<P STYLE="margin-bottom: 0cm">          'Press Franc&eacute;s',
-'Extensiones en Polea con Cuerda', 'Copas a Dos Manos', 'Patada de
-Tr&iacute;ceps', 'Fondos entre Bancos'</P>
-<P STYLE="margin-bottom: 0cm">        ]</P>
-<P STYLE="margin-bottom: 0cm">      },</P>
-<P STYLE="margin-bottom: 0cm">      {</P>
-<P STYLE="margin-bottom: 0cm">        id: 'dia-2',</P>
-<P STYLE="margin-bottom: 0cm">        nombre: 'D&iacute;a 2: Espalda
-y B&iacute;ceps',</P>
-<P STYLE="margin-bottom: 0cm">        ejercicios: [</P>
-<P STYLE="margin-bottom: 0cm">          'Jal&oacute;n al Pecho',
-'Remo con Barra', 'Remo Unilateral con Mancuerna', 'Pullover en Polea
-Alta', 'Peso Muerto',</P>
-<P STYLE="margin-bottom: 0cm">          'Curl de B&iacute;ceps con
-Barra Z', 'Curl Martillo', 'Curl Predicador', 'Curl Inclinado con
-Mancuernas', 'Curl en Polea Baja'</P>
-<P STYLE="margin-bottom: 0cm">        ]</P>
-<P STYLE="margin-bottom: 0cm">      },</P>
-<P STYLE="margin-bottom: 0cm">      {</P>
-<P STYLE="margin-bottom: 0cm">        id: 'dia-3',</P>
-<P STYLE="margin-bottom: 0cm">        nombre: 'D&iacute;a 3:
-Piernas',</P>
-<P STYLE="margin-bottom: 0cm">        ejercicios: [</P>
-<P STYLE="margin-bottom: 0cm">          'Sentadilla Profunda con
-Barra', 'Prensa de Piernas', 'Peso Muerto Rumano', 'Extensiones de
-Cu&aacute;driceps', 'Curl Femoral Tumbado'</P>
-<P STYLE="margin-bottom: 0cm">        ]</P>
-<P STYLE="margin-bottom: 0cm">      },</P>
-<P STYLE="margin-bottom: 0cm">      {</P>
-<P STYLE="margin-bottom: 0cm">        id: 'dia-4',</P>
-<P STYLE="margin-bottom: 0cm">        nombre: 'D&iacute;a 4: Hombros
-y Abdominales',</P>
-<P STYLE="margin-bottom: 0cm">        ejercicios: [</P>
-<P STYLE="margin-bottom: 0cm">          'Press Militar con Barra',
-'Elevaciones Laterales', 'P&aacute;jaros (Deltoides Posterior)',
-'Elevaciones Frontales', 'Encogimientos de Hombro con Mancuerna',</P>
-<P STYLE="margin-bottom: 0cm">          'Crunch en Polea Alta',
-'Elevaciones de Pierna Colgado', 'Crunch Abdominal en Esterilla',
-'Plancha Abdominal', 'Rueda Abdominal'</P>
-<P STYLE="margin-bottom: 0cm">        ]</P>
-<P STYLE="margin-bottom: 0cm">      }</P>
-<P STYLE="margin-bottom: 0cm">    ];</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    let series =
-JSON.parse(localStorage.getItem('gym_logs_pro')) || [];</P>
-<P STYLE="margin-bottom: 0cm">    let rutinas =
-JSON.parse(localStorage.getItem('gym_routines_4days')) ||
-rutina4DiasBase;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    function switchTab(tab) {</P>
-<P STYLE="margin-bottom: 0cm">      const tabs = ['entrenar',
-'resumen', 'rutinas'];</P>
-<P STYLE="margin-bottom: 0cm">      tabs.forEach(t =&gt; {</P>
-<P STYLE="margin-bottom: 0cm">        const tabEl =
-document.getElementById(`tab-${t}`);</P>
-<P STYLE="margin-bottom: 0cm">        const btnEl =
-document.getElementById(`tab-${t}-btn`);</P>
-<P STYLE="margin-bottom: 0cm">        if (t === tab) {</P>
-<P STYLE="margin-bottom: 0cm">         
-tabEl.classList.remove('hidden');</P>
-<P STYLE="margin-bottom: 0cm">          btnEl.className = 'flex-1
-py-2 text-xs font-bold rounded-lg bg-emerald-500 text-slate-900
-transition';</P>
-<P STYLE="margin-bottom: 0cm">        } else {</P>
-<P STYLE="margin-bottom: 0cm">         
-tabEl.classList.add('hidden');</P>
-<P STYLE="margin-bottom: 0cm">          btnEl.className = 'flex-1
-py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white
-transition';</P>
-<P STYLE="margin-bottom: 0cm">        }</P>
-<P STYLE="margin-bottom: 0cm">      });</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      if (tab === 'resumen') {</P>
-<P STYLE="margin-bottom: 0cm">        calcularResumenesAnalytics();</P>
-<P STYLE="margin-bottom: 0cm">      }</P>
-<P STYLE="margin-bottom: 0cm">    }</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    function startTimer(seconds) {</P>
-<P STYLE="margin-bottom: 0cm">      clearInterval(timerInterval);</P>
-<P STYLE="margin-bottom: 0cm">      let timeLeft = seconds;</P>
-<P STYLE="margin-bottom: 0cm">      updateTimerDisplay(timeLeft);</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      timerInterval = setInterval(() =&gt;
-{</P>
-<P STYLE="margin-bottom: 0cm">        timeLeft--;</P>
-<P STYLE="margin-bottom: 0cm">        updateTimerDisplay(timeLeft);</P>
-<P STYLE="margin-bottom: 0cm">        if (timeLeft &lt;= 0) {</P>
-<P STYLE="margin-bottom: 0cm">          clearInterval(timerInterval);</P>
-<P STYLE="margin-bottom: 0cm">          alert('&iexcl;Tiempo de
-descanso cumplido!');</P>
-<P STYLE="margin-bottom: 0cm">        }</P>
-<P STYLE="margin-bottom: 0cm">      }, 1000);</P>
-<P STYLE="margin-bottom: 0cm">    }</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    function stopTimer() {</P>
-<P STYLE="margin-bottom: 0cm">      clearInterval(timerInterval);</P>
-<P STYLE="margin-bottom: 0cm">      updateTimerDisplay(0);</P>
-<P STYLE="margin-bottom: 0cm">    }</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    function
-updateTimerDisplay(seconds) {</P>
-<P STYLE="margin-bottom: 0cm">      const mins = Math.floor(seconds /
-60).toString().padStart(2, '0');</P>
-<P STYLE="margin-bottom: 0cm">      const secs = (seconds %
-60).toString().padStart(2, '0');</P>
-<P STYLE="margin-bottom: 0cm">     
-document.getElementById('timer-display').textContent =
-`${mins}:${secs}`;</P>
-<P STYLE="margin-bottom: 0cm">    }</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    function updateMetrics() {</P>
-<P STYLE="margin-bottom: 0cm">      const hoyStr = new
-Date().toISOString().split('T')[0];</P>
-<P STYLE="margin-bottom: 0cm">      const seriesHoy = series.filter(s
-=&gt; s.fecha === hoyStr);</P>
-<P STYLE="margin-bottom: 0cm">      const totalVol =
-seriesHoy.reduce((acc, s) =&gt; acc + (s.peso * s.reps), 0);</P>
-<P STYLE="margin-bottom: 0cm">      
-</P>
-<P STYLE="margin-bottom: 0cm">     
-document.getElementById('volumen-total').textContent =
-`${totalVol.toLocaleString()} kg`;</P>
-<P STYLE="margin-bottom: 0cm">     
-document.getElementById('total-series').textContent =
-seriesHoy.length;</P>
-<P STYLE="margin-bottom: 0cm">    }</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    function
-calcularResumenesAnalytics() {</P>
-<P STYLE="margin-bottom: 0cm">      const ahora = new Date();</P>
-<P STYLE="margin-bottom: 0cm">      const hace15Dias = new Date();</P>
-<P STYLE="margin-bottom: 0cm">     
-hace15Dias.setDate(ahora.getDate() - 15);</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      const hace30Dias = new Date();</P>
-<P STYLE="margin-bottom: 0cm">     
-hace30Dias.setDate(ahora.getDate() - 30);</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      // Quincenal (15 D&iacute;as)</P>
-<P STYLE="margin-bottom: 0cm">      const series15Dias =
-series.filter(s =&gt; new Date(s.fecha) &gt;= hace15Dias);</P>
-<P STYLE="margin-bottom: 0cm">      const vol15 =
-series15Dias.reduce((acc, s) =&gt; acc + (s.peso * s.reps), 0);</P>
-<P STYLE="margin-bottom: 0cm">     
-document.getElementById('quin-volumen').textContent =
-`${vol15.toLocaleString()} kg`;</P>
-<P STYLE="margin-bottom: 0cm">     
-document.getElementById('quin-series').textContent =
-series15Dias.length;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      // Mensual (30 D&iacute;as)</P>
-<P STYLE="margin-bottom: 0cm">      const series30Dias =
-series.filter(s =&gt; new Date(s.fecha) &gt;= hace30Dias);</P>
-<P STYLE="margin-bottom: 0cm">      const vol30 =
-series30Dias.reduce((acc, s) =&gt; acc + (s.peso * s.reps), 0);</P>
-<P STYLE="margin-bottom: 0cm">     
-document.getElementById('mes-volumen').textContent =
-`${vol30.toLocaleString()} kg`;</P>
-<P STYLE="margin-bottom: 0cm">     
-document.getElementById('mes-series').textContent =
-series30Dias.length;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      // Desglose por ejercicio del
-&uacute;ltimo mes</P>
-<P STYLE="margin-bottom: 0cm">      const desgloseEl =
-document.getElementById('desglose-ejercicios-mes');</P>
-<P STYLE="margin-bottom: 0cm">      desgloseEl.innerHTML = '';</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      if (series30Dias.length === 0) {</P>
-<P STYLE="margin-bottom: 0cm">        desgloseEl.innerHTML = '&lt;p
-class=&quot;text-xs text-slate-500 py-2&quot;&gt;Sin entrenamientos
-registrados en los &uacute;ltimos 30 d&iacute;as.&lt;/p&gt;';</P>
-<P STYLE="margin-bottom: 0cm">        return;</P>
-<P STYLE="margin-bottom: 0cm">      }</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      const ejercicioMap = {};</P>
-<P STYLE="margin-bottom: 0cm">      series30Dias.forEach(s =&gt; {</P>
-<P STYLE="margin-bottom: 0cm">        const vol = s.peso * s.reps;</P>
-<P STYLE="margin-bottom: 0cm">        ejercicioMap[s.ejercicio] =
-(ejercicioMap[s.ejercicio] || 0) + vol;</P>
-<P STYLE="margin-bottom: 0cm">      });</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      const ordenados =
-Object.entries(ejercicioMap).sort((a, b) =&gt; b[1] - a[1]);</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      ordenados.forEach(([nombre, vol])
-=&gt; {</P>
-<P STYLE="margin-bottom: 0cm">        const item =
-document.createElement('div');</P>
-<P STYLE="margin-bottom: 0cm">        item.className = 'flex
-justify-between items-center bg-slate-900/60 p-2 rounded-lg border
-border-slate-700/60 text-xs';</P>
-<P STYLE="margin-bottom: 0cm">        item.innerHTML = `</P>
-<P STYLE="margin-bottom: 0cm">          &lt;span class=&quot;font-medium
-text-slate-200&quot;&gt;${nombre}&lt;/span&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;span class=&quot;font-bold
-text-emerald-400&quot;&gt;${vol.toLocaleString()} kg&lt;/span&gt;</P>
-<P STYLE="margin-bottom: 0cm">        `;</P>
-<P STYLE="margin-bottom: 0cm">        desgloseEl.appendChild(item);</P>
-<P STYLE="margin-bottom: 0cm">      });</P>
-<P STYLE="margin-bottom: 0cm">    }</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    function renderSeries() {</P>
-<P STYLE="margin-bottom: 0cm">      listaSeries.innerHTML = '';</P>
-<P STYLE="margin-bottom: 0cm">      if (series.length === 0) {</P>
-<P STYLE="margin-bottom: 0cm">        listaSeries.innerHTML = '&lt;p
-class=&quot;text-slate-500 text-sm text-center py-4&quot;&gt;A&uacute;n
-no has anotado series hoy.&lt;/p&gt;';</P>
-<P STYLE="margin-bottom: 0cm">        updateMetrics();</P>
-<P STYLE="margin-bottom: 0cm">        return;</P>
-<P STYLE="margin-bottom: 0cm">      }</P>
-<P STYLE="margin-bottom: 0cm">      
-</P>
-<P STYLE="margin-bottom: 0cm">      series.slice(0, 10).forEach((s)
-=&gt; {</P>
-<P STYLE="margin-bottom: 0cm">        const item =
-document.createElement('div');</P>
-<P STYLE="margin-bottom: 0cm">        item.className = 'bg-slate-800
-border border-slate-700 p-3 rounded-lg flex justify-between
-items-center';</P>
-<P STYLE="margin-bottom: 0cm">        item.innerHTML = `</P>
-<P STYLE="margin-bottom: 0cm">          &lt;div&gt;</P>
-<P STYLE="margin-bottom: 0cm">            &lt;p class=&quot;font-bold
-text-slate-100&quot;&gt;${s.ejercicio}&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">            &lt;p class=&quot;text-xs
-text-slate-400&quot;&gt;${s.fecha || 'Hoy'} - ${s.hora}&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;div class=&quot;text-right&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">            &lt;span
-class=&quot;text-emerald-400 font-semibold&quot;&gt;${s.peso}
-kg&lt;/span&gt;</P>
-<P STYLE="margin-bottom: 0cm">            &lt;span
-class=&quot;text-slate-400 text-sm&quot;&gt;&times; ${s.reps}
-reps&lt;/span&gt;</P>
-<P STYLE="margin-bottom: 0cm">            &lt;p class=&quot;text-[10px]
-text-indigo-300&quot;&gt;Volumen: ${s.peso * s.reps} kg&lt;/p&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">        `;</P>
-<P STYLE="margin-bottom: 0cm">        listaSeries.appendChild(item);</P>
-<P STYLE="margin-bottom: 0cm">      });</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      updateMetrics();</P>
-<P STYLE="margin-bottom: 0cm">    }</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    function renderRutinas() {</P>
-<P STYLE="margin-bottom: 0cm">      const listaRutinas =
-document.getElementById('lista-rutinas-guardadas');</P>
-<P STYLE="margin-bottom: 0cm">      const selectCarga =
-document.getElementById('select-rutina-carga');</P>
-<P STYLE="margin-bottom: 0cm">      
-</P>
-<P STYLE="margin-bottom: 0cm">      listaRutinas.innerHTML = '';</P>
-<P STYLE="margin-bottom: 0cm">      selectCarga.innerHTML = '&lt;option
-value=&quot;&quot;&gt;-- Seleccionar D&iacute;a --&lt;/option&gt;';</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      rutinas.forEach((r) =&gt; {</P>
-<P STYLE="margin-bottom: 0cm">        const opt =
-document.createElement('option');</P>
-<P STYLE="margin-bottom: 0cm">        opt.value = r.id;</P>
-<P STYLE="margin-bottom: 0cm">        opt.textContent = r.nombre;</P>
-<P STYLE="margin-bottom: 0cm">        selectCarga.appendChild(opt);</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">        const card =
-document.createElement('div');</P>
-<P STYLE="margin-bottom: 0cm">        card.className = 'bg-slate-800
-border border-slate-700 p-3.5 rounded-xl space-y-2';</P>
-<P STYLE="margin-bottom: 0cm">        card.innerHTML = `</P>
-<P STYLE="margin-bottom: 0cm">          &lt;div class=&quot;flex
-justify-between items-center&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">            &lt;h3 class=&quot;font-bold
-text-slate-200 text-sm&quot;&gt;${r.nombre}&lt;/h3&gt;</P>
-<P STYLE="margin-bottom: 0cm">            &lt;div class=&quot;flex
-gap-2&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">              &lt;button
-onclick=&quot;abrirEdicionRutina('${r.id}')&quot; class=&quot;text-xs
-text-amber-400 hover:underline font-medium&quot;&gt;&#9999;&#65039;
-Editar&lt;/button&gt;</P>
-<P STYLE="margin-bottom: 0cm">              &lt;button
-onclick=&quot;borrarRutina('${r.id}')&quot; class=&quot;text-xs
-text-rose-400 hover:underline&quot;&gt;Eliminar&lt;/button&gt;</P>
-<P STYLE="margin-bottom: 0cm">            &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;div class=&quot;flex
-flex-wrap gap-1.5&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">            ${r.ejercicios.map(e =&gt;
-`&lt;span class=&quot;bg-slate-700 text-slate-300 text-[11px] px-2
-py-0.5 rounded-md border border-slate-600&quot;&gt;${e}&lt;/span&gt;`).join('')}</P>
-<P STYLE="margin-bottom: 0cm">          &lt;/div&gt;</P>
-<P STYLE="margin-bottom: 0cm">          &lt;button
-onclick=&quot;seleccionarRutinaYEntrenar('${r.id}')&quot;
-class=&quot;w-full bg-slate-700 hover:bg-emerald-600
-hover:text-slate-900 text-emerald-400 font-semibold text-xs py-1.5
-rounded-lg transition mt-1&quot;&gt;</P>
-<P STYLE="margin-bottom: 0cm">            Iniciar ${r.nombre}</P>
-<P STYLE="margin-bottom: 0cm">          &lt;/button&gt;</P>
-<P STYLE="margin-bottom: 0cm">        `;</P>
-<P STYLE="margin-bottom: 0cm">        listaRutinas.appendChild(card);</P>
-<P STYLE="margin-bottom: 0cm">      });</P>
-<P STYLE="margin-bottom: 0cm">    }</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    function
-abrirEdicionRutina(rutinaId) {</P>
-<P STYLE="margin-bottom: 0cm">      const rutina = rutinas.find(r =&gt;
-r.id === rutinaId);</P>
-<P STYLE="margin-bottom: 0cm">      if (!rutina) return;</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">     
-document.getElementById('edit-rutina-id').value = rutina.id;</P>
-<P STYLE="margin-bottom: 0cm">     
-document.getElementById('edit-nombre-rutina').value = rutina.nombre;</P>
-<P STYLE="margin-bottom: 0cm">     
-document.getElementById('edit-lista-ejercicios').value =
-rutina.ejercicios.join(', ');</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      const secEdicion =
-document.getElementById('seccion-editar');</P>
-<P STYLE="margin-bottom: 0cm">     
-secEdicion.classList.remove('hidden');</P>
-<P STYLE="margin-bottom: 0cm">      secEdicion.scrollIntoView({
-behavior: 'smooth' });</P>
-<P STYLE="margin-bottom: 0cm">    }</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    function cancelarEdicion() {</P>
-<P STYLE="margin-bottom: 0cm">     
-document.getElementById('seccion-editar').classList.add('hidden');</P>
-<P STYLE="margin-bottom: 0cm">      editRoutineForm.reset();</P>
-<P STYLE="margin-bottom: 0cm">    }</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">   
-editRoutineForm.addEventListener('submit', (e) =&gt; {</P>
-<P STYLE="margin-bottom: 0cm">      e.preventDefault();</P>
-<P STYLE="margin-bottom: 0cm">      const id =
-document.getElementById('edit-rutina-id').value;</P>
-<P STYLE="margin-bottom: 0cm">      const nuevoNombre =
-document.getElementById('edit-nombre-rutina').value.trim();</P>
-<P STYLE="margin-bottom: 0cm">      const rawEjercicios =
-document.getElementById('edit-lista-ejercicios').value;</P>
-<P STYLE="margin-bottom: 0cm">      const nuevosEjercicios =
-rawEjercicios.split(',').map(e =&gt; e.trim()).filter(e =&gt;
-e.length &gt; 0);</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      rutinas = rutinas.map(r =&gt; {</P>
-<P STYLE="margin-bottom: 0cm">        if (r.id === id) {</P>
-<P STYLE="margin-bottom: 0cm">          return { ...r, nombre:
-nuevoNombre, ejercicios: nuevosEjercicios };</P>
-<P STYLE="margin-bottom: 0cm">        }</P>
-<P STYLE="margin-bottom: 0cm">        return r;</P>
-<P STYLE="margin-bottom: 0cm">      });</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">     
-localStorage.setItem('gym_routines_4days', JSON.stringify(rutinas));</P>
-<P STYLE="margin-bottom: 0cm">      renderRutinas();</P>
-<P STYLE="margin-bottom: 0cm">      cancelarEdicion();</P>
-<P STYLE="margin-bottom: 0cm">      alert('&iexcl;Rutina y ejercicios
-actualizados correctamente!');</P>
-<P STYLE="margin-bottom: 0cm">    });</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    function
-cargarEjerciciosDeRutina(rutinaId) {</P>
-<P STYLE="margin-bottom: 0cm">      const rutina = rutinas.find(r =&gt;
-r.id === rutinaId);</P>
-<P STYLE="margin-bottom: 0cm">      const datalist =
-document.getElementById('sugerencias-ejercicios');</P>
-<P STYLE="margin-bottom: 0cm">      const rutinaNombreDisplay =
-document.getElementById('rutina-activa-nombre');</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      datalist.innerHTML = '';</P>
-<P STYLE="margin-bottom: 0cm">      if (rutina) {</P>
-<P STYLE="margin-bottom: 0cm">        rutinaNombreDisplay.textContent
-= rutina.nombre;</P>
-<P STYLE="margin-bottom: 0cm">        rutina.ejercicios.forEach(ej =&gt;
-{</P>
-<P STYLE="margin-bottom: 0cm">          const opt =
-document.createElement('option');</P>
-<P STYLE="margin-bottom: 0cm">          opt.value = ej;</P>
-<P STYLE="margin-bottom: 0cm">          datalist.appendChild(opt);</P>
-<P STYLE="margin-bottom: 0cm">        });</P>
-<P STYLE="margin-bottom: 0cm">        if (rutina.ejercicios.length &gt;
-0) {</P>
-<P STYLE="margin-bottom: 0cm">         
-document.getElementById('ejercicio').value = rutina.ejercicios[0];</P>
-<P STYLE="margin-bottom: 0cm">        }</P>
-<P STYLE="margin-bottom: 0cm">      } else {</P>
-<P STYLE="margin-bottom: 0cm">        rutinaNombreDisplay.textContent
-= 'Ninguna seleccionada';</P>
-<P STYLE="margin-bottom: 0cm">      }</P>
-<P STYLE="margin-bottom: 0cm">    }</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    function
-seleccionarRutinaYEntrenar(rutinaId) {</P>
-<P STYLE="margin-bottom: 0cm">     
-document.getElementById('select-rutina-carga').value = rutinaId;</P>
-<P STYLE="margin-bottom: 0cm">     
-cargarEjerciciosDeRutina(rutinaId);</P>
-<P STYLE="margin-bottom: 0cm">      switchTab('entrenar');</P>
-<P STYLE="margin-bottom: 0cm">    }</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    function borrarRutina(rutinaId) {</P>
-<P STYLE="margin-bottom: 0cm">      if (confirm('&iquest;Seguro que
-quieres borrar esta rutina?')) {</P>
-<P STYLE="margin-bottom: 0cm">        rutinas = rutinas.filter(r =&gt;
-r.id !== rutinaId);</P>
-<P STYLE="margin-bottom: 0cm">       
-localStorage.setItem('gym_routines_4days', JSON.stringify(rutinas));</P>
-<P STYLE="margin-bottom: 0cm">        renderRutinas();</P>
-<P STYLE="margin-bottom: 0cm">      }</P>
-<P STYLE="margin-bottom: 0cm">    }</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">   
-routineForm.addEventListener('submit', (e) =&gt; {</P>
-<P STYLE="margin-bottom: 0cm">      e.preventDefault();</P>
-<P STYLE="margin-bottom: 0cm">      const nombre =
-document.getElementById('nombre-rutina').value.trim();</P>
-<P STYLE="margin-bottom: 0cm">      const rawEjercicios =
-document.getElementById('lista-ejercicios-rutina').value;</P>
-<P STYLE="margin-bottom: 0cm">      const ejercicios =
-rawEjercicios.split(',').map(e =&gt; e.trim()).filter(e =&gt;
-e.length &gt; 0);</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      const nuevaRutina = {</P>
-<P STYLE="margin-bottom: 0cm">        id: Date.now().toString(),</P>
-<P STYLE="margin-bottom: 0cm">        nombre,</P>
-<P STYLE="margin-bottom: 0cm">        ejercicios</P>
-<P STYLE="margin-bottom: 0cm">      };</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      rutinas.push(nuevaRutina);</P>
-<P STYLE="margin-bottom: 0cm">     
-localStorage.setItem('gym_routines_4days', JSON.stringify(rutinas));</P>
-<P STYLE="margin-bottom: 0cm">      routineForm.reset();</P>
-<P STYLE="margin-bottom: 0cm">      renderRutinas();</P>
-<P STYLE="margin-bottom: 0cm">      alert('&iexcl;Nueva rutina
-guardada!');</P>
-<P STYLE="margin-bottom: 0cm">    });</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    form.addEventListener('submit', (e)
-=&gt; {</P>
-<P STYLE="margin-bottom: 0cm">      e.preventDefault();</P>
-<P STYLE="margin-bottom: 0cm">      const ahora = new Date();</P>
-<P STYLE="margin-bottom: 0cm">      const nuevaSerie = {</P>
-<P STYLE="margin-bottom: 0cm">        fecha:
-ahora.toISOString().split('T')[0],</P>
-<P STYLE="margin-bottom: 0cm">        ejercicio:
-document.getElementById('ejercicio').value,</P>
-<P STYLE="margin-bottom: 0cm">        peso:
-parseFloat(document.getElementById('peso').value),</P>
-<P STYLE="margin-bottom: 0cm">        reps:
-parseInt(document.getElementById('reps').value),</P>
-<P STYLE="margin-bottom: 0cm">        hora:
-ahora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })</P>
-<P STYLE="margin-bottom: 0cm">      };</P>
-<P STYLE="margin-bottom: 0cm">      
-</P>
-<P STYLE="margin-bottom: 0cm">      series.unshift(nuevaSerie);</P>
-<P STYLE="margin-bottom: 0cm">     
-localStorage.setItem('gym_logs_pro', JSON.stringify(series));</P>
-<P STYLE="margin-bottom: 0cm">      
-</P>
-<P STYLE="margin-bottom: 0cm">     
-document.getElementById('peso').value = '';</P>
-<P STYLE="margin-bottom: 0cm">     
-document.getElementById('reps').value = '';</P>
-<P STYLE="margin-bottom: 0cm">      
-</P>
-<P STYLE="margin-bottom: 0cm">      renderSeries();</P>
-<P STYLE="margin-bottom: 0cm">      startTimer(90);</P>
-<P STYLE="margin-bottom: 0cm">    });</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    exportBtn.addEventListener('click',
-() =&gt; {</P>
-<P STYLE="margin-bottom: 0cm">      if (series.length === 0) {</P>
-<P STYLE="margin-bottom: 0cm">        alert('No hay registros
-guardados para exportar.');</P>
-<P STYLE="margin-bottom: 0cm">        return;</P>
-<P STYLE="margin-bottom: 0cm">      }</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      let csvContent =
-&quot;data:text/csv;charset=utf-8,Fecha,Hora,Ejercicio,Peso
-(kg),Repeticiones,Volumen (kg)\n&quot;;</P>
-<P STYLE="margin-bottom: 0cm">      series.forEach(s =&gt; {</P>
-<P STYLE="margin-bottom: 0cm">        const vol = s.peso * s.reps;</P>
-<P STYLE="margin-bottom: 0cm">        csvContent += `&quot;${s.fecha
-|| ''}&quot;,&quot;${s.hora}&quot;,&quot;${s.ejercicio}&quot;,${s.peso},${s.reps},${vol}\n`;</P>
-<P STYLE="margin-bottom: 0cm">      });</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">      const encodedUri =
-encodeURI(csvContent);</P>
-<P STYLE="margin-bottom: 0cm">      const link =
-document.createElement(&quot;a&quot;);</P>
-<P STYLE="margin-bottom: 0cm">      link.setAttribute(&quot;href&quot;,
-encodedUri);</P>
-<P STYLE="margin-bottom: 0cm">      const filename =
-`gym_tracker_4dias_${new Date().toISOString().split('T')[0]}.csv`;</P>
-<P STYLE="margin-bottom: 0cm">      link.setAttribute(&quot;download&quot;,
-filename);</P>
-<P STYLE="margin-bottom: 0cm">      document.body.appendChild(link);</P>
-<P STYLE="margin-bottom: 0cm">      link.click();</P>
-<P STYLE="margin-bottom: 0cm">      document.body.removeChild(link);</P>
-<P STYLE="margin-bottom: 0cm">    });</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    clearBtn.addEventListener('click',
-() =&gt; {</P>
-<P STYLE="margin-bottom: 0cm">      if (confirm('&iquest;Quieres
-borrar todo el historial acumulado?')) {</P>
-<P STYLE="margin-bottom: 0cm">        series = [];</P>
-<P STYLE="margin-bottom: 0cm">       
-localStorage.removeItem('gym_logs_pro');</P>
-<P STYLE="margin-bottom: 0cm">        renderSeries();</P>
-<P STYLE="margin-bottom: 0cm">        stopTimer();</P>
-<P STYLE="margin-bottom: 0cm">      }</P>
-<P STYLE="margin-bottom: 0cm">    });</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">    renderSeries();</P>
-<P STYLE="margin-bottom: 0cm">    renderRutinas();</P>
-<P STYLE="margin-bottom: 0cm">  &lt;/script&gt;</P>
-<P STYLE="margin-bottom: 0cm">&lt;/body&gt;</P>
-<P STYLE="margin-bottom: 0cm">&lt;/html&gt;</P>
-</BODY>
-</HTML>
-															  
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gimnasio</title>
+    <!-- Configuración para PWA / Pantalla completa en Móvil -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Gimnasio">
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --accent-color: #00e676;
+            --text-color: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border-color: #333333;
+            --danger-color: #ff5252;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 80px;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--card-bg);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-top: 1px solid var(--border-color);
+            z-index: 1000;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            width: 33%;
+        }
+
+        nav button.active {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card h2 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--accent-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .day-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            background-color: var(--accent-color);
+            color: #000;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            width: auto;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: #fff;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            background-color: #2a2a2a;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .exercise-item {
+            background-color: #252525;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .exercise-header {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+
+        .metrics-grid div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metrics-grid label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .metrics-grid input {
+            margin-bottom: 0;
+            text-align: center;
+        }
+
+        .group-title {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin: 15px 0 8px 0;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .report-section {
+            margin-top: 15px;
+        }
+
+        .report-item {
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 0;
+        }
+
+        .report-item:last-child {
+            border-bottom: none;
+        }
+
+        .report-date {
+            font-size: 0.8rem;
+            color: var(--accent-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 20px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Mi Gimnasio</h1>
+    </header>
+
+    <div class="container">
+        <!-- VISTA 1: ENTRENAR -->
+        <div id="tab-entrenar" class="tab-content active">
+            <div class="card">
+                <h2>Selecciona el día</h2>
+                <div class="day-grid">
+                    <button class="btn btn-outline" onclick="selectDay(1)">Día 1</button>
+                    <button class="btn btn-outline" onclick="selectDay(2)">Día 2</button>
+                    <button class="btn btn-outline" onclick="selectDay(3)">Día 3</button>
+                    <button class="btn btn-outline" onclick="selectDay(4)">Día 4</button>
+                </div>
+            </div>
+
+            <div id="workout-area" style="display: none;">
+                <div class="card">
+                    <h2 id="current-day-title">Día X</h2>
+                    <div id="workout-form"></div>
+                    <button class="btn" style="margin-top: 15px;" onclick="saveWorkout()">Guardar Entrenamiento</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISTA 2: CONFIGURACIÓN DE RUTINA -->
+        <div id="tab-rutina" class="tab-content">
+            <div class="card">
+                <h2>Configurar Rutina</h2>
+                <label>Selecciona Día:</label>
+                <select id="config-day-select" onchange="loadRoutineConfig()">
+                    <option value="1">Día 1</option>
+                    <option value="2">Día 2</option>
+                    <option value="3">Día 3</option>
+                    <option value="4">Día 4</option>
+                </select>
+                
+                <div id="routine-editor"></div>
+                <button class="btn" style="margin-top: 15px;" onclick="saveRoutineConfig()">Guardar Configuración</button>
+            </div>
+        </div>
+
+        <!-- VISTA 3: INFORMES -->
+        <div id="tab-informes" class="tab-content">
+            <div class="card">
+                <h2>Informes de Progreso</h2>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <button class="btn btn-outline" onclick="generateReport(15)">Últimos 15 Días</button>
+                    <button class="btn btn-outline" onclick="generateReport(30)">Último Mes</button>
+                </div>
+                <div id="report-results" class="report-section">
+                    <div class="empty-state">Selecciona un periodo para ver el resumen.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <button id="nav-entrenar" class="active" onclick="switchTab('entrenar')">
+            <span>🏋️</span>
+            <span>Entrenar</span>
+        </button>
+        <button id="nav-rutina" onclick="switchTab('rutina')">
+            <span>⚙️</span>
+            <span>Rutina</span>
+        </button>
+        <button id="nav-informes" onclick="switchTab('informes')">
+            <span>📊</span>
+            <span>Informes</span>
+        </button>
+    </nav>
+
+    <script>
+        // Estructura de datos por defecto
+        let routineData = JSON.parse(localStorage.getItem('gym_routine')) || {
+            1: { g1: "Grupo 1", e1: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"], g2: "Grupo 2", e2: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"] },
+            2: { g1: "Grupo 1", e1: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"], g2: "Grupo 2", e2: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"] },
+            3: { g1: "Grupo 1", e1: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"], g2: "Grupo 2", e2: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"] },
+            4: { g1: "Grupo 1", e1: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"], g2: "Grupo 2", e2: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"] }
+        };
+
+        let currentActiveDay = null;
+
+        // Cambio de pestañas
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            document.getElementById(`nav-${tabId}`).classList.add('active');
+
+            if (tabId === 'rutina') loadRoutineConfig();
+        }
+
+        // Cargar vista de edición de rutina
+        function loadRoutineConfig() {
+            const day = document.getElementById('config-day-select').value;
+            const data = routineData[day];
+            const container = document.getElementById('routine-editor');
+            
+            let html = `
+                <div class="group-title">Grupo Muscular 1</div>
+                <input type="text" id="g1-name" value="${data.g1}" placeholder="Nombre Grupo 1 (Ej: Pecho)">
+                <div class="group-title">Ejercicios Grupo 1 (5)</div>
+            `;
+            for(let i=0; i<5; i++) {
+                html += `<input type="text" class="g1-ex" value="${data.e1[i] || ''}" placeholder="Ejercicio ${i+1}">`;
+            }
+
+            html += `
+                <div class="group-title" style="margin-top:20px;">Grupo Muscular 2</div>
+                <input type="text" id="g2-name" value="${data.g2}" placeholder="Nombre Grupo 2 (Ej: Tríceps)">
+                <div class="group-title">Ejercicios Grupo 2 (5)</div>
+            `;
+            for(let i=0; i<5; i++) {
+                html += `<input type="text" class="g2-ex" value="${data.e2[i] || ''}" placeholder="Ejercicio ${i+1}">`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Guardar configuración de la rutina
+        function saveRoutineConfig() {
+            const day = document.getElementById('config-day-select').value;
+            const g1Name = document.getElementById('g1-name').value;
+            const g2Name = document.getElementById('g2-name').value;
+            
+            const e1Inputs = document.querySelectorAll('.g1-ex');
+            const e2Inputs = document.querySelectorAll('.g2-ex');
+            
+            let e1 = [], e2 = [];
+            e1Inputs.forEach(input => e1.push(input.value || "Ejercicio libre"));
+            e2Inputs.forEach(input => e2.push(input.value || "Ejercicio libre"));
+
+            routineData[day] = { g1: g1Name, e1: e1, g2: g2Name, e2: e2 };
+            localStorage.setItem('gym_routine', JSON.stringify(routineData));
+            alert('¡Rutina del Día ' + day + ' guardada con éxito!');
+        }
+
+        // Seleccionar día para entrenar
+        function selectDay(day) {
+            currentActiveDay = day;
+            document.getElementById('workout-area').style.display = 'block';
+            document.getElementById('current-day-title').innerText = `Entrenamiento - Día ${day}`;
+            
+            const data = routineData[day];
+            const container = document.getElementById('workout-form');
+            let html = '';
+
+            const renderGroup = (groupName, exercises, groupPrefix) => {
+                let gHtml = `<div class="group-title">${groupName}</div>`;
+                exercises.forEach((ex, index) => {
+                    gHtml += `
+                        <div class="exercise-item">
+                            <div class="exercise-header">${ex}</div>
+                            <div class="metrics-grid">
+                                <div>
+                                    <label>Series</label>
+                                    <input type="number" id="${groupPrefix}_ex_${index}_s" value="4">
+                                </div>
+                                <div>
+                                    <label>Reps</label>
+                                    <input type="number" id="${groupPrefix}_ex_${index}_r" value="10">
+                                </div>
+                                <div>
+                                    <label>Peso (kg)</label>
+                                    <input type="number" step="0.5" id="${groupPrefix}_ex_${index}_p" placeholder="0">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                return gHtml;
+            };
+
+            html += renderGroup(data.g1, data.e1, 'g1');
+            html += renderGroup(data.g2, data.e2, 'g2');
+            container.innerHTML = html;
+        }
+
+        // Guardar la sesión realizada
+        function saveWorkout() {
+            if (!currentActiveDay) return;
+
+            const dayData = routineData[currentActiveDay];
+            const workoutLog = {
+                date: new Date().toISOString(),
+                day: currentActiveDay,
+                groups: []
+            };
+
+            const processGroup = (groupName, exercises, groupPrefix) => {
+                let groupLog = { name: groupName, exercises: [] };
+                exercises.forEach((ex, index) => {
+                    const series = document.getElementById(`${groupPrefix}_ex_${index}_s`).value;
+                    const reps = document.getElementById(`${groupPrefix}_ex_${index}_r`).value;
+                    const weight = document.getElementById(`${groupPrefix}_ex_${index}_p`).value || 0;
+
+                    groupLog.exercises.push({
+                        name: ex,
+                        series: series,
+                        reps: reps,
+                        weight: weight
+                    });
+                });
+                return groupLog;
+            };
+
+            workoutLog.groups.push(processGroup(dayData.g1, dayData.e1, 'g1'));
+            workoutLog.groups.push(processGroup(dayData.g2, dayData.e2, 'g2'));
+
+            let logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
+            logs.push(workoutLog);
+            localStorage.setItem('gym_logs', JSON.stringify(logs));
+
+            alert('¡Entrenamiento guardado correctamente!');
+            document.getElementById('workout-area').style.display = 'none';
+        }
+
+        // Generar informes (15 o 30 días)
+        function generateReport(days) {
+            const logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
+            const container = document.getElementById('report-results');
+            
+            const now = new Date();
+            const cutoffDate = new Date(now.setDate(now.getDate() - days));
+
+            const filteredLogs = logs.filter(log => new Date(log.date) >= cutoffDate);
+
+            if (filteredLogs.length === 0) {
+                container.innerHTML = `<div class="empty-state">No hay entrenamientos registrados en los últimos ${days} días.</div>`;
+                return;
+            }
+
+            let html = `<p style="margin-bottom:10px; color: var(--accent-color);">Total sesiones realizadas: <strong>${filteredLogs.length}</strong></p>`;
+
+            filteredLogs.reverse().forEach(log => {
+                const dateStr = new Date(log.date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                html += `
+                    <div class="report-item">
+                        <div class="report-date">${dateStr} - Día ${log.day}</div>
+                `;
+                
+                log.groups.forEach(g => {
+                    html += `<div style="font-size:0.85rem; font-weight:bold; margin-top:5px;">${g.name}:</div>`;
+                    g.exercises.forEach(e => {
+                        if (e.weight > 0) {
+                            html += `<div style="font-size:0.8rem; color: var(--text-secondary); margin-left:8px;">• ${e.name}: ${e.series}x${e.reps} con ${e.weight} kg</div>`;
+                        }
+                    });
+                });
+
+                html += `</div>`;
+            });
+
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
