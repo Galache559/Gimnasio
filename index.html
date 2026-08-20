@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gimnasio</title>
-    <!-- Configuración para PWA / Pantalla completa en Móvil -->
+    <title>Gimnasio v2.0</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -31,7 +30,7 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            padding-bottom: 80px;
+            padding-bottom: 90px;
         }
 
         header {
@@ -65,7 +64,7 @@
             background-color: var(--card-bg);
             display: flex;
             justify-content: space-around;
-            padding: 12px 0;
+            padding: 10px 0;
             border-top: 1px solid var(--border-color);
             z-index: 1000;
         }
@@ -74,13 +73,13 @@
             background: none;
             border: none;
             color: var(--text-secondary);
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
             cursor: pointer;
-            width: 33%;
+            width: 25%;
         }
 
         nav button.active {
@@ -139,17 +138,6 @@
             border: 1px solid var(--border-color);
         }
 
-        .btn-small {
-            padding: 6px 12px;
-            font-size: 0.8rem;
-            width: auto;
-        }
-
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: #fff;
-        }
-
         input, select {
             width: 100%;
             padding: 10px;
@@ -165,13 +153,34 @@
             background-color: #252525;
             border-radius: 8px;
             padding: 12px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .exercise-header {
             font-weight: bold;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: #fff;
+        }
+
+        .exercise-img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            background-color: #1a1a1a;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: block;
+            border: 1px solid var(--border-color);
+        }
+
+        .last-data {
+            font-size: 0.75rem;
+            color: var(--accent-color);
+            background-color: rgba(0, 230, 118, 0.1);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            padding: 6px 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
         }
 
         .metrics-grid {
@@ -197,7 +206,6 @@
         }
 
         .group-title {
-            font-size: 1rem;
             color: var(--text-secondary);
             margin: 15px 0 8px 0;
             text-transform: uppercase;
@@ -228,6 +236,50 @@
             color: var(--text-secondary);
             padding: 20px;
             font-size: 0.9rem;
+        }
+
+        /* Calendario Styles */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            text-align: center;
+        }
+
+        .cal-day-name {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: bold;
+            padding: 5px 0;
+        }
+
+        .cal-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            background-color: #252525;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .cal-day.empty {
+            background-color: transparent;
+            cursor: default;
+        }
+
+        .cal-day.has-workout {
+            background-color: var(--accent-color);
+            color: #000;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -263,7 +315,7 @@
         <div id="tab-rutina" class="tab-content">
             <div class="card">
                 <h2>Configurar Rutina</h2>
-                <label>Selecciona Día:</label>
+                <label for="config-day-select">Selecciona Día:</label>
                 <select id="config-day-select" onchange="loadRoutineConfig()">
                     <option value="1">Día 1</option>
                     <option value="2">Día 2</option>
@@ -276,7 +328,32 @@
             </div>
         </div>
 
-        <!-- VISTA 3: INFORMES -->
+        <!-- VISTA 3: CALENDARIO -->
+        <div id="tab-calendario" class="tab-content">
+            <div class="card">
+                <div class="calendar-header">
+                    <button class="btn btn-outline" style="width:auto; padding: 4px 12px;" onclick="changeMonth(-1)">❮</button>
+                    <h2 id="calendar-month-year" style="margin:0;">Mes Año</h2>
+                    <button class="btn btn-outline" style="width:auto; padding: 4px 12px;" onclick="changeMonth(1)">❯</button>
+                </div>
+                <div class="calendar-grid">
+                    <div class="cal-day-name">Lu</div>
+                    <div class="cal-day-name">Ma</div>
+                    <div class="cal-day-name">Mi</div>
+                    <div class="cal-day-name">Ju</div>
+                    <div class="cal-day-name">Vi</div>
+                    <div class="cal-day-name">Sá</div>
+                    <div class="cal-day-name">Do</div>
+                </div>
+                <div class="calendar-grid" id="calendar-body" style="margin-top:5px;"></div>
+            </div>
+            <div class="card" id="calendar-detail" style="display:none;">
+                <h2 id="detail-date-title">Detalle</h2>
+                <div id="detail-content"></div>
+            </div>
+        </div>
+
+        <!-- VISTA 4: INFORMES -->
         <div id="tab-informes" class="tab-content">
             <div class="card">
                 <h2>Informes de Progreso</h2>
@@ -291,6 +368,7 @@
         </div>
     </div>
 
+    <!-- MENÚ DE NAVEGACIÓN INFERIOR (AHORA CON 4 BOTONES) -->
     <nav>
         <button id="nav-entrenar" class="active" onclick="switchTab('entrenar')">
             <span>🏋️</span>
@@ -300,6 +378,10 @@
             <span>⚙️</span>
             <span>Rutina</span>
         </button>
+        <button id="nav-calendario" onclick="switchTab('calendario')">
+            <span>📅</span>
+            <span>Calendario</span>
+        </button>
         <button id="nav-informes" onclick="switchTab('informes')">
             <span>📊</span>
             <span>Informes</span>
@@ -307,17 +389,22 @@
     </nav>
 
     <script>
-        // Estructura de datos por defecto
-        let routineData = JSON.parse(localStorage.getItem('gym_routine')) || {
-            1: { g1: "Grupo 1", e1: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"], g2: "Grupo 2", e2: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"] },
-            2: { g1: "Grupo 1", e1: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"], g2: "Grupo 2", e2: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"] },
-            3: { g1: "Grupo 1", e1: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"], g2: "Grupo 2", e2: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"] },
-            4: { g1: "Grupo 1", e1: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"], g2: "Grupo 2", e2: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"] }
-        };
+        // Carga de datos con actualización forzada de campos de imagen
+        let routineData = JSON.parse(localStorage.getItem('gym_routine')) || {};
+        const defaultDay = { g1: "Grupo 1", e1: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"], img1: ["","","","",""], g2: "Grupo 2", e2: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"], img2: ["","","","",""] };
+        
+        for (let i = 1; i <= 4; i++) {
+            if (!routineData[i]) {
+                routineData[i] = JSON.parse(JSON.stringify(defaultDay));
+            } else {
+                if (!routineData[i].img1) routineData[i].img1 = ["","","","",""];
+                if (!routineData[i].img2) routineData[i].img2 = ["","","","",""];
+            }
+        }
 
         let currentActiveDay = null;
+        let currentCalendarDate = new Date();
 
-        // Cambio de pestañas
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
@@ -326,69 +413,118 @@
             document.getElementById(`nav-${tabId}`).classList.add('active');
 
             if (tabId === 'rutina') loadRoutineConfig();
+            if (tabId === 'calendario') renderCalendar();
         }
 
-        // Cargar vista de edición de rutina
         function loadRoutineConfig() {
             const day = document.getElementById('config-day-select').value;
-            const data = routineData[day];
+            const data = routineData[day] || defaultDay;
             const container = document.getElementById('routine-editor');
             
+            const g1Name = data.g1 || "Grupo 1";
+            const g2Name = data.g2 || "Grupo 2";
+            const e1List = data.e1 || [];
+            const e2List = data.e2 || [];
+            const img1List = data.img1 || [];
+            const img2List = data.img2 || [];
+
             let html = `
                 <div class="group-title">Grupo Muscular 1</div>
-                <input type="text" id="g1-name" value="${data.g1}" placeholder="Nombre Grupo 1 (Ej: Pecho)">
-                <div class="group-title">Ejercicios Grupo 1 (5)</div>
+                <input type="text" id="g1-name" value="${g1Name}" placeholder="Nombre Grupo 1">
+                <div class="group-title">Ejercicios Grupo 1</div>
             `;
             for(let i=0; i<5; i++) {
-                html += `<input type="text" class="g1-ex" value="${data.e1[i] || ''}" placeholder="Ejercicio ${i+1}">`;
+                const val = e1List[i] !== undefined ? e1List[i] : `Ej ${i+1}`;
+                const imgVal = img1List[i] || "";
+                html += `
+                    <div style="background:#252525; padding:8px; border-radius:6px; margin-bottom:10px;">
+                        <input type="text" class="g1-ex" value="${val}" placeholder="Nombre Ejercicio ${i+1}">
+                        <input type="text" class="g1-img" value="${imgVal}" placeholder="URL Imagen/GIF Ejercicio ${i+1}" style="font-size:0.8rem; margin-bottom:0;">
+                    </div>
+                `;
             }
 
             html += `
                 <div class="group-title" style="margin-top:20px;">Grupo Muscular 2</div>
-                <input type="text" id="g2-name" value="${data.g2}" placeholder="Nombre Grupo 2 (Ej: Tríceps)">
-                <div class="group-title">Ejercicios Grupo 2 (5)</div>
+                <input type="text" id="g2-name" value="${g2Name}" placeholder="Nombre Grupo 2">
+                <div class="group-title">Ejercicios Grupo 2</div>
             `;
             for(let i=0; i<5; i++) {
-                html += `<input type="text" class="g2-ex" value="${data.e2[i] || ''}" placeholder="Ejercicio ${i+1}">`;
+                const val = e2List[i] !== undefined ? e2List[i] : `Ej ${i+1}`;
+                const imgVal = img2List[i] || "";
+                html += `
+                    <div style="background:#252525; padding:8px; border-radius:6px; margin-bottom:10px;">
+                        <input type="text" class="g2-ex" value="${val}" placeholder="Nombre Ejercicio ${i+1}">
+                        <input type="text" class="g2-img" value="${imgVal}" placeholder="URL Imagen/GIF Ejercicio ${i+1}" style="font-size:0.8rem; margin-bottom:0;">
+                    </div>
+                `;
             }
 
             container.innerHTML = html;
         }
 
-        // Guardar configuración de la rutina
         function saveRoutineConfig() {
             const day = document.getElementById('config-day-select').value;
             const g1Name = document.getElementById('g1-name').value;
             const g2Name = document.getElementById('g2-name').value;
             
             const e1Inputs = document.querySelectorAll('.g1-ex');
+            const img1Inputs = document.querySelectorAll('.g1-img');
             const e2Inputs = document.querySelectorAll('.g2-ex');
+            const img2Inputs = document.querySelectorAll('.g2-img');
             
-            let e1 = [], e2 = [];
-            e1Inputs.forEach(input => e1.push(input.value || "Ejercicio libre"));
-            e2Inputs.forEach(input => e2.push(input.value || "Ejercicio libre"));
+            let e1 = [], img1 = [], e2 = [], img2 = [];
+            e1Inputs.forEach((input, i) => e1.push(input.value || `Ej ${i+1}`));
+            img1Inputs.forEach((input) => img1.push(input.value || ""));
+            e2Inputs.forEach((input, i) => e2.push(input.value || `Ej ${i+1}`));
+            img2Inputs.forEach((input) => img2.push(input.value || ""));
 
-            routineData[day] = { g1: g1Name, e1: e1, g2: g2Name, e2: e2 };
+            routineData[day] = { g1: g1Name, e1: e1, img1: img1, g2: g2Name, e2: e2, img2: img2 };
             localStorage.setItem('gym_routine', JSON.stringify(routineData));
-            alert('¡Rutina del Día ' + day + ' guardada con éxito!');
+            alert('¡Rutina guardada correctamente!');
         }
 
-        // Seleccionar día para entrenar
+        function getLastExerciseData(exName) {
+            const logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
+            for (let i = logs.length - 1; i >= 0; i--) {
+                const log = logs[i];
+                for (let g of log.groups) {
+                    for (let e of g.exercises) {
+                        if (e.name === exName) {
+                            const dateStr = new Date(log.date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+                            return { date: dateStr, weight: e.weight, series: e.series, reps: e.reps };
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
         function selectDay(day) {
             currentActiveDay = day;
             document.getElementById('workout-area').style.display = 'block';
             document.getElementById('current-day-title').innerText = `Entrenamiento - Día ${day}`;
             
-            const data = routineData[day];
+            const data = routineData[day] || defaultDay;
             const container = document.getElementById('workout-form');
             let html = '';
 
-            const renderGroup = (groupName, exercises, groupPrefix) => {
-                let gHtml = `<div class="group-title">${groupName}</div>`;
-                exercises.forEach((ex, index) => {
+            const renderGroup = (groupName, exercises, images, groupPrefix) => {
+                let gHtml = `<div class="group-title">${groupName || 'Grupo'}</div>`;
+                (exercises || []).forEach((ex, index) => {
+                    const imgUrl = (images && images[index]) ? images[index] : "";
+                    const lastData = getLastExerciseData(ex);
+                    
+                    let lastInfoHtml = `<div class="last-data">Sin registros previos de este ejercicio</div>`;
+                    if (lastData) {
+                        lastInfoHtml = `<div class="last-data">Último entrenamiento (${lastData.date}): ${lastData.series}x${lastData.reps} con ${lastData.weight} kg</div>`;
+                    }
+
                     gHtml += `
                         <div class="exercise-item">
                             <div class="exercise-header">${ex}</div>
+                            ${imgUrl ? `<img src="${imgUrl}" class="exercise-img" alt="${ex}">` : ''}
+                            ${lastInfoHtml}
                             <div class="metrics-grid">
                                 <div>
                                     <label>Series</label>
@@ -409,35 +545,25 @@
                 return gHtml;
             };
 
-            html += renderGroup(data.g1, data.e1, 'g1');
-            html += renderGroup(data.g2, data.e2, 'g2');
+            html += renderGroup(data.g1, data.e1, data.img1, 'g1');
+            html += renderGroup(data.g2, data.e2, data.img2, 'g2');
             container.innerHTML = html;
         }
 
-        // Guardar la sesión realizada
         function saveWorkout() {
             if (!currentActiveDay) return;
 
             const dayData = routineData[currentActiveDay];
-            const workoutLog = {
-                date: new Date().toISOString(),
-                day: currentActiveDay,
-                groups: []
-            };
+            const workoutLog = { date: new Date().toISOString(), day: currentActiveDay, groups: [] };
 
             const processGroup = (groupName, exercises, groupPrefix) => {
                 let groupLog = { name: groupName, exercises: [] };
-                exercises.forEach((ex, index) => {
+                (exercises || []).forEach((ex, index) => {
                     const series = document.getElementById(`${groupPrefix}_ex_${index}_s`).value;
                     const reps = document.getElementById(`${groupPrefix}_ex_${index}_r`).value;
                     const weight = document.getElementById(`${groupPrefix}_ex_${index}_p`).value || 0;
 
-                    groupLog.exercises.push({
-                        name: ex,
-                        series: series,
-                        reps: reps,
-                        weight: weight
-                    });
+                    groupLog.exercises.push({ name: ex, series: series, reps: reps, weight: weight });
                 });
                 return groupLog;
             };
@@ -453,13 +579,75 @@
             document.getElementById('workout-area').style.display = 'none';
         }
 
-        // Generar informes (15 o 30 días)
+        function changeMonth(delta) {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+            const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            
+            document.getElementById('calendar-month-year').innerText = `${monthNames[month]} ${year}`;
+
+            const firstDayIndex = (new Date(year, month, 1).getDay() + 6) % 7;
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
+            const body = document.getElementById('calendar-body');
+            body.innerHTML = '';
+
+            for (let i = 0; i < firstDayIndex; i++) {
+                body.innerHTML += `<div class="cal-day empty"></div>`;
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayDateStr = new Date(year, month, day).toDateString();
+                const hasLog = logs.some(l => new Date(l.date).toDateString() === dayDateStr);
+                const activeClass = hasLog ? 'has-workout' : '';
+                body.innerHTML += `<div class="cal-day ${activeClass}" onclick="showDayDetail('${year}-${month+1}-${day}')">${day}</div>`;
+            }
+
+            document.getElementById('calendar-detail').style.display = 'none';
+        }
+
+        function showDayDetail(dateStr) {
+            const parts = dateStr.split('-');
+            const targetDate = new Date(parts[0], parts[1] - 1, parts[2]);
+            const logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
+            
+            const dayLogs = logs.filter(l => new Date(l.date).toDateString() === targetDate.toDateString());
+            const detailCard = document.getElementById('calendar-detail');
+            const detailTitle = document.getElementById('detail-date-title');
+            const detailContent = document.getElementById('detail-content');
+
+            detailTitle.innerText = targetDate.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+            if (dayLogs.length === 0) {
+                detailContent.innerHTML = `<div class="empty-state">No se registró entrenamiento este día.</div>`;
+            } else {
+                let html = '';
+                dayLogs.forEach(log => {
+                    html += `<div style="font-size:0.9rem; font-weight:bold; color:var(--accent-color); margin-bottom:6px;">Entrenamiento - Día ${log.day}</div>`;
+                    log.groups.forEach(g => {
+                        html += `<div style="font-size:0.85rem; font-weight:bold; margin-top:5px;">${g.name}:</div>`;
+                        g.exercises.forEach(e => {
+                            html += `<div style="font-size:0.8rem; color:var(--text-secondary); margin-left:8px;">• ${e.name}: ${e.series}x${e.reps} (${e.weight} kg)</div>`;
+                        });
+                    });
+                });
+                detailContent.innerHTML = html;
+            }
+
+            detailCard.style.display = 'block';
+        }
+
         function generateReport(days) {
             const logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
             const container = document.getElementById('report-results');
             
-            const now = new Date();
-            const cutoffDate = new Date(now.setDate(now.getDate() - days));
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - days);
 
             const filteredLogs = logs.filter(log => new Date(log.date) >= cutoffDate);
 
@@ -470,12 +658,9 @@
 
             let html = `<p style="margin-bottom:10px; color: var(--accent-color);">Total sesiones realizadas: <strong>${filteredLogs.length}</strong></p>`;
 
-            filteredLogs.reverse().forEach(log => {
+            filteredLogs.slice().reverse().forEach(log => {
                 const dateStr = new Date(log.date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                html += `
-                    <div class="report-item">
-                        <div class="report-date">${dateStr} - Día ${log.day}</div>
-                `;
+                html += `<div class="report-item"><div class="report-date">${dateStr} - Día ${log.day}</div>`;
                 
                 log.groups.forEach(g => {
                     html += `<div style="font-size:0.85rem; font-weight:bold; margin-top:5px;">${g.name}:</div>`;
