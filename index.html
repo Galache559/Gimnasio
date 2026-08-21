@@ -363,7 +363,6 @@
         <!-- VISTA 1: ENTRENAR -->
         <div id="tab-entrenar" class="tab-content active">
             
-            <!-- MODO PANTALLA ENCENDIDA Y CRONÓMETRO -->
             <div class="timer-box">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                     <span style="font-size:0.8rem; color:var(--text-secondary);">⏱️ Temporizador</span>
@@ -526,7 +525,7 @@
             if (tabId === 'informes') populateChartSelect();
         }
 
-        /* WAKE LOCK API (PANTALLA ENCENDIDA) */
+        /* WAKE LOCK API */
         async function toggleWakeLock() {
             const btn = document.getElementById('wakelock-btn');
             if ('wakeLock' in navigator) {
@@ -551,7 +550,7 @@
             }
         }
 
-        /* LÓGICA DEL CRONÓMETRO CON CUENTA ATRÁS SONORA */
+        /* CRONÓMETRO */
         function startTimer(seconds) {
             clearInterval(timerInterval);
             remainingSeconds = seconds;
@@ -561,7 +560,6 @@
                 remainingSeconds--;
                 updateTimerDisplay();
 
-                // Cuenta atrás sonora en los últimos 3 segundos
                 if (remainingSeconds === 3 || remainingSeconds === 2 || remainingSeconds === 1) {
                     playShortBeep();
                 } else if (remainingSeconds <= 0) {
@@ -584,7 +582,6 @@
                 `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
 
-        // Pitido corto de pre-aviso (3s, 2s, 1s)
         function playShortBeep() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -597,7 +594,6 @@
             } catch (e) {}
         }
 
-        // Pitido largo de fin de descanso (0s)
         function playFinalBeep() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -610,7 +606,7 @@
             } catch (e) {}
         }
 
-        /* CÁLCULO DE 1RM (EPLEY) */
+        /* CÁLCULO DE 1RM */
         function calculate1RM(weight, reps) {
             if (!weight || !reps || reps <= 0) return 0;
             if (reps === 1) return weight;
@@ -634,7 +630,6 @@
             }
         }
 
-        /* OBTENER MÁXIMO PESO HISTÓRICO (PR) */
         function getMaxWeightForExercise(exName) {
             const logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
             let maxW = 0;
@@ -876,6 +871,38 @@
             alert('¡Rutina guardada correctamente!');
         }
 
+        /* BACKUP DATOS */
+        function exportData() {
+            const data = {
+                routine: JSON.parse(localStorage.getItem('gym_routine')) || {},
+                logs: JSON.parse(localStorage.getItem('gym_logs')) || []
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `gym_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.routine) localStorage.setItem('gym_routine', JSON.stringify(data.routine));
+                    if (data.logs) localStorage.setItem('gym_logs', JSON.stringify(data.logs));
+                    alert('¡Datos importados con éxito!');
+                    location.reload();
+                } catch (err) {
+                    alert('Error al leer el archivo JSON.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
         /* CALENDARIO */
         function changeMonth(delta) {
             currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
@@ -926,200 +953,145 @@
             } else {
                 let html = '';
                 dayLogs.forEach(log => {
-                    html += `
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                            <div style="font-size:0.9rem; font-weight:bold; color:var(--accent-color);">Entrenamiento - Día ${log.day}</div>
-                            <button class="btn-danger" onclick="deleteLog(${log.id || 0})">Eliminar</button>
-                        </div>
-                    `;
+                    html += `<div style="margin-bottom:10px;"><strong>Entrenamiento Día ${log.day}</strong></div>`;
                     log.groups.forEach(g => {
-                        html += `<div style="font-size:0.85rem; font-weight:bold; margin-top:5px;">${g.name}:</div>`;
+                        html += `<div style="font-size:0.85rem; color:var(--accent-color); margin-top:5px;">${g.name}</div>`;
                         g.exercises.forEach(e => {
-                            const rm = calculate1RM(e.weight, e.reps);
-                            html += `<div style="font-size:0.8rem; color:var(--text-secondary); margin-left:8px;">• ${e.name}: ${e.series}x${e.reps} (${e.weight} kg) | 1RM: ~${rm}kg</div>`;
+                            html += `<div style="font-size:0.8rem; color:var(--text-secondary);">${e.name}: ${e.series}x${e.reps} - ${e.weight} kg</div>`;
                         });
                     });
                 });
                 detailContent.innerHTML = html;
             }
-
             detailCard.style.display = 'block';
         }
 
-        function deleteLog(logId) {
-            if (!confirm('¿Seguro que deseas borrar este registro?')) return;
-            let logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
-            logs = logs.filter(l => l.id !== logId);
-            localStorage.setItem('gym_logs', JSON.stringify(logs));
-            renderCalendar();
-            alert('Registro eliminado.');
-        }
-
-        /* INFORMES Y GRÁFICOS */
+        /* INFORMES Y GRÁFICOS (CANVAS NATIVO) */
         function populateChartSelect() {
             const logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
+            const exercisesSet = new Set();
+            logs.forEach(l => l.groups.forEach(g => g.exercises.forEach(e => exercisesSet.add(e.name))));
+
             const select = document.getElementById('chart-ex-select');
             select.innerHTML = '<option value="">-- Elige un ejercicio --</option>';
-
-            const exerciseSet = new Set();
-            logs.forEach(log => {
-                log.groups.forEach(g => {
-                    g.exercises.forEach(e => exerciseSet.add(e.name));
-                });
-            });
-
-            exerciseSet.forEach(ex => {
+            exercisesSet.forEach(ex => {
                 select.innerHTML += `<option value="${ex}">${ex}</option>`;
             });
         }
 
         function renderProgressChart() {
-            const selectedEx = document.getElementById('chart-ex-select').value;
+            const exName = document.getElementById('chart-ex-select').value;
             const canvas = document.getElementById('progressChart');
             const ctx = canvas.getContext('2d');
-
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-
+            
+            // Ajustar resolución del canvas
+            canvas.width = canvas.parentElement.clientWidth - 32;
+            canvas.height = 180;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            if (!selectedEx) return;
+            if (!exName) return;
 
             const logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
-            const history = [];
+            const dataPoints = [];
 
-            logs.forEach(log => {
-                log.groups.forEach(g => {
+            logs.forEach(l => {
+                l.groups.forEach(g => {
                     g.exercises.forEach(e => {
-                        if (e.name === selectedEx && e.weight > 0) {
-                            history.push({ date: new Date(log.date), weight: e.weight });
+                        if (e.name === exName && e.weight > 0) {
+                            dataPoints.push({
+                                date: new Date(l.date),
+                                weight: e.weight
+                            });
                         }
                     });
                 });
             });
 
-            history.sort((a, b) => a.date - b.date);
+            dataPoints.sort((a, b) => a.date - b.date);
 
-            if (history.length === 0) {
+            if (dataPoints.length === 0) {
                 ctx.fillStyle = '#b0b0b0';
                 ctx.font = '12px sans-serif';
-                ctx.fillText('Sin datos de peso guardados para este ejercicio', 15, 90);
+                ctx.fillText('Sin datos registrados para este ejercicio', 20, 90);
                 return;
             }
 
             const padding = 30;
-            const chartW = canvas.width - padding * 2;
-            const chartH = canvas.height - padding * 2;
+            const width = canvas.width - padding * 2;
+            const height = canvas.height - padding * 2;
 
-            const maxW = Math.max(...history.map(h => h.weight));
-            const minW = Math.min(...history.map(h => h.weight));
-            const range = (maxW - minW) || 1;
+            const weights = dataPoints.map(d => d.weight);
+            const minW = Math.min(...weights) * 0.9;
+            const maxW = Math.max(...weights) * 1.1 || 1;
 
+            // Dibujar Ejes/Líneas de fondo
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, canvas.height - padding);
+            ctx.lineTo(canvas.width - padding, canvas.height - padding);
+            ctx.stroke();
+
+            // Dibujar Gráfica
             ctx.strokeStyle = '#00e676';
+            ctx.fillStyle = '#00e676';
             ctx.lineWidth = 2;
             ctx.beginPath();
 
-            history.forEach((h, idx) => {
-                const x = padding + (idx / (history.length - 1 || 1)) * chartW;
-                const y = canvas.height - padding - ((h.weight - minW) / range) * chartH;
+            dataPoints.forEach((pt, i) => {
+                const x = padding + (dataPoints.length > 1 ? (i / (dataPoints.length - 1)) * width : width / 2);
+                const y = canvas.height - padding - ((pt.weight - minW) / (maxW - minW)) * height;
 
-                if (idx === 0) ctx.moveTo(x, y);
+                if (i === 0) ctx.moveTo(x, y);
                 else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+
+            // Dibujar Puntos y Etiquetas
+            dataPoints.forEach((pt, i) => {
+                const x = padding + (dataPoints.length > 1 ? (i / (dataPoints.length - 1)) * width : width / 2);
+                const y = canvas.height - padding - ((pt.weight - minW) / (maxW - minW)) * height;
+
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fill();
 
                 ctx.fillStyle = '#ffffff';
-                ctx.fillRect(x - 3, y - 3, 6, 6);
-
-                ctx.fillStyle = '#b0b0b0';
                 ctx.font = '10px sans-serif';
-                ctx.fillText(`${h.weight}kg`, x - 10, y - 8);
+                ctx.fillText(`${pt.weight}kg`, x - 10, y - 8);
+                ctx.fillStyle = '#00e676';
             });
-
-            ctx.stroke();
         }
 
         function generateReport(days) {
             const logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
+            const now = new Date();
+            const cutoff = new Date(now.setDate(now.getDate() - days));
+
+            const filteredLogs = logs.filter(l => new Date(l.date) >= cutoff)
+                                     .sort((a,b) => new Date(b.date) - new Date(a.date));
+
             const container = document.getElementById('report-results');
-            
-            const cutoffDate = new Date();
-            cutoffDate.setDate(cutoffDate.getDate() - days);
-
-            const filteredLogs = logs.filter(log => new Date(log.date) >= cutoffDate);
-
             if (filteredLogs.length === 0) {
-                container.innerHTML = `<div class="empty-state">No hay entrenamientos registrados en los últimos ${days} días.</div>`;
+                container.innerHTML = `<div class="empty-state">No hay entrenamientos en los últimos ${days} días.</div>`;
                 return;
             }
 
-            let totalVolume = 0;
+            let html = '';
             filteredLogs.forEach(log => {
+                const dateStr = new Date(log.date).toLocaleDateString('es-ES', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
+                html += `<div class="report-item">`;
+                html += `<div class="report-date">${dateStr} - Día ${log.day}</div>`;
                 log.groups.forEach(g => {
+                    html += `<div style="font-weight:bold; font-size:0.85rem; margin-top:4px;">${g.name}</div>`;
                     g.exercises.forEach(e => {
-                        totalVolume += (e.series * e.reps * e.weight);
+                        html += `<div style="font-size:0.8rem; color:var(--text-secondary);">${e.name}: ${e.series} series x ${e.reps} reps @ ${e.weight} kg</div>`;
                     });
                 });
-            });
-
-            let html = `
-                <p style="margin-bottom:5px; color: var(--accent-color);">Sesiones realizadas: <strong>${filteredLogs.length}</strong></p>
-                <p style="margin-bottom:15px; font-size:0.85rem; color: var(--text-secondary);">Volumen total movido: <strong>${totalVolume.toLocaleString()} kg</strong></p>
-            `;
-
-            filteredLogs.slice().reverse().forEach(log => {
-                const dateStr = new Date(log.date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                html += `<div class="report-item"><div class="report-date">${dateStr} - Día ${log.day}</div>`;
-                
-                log.groups.forEach(g => {
-                    html += `<div style="font-size:0.85rem; font-weight:bold; margin-top:5px;">${g.name}:</div>`;
-                    g.exercises.forEach(e => {
-                        const rm = calculate1RM(e.weight, e.reps);
-                        html += `<div style="font-size:0.8rem; color: var(--text-secondary); margin-left:8px;">• ${e.name}: ${e.series}x${e.reps} con ${e.weight} kg (1RM: ~${rm}kg)</div>`;
-                    });
-                });
-
                 html += `</div>`;
             });
-
             container.innerHTML = html;
-        }
-
-        /* COPIA DE SEGURIDAD */
-        function exportData() {
-            const dataToExport = {
-                gym_routine: JSON.parse(localStorage.getItem('gym_routine')),
-                gym_logs: JSON.parse(localStorage.getItem('gym_logs'))
-            };
-            
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToExport, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `Copia_Gimnasio_${new Date().toISOString().split('T')[0]}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        }
-
-        function importData(event) {
-            const fileReader = new FileReader();
-            fileReader.onload = function(e) {
-                try {
-                    const importedData = JSON.parse(e.target.result);
-                    if (importedData.gym_routine) {
-                        localStorage.setItem('gym_routine', JSON.stringify(importedData.gym_routine));
-                        routineData = importedData.gym_routine;
-                    }
-                    if (importedData.gym_logs) {
-                        localStorage.setItem('gym_logs', JSON.stringify(importedData.gym_logs));
-                    }
-                    alert('¡Datos importados con éxito!');
-                    location.reload();
-                } catch (err) {
-                    alert('Error al leer el archivo. Asegúrate de que sea un JSON válido.');
-                }
-            };
-            if (event.target.files[0]) {
-                fileReader.readAsText(event.target.files[0]);
-            }
         }
     </script>
 </body>
