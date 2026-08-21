@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gimnasio v2.0 Pro</title>
+    <title>Gimnasio v3.0 Ultimate</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Gimnasio">
     <style>
         :root {
             --bg-color: #121212;
             --card-bg: #1e1e1e;
             --accent-color: #00e676;
+            --accent-hover: #00c853;
             --text-color: #ffffff;
             --text-secondary: #b0b0b0;
             --border-color: #333333;
             --danger-color: #ff5252;
             --gold-color: #ffd700;
+            --info-color: #29b6f6;
         }
 
         * {
@@ -89,13 +89,8 @@
             font-weight: bold;
         }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
         .card {
             background-color: var(--card-bg);
@@ -211,7 +206,25 @@
             border: 1px solid rgba(0, 230, 118, 0.3);
             padding: 6px 8px;
             border-radius: 4px;
+            margin-bottom: 6px;
+        }
+
+        .suggestion-box {
+            font-size: 0.75rem;
+            color: var(--info-color);
+            background-color: rgba(41, 182, 246, 0.1);
+            border: 1px solid rgba(41, 182, 246, 0.3);
+            padding: 6px 8px;
+            border-radius: 4px;
             margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .rm-display {
+            font-size: 0.75rem;
+            color: var(--gold-color);
+            margin-top: 4px;
+            font-weight: bold;
         }
 
         .metrics-grid {
@@ -247,7 +260,6 @@
             align-items: center;
         }
 
-        /* Estilos del Temporizador */
         .timer-box {
             background-color: #252525;
             border: 1px solid var(--accent-color);
@@ -282,7 +294,6 @@
             cursor: pointer;
         }
 
-        /* Calendario Styles */
         .calendar-header {
             display: flex;
             justify-content: space-between;
@@ -315,39 +326,14 @@
             cursor: pointer;
         }
 
-        .cal-day.empty {
-            background-color: transparent;
-            cursor: default;
-        }
+        .cal-day.empty { background-color: transparent; cursor: default; }
+        .cal-day.has-workout { background-color: var(--accent-color); color: #000; font-weight: bold; }
 
-        .cal-day.has-workout {
-            background-color: var(--accent-color);
-            color: #000;
-            font-weight: bold;
-        }
+        .report-section { margin-top: 15px; }
+        .report-item { border-bottom: 1px solid var(--border-color); padding: 10px 0; }
+        .report-date { font-size: 0.8rem; color: var(--accent-color); }
+        .empty-state { text-align: center; color: var(--text-secondary); padding: 20px; font-size: 0.9rem; }
 
-        .report-section {
-            margin-top: 15px;
-        }
-
-        .report-item {
-            border-bottom: 1px solid var(--border-color);
-            padding: 10px 0;
-        }
-
-        .report-date {
-            font-size: 0.8rem;
-            color: var(--accent-color);
-        }
-
-        .empty-state {
-            text-align: center;
-            color: var(--text-secondary);
-            padding: 20px;
-            font-size: 0.9rem;
-        }
-
-        /* Gráfico Canvas */
         canvas {
             width: 100%;
             height: 180px;
@@ -356,21 +342,34 @@
             border: 1px solid var(--border-color);
             margin-top: 10px;
         }
+
+        /* Estilos de Impresión */
+        @media print {
+            body { background: #fff; color: #000; padding: 0; }
+            header, nav, .timer-box, .day-grid, .btn, button, select, input, canvas { display: none !important; }
+            .card { border: none; background: #fff; color: #000; padding: 0; }
+            .report-section { display: block !important; }
+            .report-item { border-bottom: 1px solid #ccc; color: #000; }
+            .report-date { color: #000; font-weight: bold; }
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Mi Gimnasio Pro</h1>
+        <h1>Mi Gimnasio Pro v3.0</h1>
     </header>
 
     <div class="container">
         <!-- VISTA 1: ENTRENAR -->
         <div id="tab-entrenar" class="tab-content active">
             
-            <!-- CRONÓMETRO DE DESCANSO -->
+            <!-- MODO PANTALLA ENCENDIDA Y CRONÓMETRO -->
             <div class="timer-box">
-                <div style="font-size:0.8rem; color:var(--text-secondary);">⏱️ Temporizador de Descanso</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size:0.8rem; color:var(--text-secondary);">⏱️ Temporizador</span>
+                    <button id="wakelock-btn" class="timer-btn" style="font-size:0.7rem; background:#333;" onclick="toggleWakeLock()">💡 MANTENER PANTALLA: OFF</button>
+                </div>
                 <div id="timer-display" class="timer-display">00:00</div>
                 <div class="timer-presets">
                     <button class="timer-btn" onclick="startTimer(60)">60s</button>
@@ -455,10 +454,10 @@
             </div>
         </div>
 
-        <!-- VISTA 4: INFORMES Y GRÁFICO DE FUERZA -->
+        <!-- VISTA 4: INFORMES Y GRÁFICOS -->
         <div id="tab-informes" class="tab-content">
             <div class="card">
-                <h2>📈 Gráfico de Progresión</h2>
+                <h2>📈 Progresión de Fuerza</h2>
                 <label for="chart-ex-select" style="font-size:0.8rem; color:var(--text-secondary);">Selecciona un Ejercicio:</label>
                 <select id="chart-ex-select" onchange="renderProgressChart()">
                     <option value="">-- Elige un ejercicio --</option>
@@ -468,9 +467,10 @@
 
             <div class="card">
                 <h2>Resumen de Sesiones</h2>
-                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <button class="btn btn-outline" onclick="generateReport(15)">Últimos 15 Días</button>
-                    <button class="btn btn-outline" onclick="generateReport(30)">Último Mes</button>
+                <div style="display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <button class="btn btn-outline" style="flex:1;" onclick="generateReport(15)">Últimos 15 Días</button>
+                    <button class="btn btn-outline" style="flex:1;" onclick="generateReport(30)">Último Mes</button>
+                    <button class="btn btn-outline" style="width:100%;" onclick="window.print()">🖨️ Imprimir / Guardar en PDF</button>
                 </div>
                 <div id="report-results" class="report-section">
                     <div class="empty-state">Selecciona un periodo para ver el resumen.</div>
@@ -513,6 +513,7 @@
         let currentCalendarDate = new Date();
         let timerInterval = null;
         let remainingSeconds = 0;
+        let wakeLock = null;
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -524,6 +525,31 @@
             if (tabId === 'rutina') loadRoutineConfig();
             if (tabId === 'calendario') renderCalendar();
             if (tabId === 'informes') populateChartSelect();
+        }
+
+        /* WAKE LOCK API (PANTALLA ENCENDIDA) */
+        async function toggleWakeLock() {
+            const btn = document.getElementById('wakelock-btn');
+            if ('wakeLock' in navigator) {
+                try {
+                    if (!wakeLock) {
+                        wakeLock = await navigator.wakeLock.request('screen');
+                        btn.innerText = "💡 MANTENER PANTALLA: ON";
+                        btn.style.background = "var(--accent-color)";
+                        btn.style.color = "#000";
+                    } else {
+                        await wakeLock.release();
+                        wakeLock = null;
+                        btn.innerText = "💡 MANTENER PANTALLA: OFF";
+                        btn.style.background = "#333";
+                        btn.style.color = "#fff";
+                    }
+                } catch (err) {
+                    alert('No se pudo activar el bloqueo de pantalla.');
+                }
+            } else {
+                alert('Tu navegador no soporta la API Wake Lock.');
+            }
         }
 
         /* LÓGICA DEL CRONÓMETRO */
@@ -569,7 +595,197 @@
             } catch (e) {}
         }
 
-        /* CONFIGURACIÓN Y EDICIÓN DINÁMICA DE RUTINAS */
+        /* CÁLCULO DE 1RM (EPLEY) */
+        function calculate1RM(weight, reps) {
+            if (!weight || !reps || reps <= 0) return 0;
+            if (reps === 1) return weight;
+            return Math.round(weight * (1 + reps / 30));
+        }
+
+        function update1RMDisplay(inputElem, groupPrefix, index) {
+            const container = inputElem.closest('.exercise-item');
+            const repsInput = container.querySelector(`input[id$="_r"]`);
+            const weightInput = container.querySelector(`input[id$="_p"]`);
+            const rmDisplay = container.querySelector('.rm-display');
+
+            const w = parseFloat(weightInput.value) || 0;
+            const r = parseInt(repsInput.value) || 0;
+            const rm = calculate1RM(w, r);
+
+            if (rm > 0 && rmDisplay) {
+                rmDisplay.innerText = `🔥 1RM Est.: ~${rm} kg`;
+            } else if (rmDisplay) {
+                rmDisplay.innerText = `🔥 1RM Est.: -- kg`;
+            }
+        }
+
+        /* OBTENER MÁXIMO PESO HISTÓRICO (PR) */
+        function getMaxWeightForExercise(exName) {
+            const logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
+            let maxW = 0;
+            logs.forEach(log => {
+                log.groups.forEach(g => {
+                    g.exercises.forEach(e => {
+                        if (e.name === exName && e.weight > maxW) {
+                            maxW = e.weight;
+                        }
+                    });
+                });
+            });
+            return maxW;
+        }
+
+        function getLastExerciseData(exName) {
+            const logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
+            for (let i = logs.length - 1; i >= 0; i--) {
+                const log = logs[i];
+                for (let g of log.groups) {
+                    for (let e of g.exercises) {
+                        if (e.name === exName) {
+                            const dateStr = new Date(log.date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+                            return { date: dateStr, weight: e.weight, series: e.series, reps: e.reps };
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        /* SELECCIÓN Y CARGA DE DÍA */
+        function selectDay(day) {
+            currentActiveDay = day;
+            document.getElementById('workout-area').style.display = 'block';
+            document.getElementById('current-day-title').innerText = `Entrenamiento - Día ${day}`;
+            
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('workout-date').value = today;
+
+            const data = routineData[day] || defaultDay;
+            const container = document.getElementById('workout-form');
+            let html = '';
+
+            const renderGroup = (groupName, exercises, images, groupPrefix) => {
+                let gHtml = `<div class="group-title">${groupName || 'Grupo'}</div>`;
+                (exercises || []).forEach((ex, index) => {
+                    const imgUrl = (images && images[index]) ? images[index] : "";
+                    const lastData = getLastExerciseData(ex);
+                    const pr = getMaxWeightForExercise(ex);
+                    
+                    let lastInfoHtml = `<div class="last-data">Sin registros previos de este ejercicio</div>`;
+                    let suggestionHtml = '';
+                    let defaultSeries = 4;
+                    let defaultReps = 10;
+                    let defaultWeight = "";
+
+                    if (lastData) {
+                        lastInfoHtml = `<div class="last-data">Último (${lastData.date}): ${lastData.series}x${lastData.reps} con ${lastData.weight} kg | PR: ${pr}kg</div>`;
+                        defaultSeries = lastData.series;
+                        defaultReps = lastData.reps;
+                        defaultWeight = lastData.weight;
+
+                        const suggestedWeight = (lastData.weight * 1.025).toFixed(1);
+                        suggestionHtml = `
+                            <div class="suggestion-box" onclick="applySuggestion('${groupPrefix}_ex_${index}_p', ${suggestedWeight})">
+                                💡 Sobrecarga Sugerida (+2.5%): <strong>${suggestedWeight} kg</strong> (Toca para aplicar)
+                            </div>
+                        `;
+                    }
+
+                    const initial1RM = calculate1RM(parseFloat(defaultWeight) || 0, defaultReps);
+
+                    gHtml += `
+                        <div class="exercise-item">
+                            <div class="exercise-header">
+                                <span>${ex}</span>
+                                <span id="pr-badge-${groupPrefix}-${index}" class="badge-pr" style="display:none;">🏆 ¡NUEVO PR!</span>
+                            </div>
+                            ${imgUrl ? `<img src="${imgUrl}" class="exercise-img" alt="${ex}">` : ''}
+                            ${lastInfoHtml}
+                            ${suggestionHtml}
+                            <div class="metrics-grid">
+                                <div>
+                                    <label>Series</label>
+                                    <input type="number" id="${groupPrefix}_ex_${index}_s" value="${defaultSeries}">
+                                </div>
+                                <div>
+                                    <label>Reps</label>
+                                    <input type="number" id="${groupPrefix}_ex_${index}_r" value="${defaultReps}" oninput="update1RMDisplay(this, '${groupPrefix}', ${index})">
+                                </div>
+                                <div>
+                                    <label>Peso (kg)</label>
+                                    <input type="number" step="0.5" id="${groupPrefix}_ex_${index}_p" value="${defaultWeight}" placeholder="0" oninput="checkPR('${ex}', this.value, '${groupPrefix}-${index}'); update1RMDisplay(this, '${groupPrefix}', ${index});">
+                                </div>
+                            </div>
+                            <div class="rm-display">🔥 1RM Est.: ${initial1RM > 0 ? '~' + initial1RM + ' kg' : '-- kg'}</div>
+                        </div>
+                    `;
+                });
+                return gHtml;
+            };
+
+            html += renderGroup(data.g1, data.e1, data.img1, 'g1');
+            html += renderGroup(data.g2, data.e2, data.img2, 'g2');
+            container.innerHTML = html;
+        }
+
+        function applySuggestion(inputId, targetWeight) {
+            const input = document.getElementById(inputId);
+            if (input) {
+                input.value = targetWeight;
+                input.dispatchEvent(new Event('input'));
+            }
+        }
+
+        function checkPR(exName, inputVal, id) {
+            const currentMax = getMaxWeightForExercise(exName);
+            const val = parseFloat(inputVal) || 0;
+            const badge = document.getElementById(`pr-badge-${id}`);
+            if (badge) {
+                if (val > currentMax && currentMax > 0) {
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+
+        function saveWorkout() {
+            if (!currentActiveDay) return;
+
+            const selectedDateVal = document.getElementById('workout-date').value;
+            const dateObj = selectedDateVal ? new Date(selectedDateVal + 'T12:00:00') : new Date();
+
+            const dayData = routineData[currentActiveDay];
+            const workoutLog = { id: Date.now(), date: dateObj.toISOString(), day: currentActiveDay, groups: [] };
+
+            const processGroup = (groupName, exercises, groupPrefix) => {
+                let groupLog = { name: groupName, exercises: [] };
+                (exercises || []).forEach((ex, index) => {
+                    const sInput = document.getElementById(`${groupPrefix}_ex_${index}_s`);
+                    const rInput = document.getElementById(`${groupPrefix}_ex_${index}_r`);
+                    const pInput = document.getElementById(`${groupPrefix}_ex_${index}_p`);
+
+                    const series = sInput ? parseFloat(sInput.value) || 0 : 0;
+                    const reps = rInput ? parseFloat(rInput.value) || 0 : 0;
+                    const weight = pInput && pInput.value !== "" ? parseFloat(pInput.value) : 0;
+
+                    groupLog.exercises.push({ name: ex, series: series, reps: reps, weight: weight });
+                });
+                return groupLog;
+            };
+
+            workoutLog.groups.push(processGroup(dayData.g1, dayData.e1, 'g1'));
+            workoutLog.groups.push(processGroup(dayData.g2, dayData.e2, 'g2'));
+
+            let logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
+            logs.push(workoutLog);
+            localStorage.setItem('gym_logs', JSON.stringify(logs));
+
+            alert('¡Entrenamiento guardado correctamente!');
+            document.getElementById('workout-area').style.display = 'none';
+        }
+
+        /* CONFIGURACIÓN Y EDICIÓN DE RUTINAS */
         function loadRoutineConfig() {
             const day = document.getElementById('config-day-select').value;
             const data = routineData[day] || defaultDay;
@@ -645,151 +861,6 @@
             alert('¡Rutina guardada correctamente!');
         }
 
-        /* OBTENER MÁXIMO PESO HISTÓRICO (PR) */
-        function getMaxWeightForExercise(exName) {
-            const logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
-            let maxW = 0;
-            logs.forEach(log => {
-                log.groups.forEach(g => {
-                    g.exercises.forEach(e => {
-                        if (e.name === exName && e.weight > maxW) {
-                            maxW = e.weight;
-                        }
-                    });
-                });
-            });
-            return maxW;
-        }
-
-        function getLastExerciseData(exName) {
-            const logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
-            for (let i = logs.length - 1; i >= 0; i--) {
-                const log = logs[i];
-                for (let g of log.groups) {
-                    for (let e of g.exercises) {
-                        if (e.name === exName) {
-                            const dateStr = new Date(log.date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
-                            return { date: dateStr, weight: e.weight, series: e.series, reps: e.reps };
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-        function selectDay(day) {
-            currentActiveDay = day;
-            document.getElementById('workout-area').style.display = 'block';
-            document.getElementById('current-day-title').innerText = `Entrenamiento - Día ${day}`;
-            
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('workout-date').value = today;
-
-            const data = routineData[day] || defaultDay;
-            const container = document.getElementById('workout-form');
-            let html = '';
-
-            const renderGroup = (groupName, exercises, images, groupPrefix) => {
-                let gHtml = `<div class="group-title">${groupName || 'Grupo'}</div>`;
-                (exercises || []).forEach((ex, index) => {
-                    const imgUrl = (images && images[index]) ? images[index] : "";
-                    const lastData = getLastExerciseData(ex);
-                    const pr = getMaxWeightForExercise(ex);
-                    
-                    let lastInfoHtml = `<div class="last-data">Sin registros previos de este ejercicio</div>`;
-                    let defaultSeries = 4;
-                    let defaultReps = 10;
-                    let defaultWeight = "";
-
-                    if (lastData) {
-                        lastInfoHtml = `<div class="last-data">Último (${lastData.date}): ${lastData.series}x${lastData.reps} con ${lastData.weight} kg | PR: ${pr}kg</div>`;
-                        defaultSeries = lastData.series;
-                        defaultReps = lastData.reps;
-                        defaultWeight = lastData.weight;
-                    }
-
-                    gHtml += `
-                        <div class="exercise-item">
-                            <div class="exercise-header">
-                                <span>${ex}</span>
-                                <span id="pr-badge-${groupPrefix}-${index}" class="badge-pr" style="display:none;">🏆 ¡NUEVO PR!</span>
-                            </div>
-                            ${imgUrl ? `<img src="${imgUrl}" class="exercise-img" alt="${ex}">` : ''}
-                            ${lastInfoHtml}
-                            <div class="metrics-grid">
-                                <div>
-                                    <label>Series</label>
-                                    <input type="number" id="${groupPrefix}_ex_${index}_s" value="${defaultSeries}">
-                                </div>
-                                <div>
-                                    <label>Reps</label>
-                                    <input type="number" id="${groupPrefix}_ex_${index}_r" value="${defaultReps}">
-                                </div>
-                                <div>
-                                    <label>Peso (kg)</label>
-                                    <input type="number" step="0.5" id="${groupPrefix}_ex_${index}_p" value="${defaultWeight}" placeholder="0" oninput="checkPR('${ex}', this.value, '${groupPrefix}-${index}')">
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-                return gHtml;
-            };
-
-            html += renderGroup(data.g1, data.e1, data.img1, 'g1');
-            html += renderGroup(data.g2, data.e2, data.img2, 'g2');
-            container.innerHTML = html;
-        }
-
-        function checkPR(exName, inputVal, id) {
-            const currentMax = getMaxWeightForExercise(exName);
-            const val = parseFloat(inputVal) || 0;
-            const badge = document.getElementById(`pr-badge-${id}`);
-            if (badge) {
-                if (val > currentMax && currentMax > 0) {
-                    badge.style.display = 'inline-block';
-                } else {
-                    badge.style.display = 'none';
-                }
-            }
-        }
-
-        function saveWorkout() {
-            if (!currentActiveDay) return;
-
-            const selectedDateVal = document.getElementById('workout-date').value;
-            const dateObj = selectedDateVal ? new Date(selectedDateVal + 'T12:00:00') : new Date();
-
-            const dayData = routineData[currentActiveDay];
-            const workoutLog = { id: Date.now(), date: dateObj.toISOString(), day: currentActiveDay, groups: [] };
-
-            const processGroup = (groupName, exercises, groupPrefix) => {
-                let groupLog = { name: groupName, exercises: [] };
-                (exercises || []).forEach((ex, index) => {
-                    const sInput = document.getElementById(`${groupPrefix}_ex_${index}_s`);
-                    const rInput = document.getElementById(`${groupPrefix}_ex_${index}_r`);
-                    const pInput = document.getElementById(`${groupPrefix}_ex_${index}_p`);
-
-                    const series = sInput ? parseFloat(sInput.value) || 0 : 0;
-                    const reps = rInput ? parseFloat(rInput.value) || 0 : 0;
-                    const weight = pInput && pInput.value !== "" ? parseFloat(pInput.value) : 0;
-
-                    groupLog.exercises.push({ name: ex, series: series, reps: reps, weight: weight });
-                });
-                return groupLog;
-            };
-
-            workoutLog.groups.push(processGroup(dayData.g1, dayData.e1, 'g1'));
-            workoutLog.groups.push(processGroup(dayData.g2, dayData.e2, 'g2'));
-
-            let logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
-            logs.push(workoutLog);
-            localStorage.setItem('gym_logs', JSON.stringify(logs));
-
-            alert('¡Entrenamiento guardado correctamente!');
-            document.getElementById('workout-area').style.display = 'none';
-        }
-
         /* CALENDARIO */
         function changeMonth(delta) {
             currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
@@ -849,7 +920,8 @@
                     log.groups.forEach(g => {
                         html += `<div style="font-size:0.85rem; font-weight:bold; margin-top:5px;">${g.name}:</div>`;
                         g.exercises.forEach(e => {
-                            html += `<div style="font-size:0.8rem; color:var(--text-secondary); margin-left:8px;">• ${e.name}: ${e.series}x${e.reps} (${e.weight} kg)</div>`;
+                            const rm = calculate1RM(e.weight, e.reps);
+                            html += `<div style="font-size:0.8rem; color:var(--text-secondary); margin-left:8px;">• ${e.name}: ${e.series}x${e.reps} (${e.weight} kg) | 1RM: ~${rm}kg</div>`;
                         });
                     });
                 });
@@ -860,7 +932,7 @@
         }
 
         function deleteLog(logId) {
-            if (!confirm('¿Seguro que deseas borrar este registro de entrenamiento?')) return;
+            if (!confirm('¿Seguro que deseas borrar este registro?')) return;
             let logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
             logs = logs.filter(l => l.id !== logId);
             localStorage.setItem('gym_logs', JSON.stringify(logs));
@@ -868,7 +940,7 @@
             alert('Registro eliminado.');
         }
 
-        /* INFORMES Y DIBUJO DE GRÁFICO (CANVAS) */
+        /* INFORMES Y GRÁFICOS */
         function populateChartSelect() {
             const logs = JSON.parse(localStorage.getItem('gym_logs')) || [];
             const select = document.getElementById('chart-ex-select');
@@ -905,10 +977,7 @@
                 log.groups.forEach(g => {
                     g.exercises.forEach(e => {
                         if (e.name === selectedEx && e.weight > 0) {
-                            history.push({
-                                date: new Date(log.date),
-                                weight: e.weight
-                            });
+                            history.push({ date: new Date(log.date), weight: e.weight });
                         }
                     });
                 });
@@ -988,7 +1057,8 @@
                 log.groups.forEach(g => {
                     html += `<div style="font-size:0.85rem; font-weight:bold; margin-top:5px;">${g.name}:</div>`;
                     g.exercises.forEach(e => {
-                        html += `<div style="font-size:0.8rem; color: var(--text-secondary); margin-left:8px;">• ${e.name}: ${e.series}x${e.reps} con ${e.weight} kg</div>`;
+                        const rm = calculate1RM(e.weight, e.reps);
+                        html += `<div style="font-size:0.8rem; color: var(--text-secondary); margin-left:8px;">• ${e.name}: ${e.series}x${e.reps} con ${e.weight} kg (1RM: ~${rm}kg)</div>`;
                     });
                 });
 
