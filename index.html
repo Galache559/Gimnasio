@@ -305,6 +305,11 @@
             <div id="workout-area" style="display: none;">
                 <div class="card">
                     <h2 id="current-day-title">Día X</h2>
+                    
+                    <!-- SELECTOR DE FECHA -->
+                    <label for="workout-date" style="font-size: 0.8rem; color: var(--text-secondary);">Fecha del entrenamiento:</label>
+                    <input type="date" id="workout-date">
+
                     <div id="workout-form"></div>
                     <button class="btn" style="margin-top: 15px;" onclick="saveWorkout()">Guardar Entrenamiento</button>
                 </div>
@@ -325,6 +330,16 @@
                 
                 <div id="routine-editor"></div>
                 <button class="btn" style="margin-top: 15px;" onclick="saveRoutineConfig()">Guardar Configuración</button>
+            </div>
+
+            <!-- SECCIÓN COPIA DE SEGURIDAD -->
+            <div class="card">
+                <h2>Copia de Seguridad</h2>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button class="btn btn-outline" onclick="exportData()">📦 Exportar Datos (JSON)</button>
+                    <button class="btn btn-outline" onclick="document.getElementById('import-file').click()">📥 Importar Datos (JSON)</button>
+                    <input type="file" id="import-file" style="display: none;" accept=".json" onchange="importData(event)">
+                </div>
             </div>
         </div>
 
@@ -347,6 +362,7 @@
                 </div>
                 <div class="calendar-grid" id="calendar-body" style="margin-top:5px;"></div>
             </div>
+
             <div class="card" id="calendar-detail" style="display:none;">
                 <h2 id="detail-date-title">Detalle</h2>
                 <div id="detail-content"></div>
@@ -368,7 +384,7 @@
         </div>
     </div>
 
-    <!-- MENÚ DE NAVEGACIÓN INFERIOR (AHORA CON 4 BOTONES) -->
+    <!-- NAVEGACIÓN INFERIOR -->
     <nav>
         <button id="nav-entrenar" class="active" onclick="switchTab('entrenar')">
             <span>🏋️</span>
@@ -389,7 +405,6 @@
     </nav>
 
     <script>
-        // Carga de datos con actualización forzada de campos de imagen
         let routineData = JSON.parse(localStorage.getItem('gym_routine')) || {};
         const defaultDay = { g1: "Grupo 1", e1: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"], img1: ["","","","",""], g2: "Grupo 2", e2: ["Ej 1", "Ej 2", "Ej 3", "Ej 4", "Ej 5"], img2: ["","","","",""] };
         
@@ -505,6 +520,10 @@
             document.getElementById('workout-area').style.display = 'block';
             document.getElementById('current-day-title').innerText = `Entrenamiento - Día ${day}`;
             
+            // Establece la fecha de hoy por defecto en el input date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('workout-date').value = today;
+
             const data = routineData[day] || defaultDay;
             const container = document.getElementById('workout-form');
             let html = '';
@@ -516,8 +535,15 @@
                     const lastData = getLastExerciseData(ex);
                     
                     let lastInfoHtml = `<div class="last-data">Sin registros previos de este ejercicio</div>`;
+                    let defaultSeries = 4;
+                    let defaultReps = 10;
+                    let defaultWeight = "";
+
                     if (lastData) {
                         lastInfoHtml = `<div class="last-data">Último entrenamiento (${lastData.date}): ${lastData.series}x${lastData.reps} con ${lastData.weight} kg</div>`;
+                        defaultSeries = lastData.series;
+                        defaultReps = lastData.reps;
+                        defaultWeight = lastData.weight;
                     }
 
                     gHtml += `
@@ -528,15 +554,15 @@
                             <div class="metrics-grid">
                                 <div>
                                     <label>Series</label>
-                                    <input type="number" id="${groupPrefix}_ex_${index}_s" value="4">
+                                    <input type="number" id="${groupPrefix}_ex_${index}_s" value="${defaultSeries}">
                                 </div>
                                 <div>
                                     <label>Reps</label>
-                                    <input type="number" id="${groupPrefix}_ex_${index}_r" value="10">
+                                    <input type="number" id="${groupPrefix}_ex_${index}_r" value="${defaultReps}">
                                 </div>
                                 <div>
                                     <label>Peso (kg)</label>
-                                    <input type="number" step="0.5" id="${groupPrefix}_ex_${index}_p" placeholder="0">
+                                    <input type="number" step="0.5" id="${groupPrefix}_ex_${index}_p" value="${defaultWeight}" placeholder="0">
                                 </div>
                             </div>
                         </div>
@@ -553,15 +579,22 @@
         function saveWorkout() {
             if (!currentActiveDay) return;
 
+            const selectedDateVal = document.getElementById('workout-date').value;
+            const dateObj = selectedDateVal ? new Date(selectedDateVal + 'T12:00:00') : new Date();
+
             const dayData = routineData[currentActiveDay];
-            const workoutLog = { date: new Date().toISOString(), day: currentActiveDay, groups: [] };
+            const workoutLog = { date: dateObj.toISOString(), day: currentActiveDay, groups: [] };
 
             const processGroup = (groupName, exercises, groupPrefix) => {
                 let groupLog = { name: groupName, exercises: [] };
                 (exercises || []).forEach((ex, index) => {
-                    const series = document.getElementById(`${groupPrefix}_ex_${index}_s`).value;
-                    const reps = document.getElementById(`${groupPrefix}_ex_${index}_r`).value;
-                    const weight = document.getElementById(`${groupPrefix}_ex_${index}_p`).value || 0;
+                    const sInput = document.getElementById(`${groupPrefix}_ex_${index}_s`);
+                    const rInput = document.getElementById(`${groupPrefix}_ex_${index}_r`);
+                    const pInput = document.getElementById(`${groupPrefix}_ex_${index}_p`);
+
+                    const series = sInput ? sInput.value : 0;
+                    const reps = rInput ? rInput.value : 0;
+                    const weight = pInput && pInput.value !== "" ? parseFloat(pInput.value) : 0;
 
                     groupLog.exercises.push({ name: ex, series: series, reps: reps, weight: weight });
                 });
@@ -665,9 +698,7 @@
                 log.groups.forEach(g => {
                     html += `<div style="font-size:0.85rem; font-weight:bold; margin-top:5px;">${g.name}:</div>`;
                     g.exercises.forEach(e => {
-                        if (e.weight > 0) {
-                            html += `<div style="font-size:0.8rem; color: var(--text-secondary); margin-left:8px;">• ${e.name}: ${e.series}x${e.reps} con ${e.weight} kg</div>`;
-                        }
+                        html += `<div style="font-size:0.8rem; color: var(--text-secondary); margin-left:8px;">• ${e.name}: ${e.series}x${e.reps} con ${e.weight} kg</div>`;
                     });
                 });
 
@@ -675,6 +706,45 @@
             });
 
             container.innerHTML = html;
+        }
+
+        /* FUNCIONES DE COPIA DE SEGURIDAD */
+        function exportData() {
+            const dataToExport = {
+                gym_routine: JSON.parse(localStorage.getItem('gym_routine')),
+                gym_logs: JSON.parse(localStorage.getItem('gym_logs'))
+            };
+            
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToExport, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `Copia_Gimnasio_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importData(event) {
+            const fileReader = new FileReader();
+            fileReader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (importedData.gym_routine) {
+                        localStorage.setItem('gym_routine', JSON.stringify(importedData.gym_routine));
+                        routineData = importedData.gym_routine;
+                    }
+                    if (importedData.gym_logs) {
+                        localStorage.setItem('gym_logs', JSON.stringify(importedData.gym_logs));
+                    }
+                    alert('¡Datos importados con éxito!');
+                    location.reload();
+                } catch (err) {
+                    alert('Error al leer el archivo. Asegúrate de que sea un JSON válido.');
+                }
+            };
+            if (event.target.files[0]) {
+                fileReader.readAsText(event.target.files[0]);
+            }
         }
     </script>
 </body>
