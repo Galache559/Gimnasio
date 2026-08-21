@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gimnasio v3.0 Ultimate</title>
+    <title>Gimnasio v3.1 Ultimate</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -343,7 +343,6 @@
             margin-top: 10px;
         }
 
-        /* Estilos de Impresión */
         @media print {
             body { background: #fff; color: #000; padding: 0; }
             header, nav, .timer-box, .day-grid, .btn, button, select, input, canvas { display: none !important; }
@@ -357,7 +356,7 @@
 <body>
 
     <header>
-        <h1>Mi Gimnasio Pro v3.0</h1>
+        <h1>Mi Gimnasio Pro v3.1</h1>
     </header>
 
     <div class="container">
@@ -552,7 +551,7 @@
             }
         }
 
-        /* LÓGICA DEL CRONÓMETRO */
+        /* LÓGICA DEL CRONÓMETRO CON CUENTA ATRÁS SONORA */
         function startTimer(seconds) {
             clearInterval(timerInterval);
             remainingSeconds = seconds;
@@ -562,10 +561,12 @@
                 remainingSeconds--;
                 updateTimerDisplay();
 
-                if (remainingSeconds <= 0) {
+                // Cuenta atrás sonora en los últimos 3 segundos
+                if (remainingSeconds === 3 || remainingSeconds === 2 || remainingSeconds === 1) {
+                    playShortBeep();
+                } else if (remainingSeconds <= 0) {
                     clearInterval(timerInterval);
-                    playBeep();
-                    alert('⏰ ¡Tiempo de descanso finalizado!');
+                    playFinalBeep();
                 }
             }, 1000);
         }
@@ -583,15 +584,29 @@
                 `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
 
-        function playBeep() {
+        // Pitido corto de pre-aviso (3s, 2s, 1s)
+        function playShortBeep() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = ctx.createOscillator();
                 osc.type = 'sine';
-                osc.frequency.value = 800;
+                osc.frequency.value = 600;
                 osc.connect(ctx.destination);
                 osc.start();
-                osc.stop(ctx.currentTime + 0.3);
+                osc.stop(ctx.currentTime + 0.12);
+            } catch (e) {}
+        }
+
+        // Pitido largo de fin de descanso (0s)
+        function playFinalBeep() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                osc.type = 'sine';
+                osc.frequency.value = 900;
+                osc.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.4);
             } catch (e) {}
         }
 
