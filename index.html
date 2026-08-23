@@ -58,6 +58,9 @@ td select{margin:0;padding:6px 1px;font-size:.68rem}
 .report{border-bottom:1px solid var(--bor);padding:8px 0;font-size:.76rem}
 .empty{text-align:center;color:var(--sub);padding:15px;font-size:.8rem}
 .pr{display:none}
+.imgbox{display:none;text-align:center;margin:6px 0;padding:6px;background:#191919;border:1px solid var(--bor);border-radius:7px}
+.imgbox img{max-width:100%;max-height:320px;border-radius:6px}
+.imgbtn{background:#333;color:#fff;border:1px solid var(--bor);padding:5px 9px;border-radius:6px;font-size:.68rem}
 @media(max-width:380px){td input{font-size:.7rem;padding:5px 1px}th{font-size:.58rem}}
 @media print{nav,header,.timer,.days,button,input,select,canvas{display:none!important}body{background:#fff;color:#000}.card{border:0;background:#fff}.report{color:#000}}
 </style>
@@ -137,7 +140,6 @@ td select{margin:0;padding:6px 1px;font-size:.68rem}
 <div class="card">
 <h2>📊 Resumen</h2><div id="stats" class="statgrid"></div>
 </div>
-
 <div class="card">
 <h2>📈 Progresión</h2>
 <select id="chartselect" onchange="chart()"><option value="">Elige ejercicio</option></select>
@@ -148,11 +150,9 @@ td select{margin:0;padding:6px 1px;font-size:.68rem}
 </select>
 <canvas id="canvas" class="chart"></canvas>
 </div>
-
 <div class="card">
 <h2>🏆 Récords</h2><div id="records"></div>
 </div>
-
 <div class="card">
 <h2>📋 Historial</h2>
 <div style="display:flex;gap:5px;flex-wrap:wrap">
@@ -220,6 +220,12 @@ function stopTimer(){clearInterval(interval);seconds=0;showClock()}
 function showClock(){clock.innerText=`${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`}
 function beep(){try{let c=new AudioContext(),o=c.createOscillator();o.connect(c.destination);o.frequency.value=900;o.start();o.stop(c.currentTime+.35)}catch(e){}}
 
+/* NUEVO: MOSTRAR / CERRAR IMAGEN */
+function toggleImage(id){
+let e=document.getElementById(id);
+if(e)e.style.display=e.style.display==='block'?'none':'block'
+}
+
 function selectDay(d){
 day=d;work.style.display='block';daytitle.innerText='Entrenamiento - Día '+d;
 date.value=new Date().toISOString().slice(0,10);
@@ -230,11 +236,28 @@ html+=`<div class="group">${esc(x[a[0]])}</div>`;
 let l=last(ex),sets=l?l.sets.slice(0,3):[];
 while(sets.length<3)sets.push({reps:10,weight:'',rir:2,rpe:8,type:'E'});
 let lw=Math.max(...sets.map(s=>num(s.weight))),suggestion=lw?Math.round(lw*1.025*10)/10:0;
+
+/* NUEVO: OBTENER IMAGEN */
+let img=(x[a[0]==='g1'?'img1':'img2']||[])[i]||'';
+let iid=`img-${a[0]}-${i}`;
+
 html+=`<div class="ex">
 <div class="exhead"><span>${esc(ex)}</span><span id="pr-${a[0]}-${i}" class="badge pr">🏆 PR</span></div>
+
+${img?`
+<button class="imgbtn" onclick="toggleImage('${iid}')">🖼️ Ver imagen</button>
+<div id="${iid}" class="imgbox">
+<img src="${esc(img)}" alt="${esc(ex)}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+<div style="display:none;color:var(--red);font-size:.7rem;padding:5px">⚠️ No se puede cargar la imagen.</div>
+<br>
+<button class="imgbtn" onclick="toggleImage('${iid}')">✕ Cerrar imagen</button>
+</div>
+`:''}
+
 ${l?`<div class="last">Último ${l.date}: ${sets.map((s,j)=>`S${j+1} ${num(s.reps)}×${num(s.weight)}kg`).join(' · ')}</div>`:`<div class="last">Sin registro previo</div>`}
 ${suggestion?`<div class="suggest" onclick="suggest('${a[0]}',${i},${suggestion})">💡 Propuesta: ${suggestion} kg (+2,5%)</div>`:''}
 <table><thead><tr><th>S</th><th>Tipo</th><th>Reps</th><th>Kg</th><th>RIR</th><th>RPE</th><th></th></tr></thead><tbody>`;
+
 sets.forEach((s,j)=>html+=`<tr>
 <td>${j+1}</td>
 <td><select id="${a[0]}-${i}-t${j}"><option value="E" ${s.type==='E'?'selected':''}>E</option><option value="W" ${s.type==='W'?'selected':''}>C</option></select></td>
@@ -244,6 +267,7 @@ sets.forEach((s,j)=>html+=`<tr>
 <td><input type="number" min="1" max="10" step=".5" id="${a[0]}-${i}-p${j}" value="${s.rpe??''}"></td>
 <td><button class="finish" onclick="timer(+document.getElementById('rest-${a[0]}-${i}').value||90)">▶</button></td>
 </tr>`);
+
 html+=`</tbody></table>
 <div class="rm" id="rm-${a[0]}-${i}">🔥 1RM estimado: --</div>
 <div class="vol" id="vol-${a[0]}-${i}">📦 Volumen: 0 kg</div>
