@@ -5,94 +5,553 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Mi Gimnasio Pro v4.5</title>
 <meta name="theme-color" content="#121212">
+
 <style>
-:root{--bg:#121212;--card:#1e1e1e;--item:#252525;--input:#2a2a2a;--a:#00e676;--txt:#fff;--sub:#aaa;--bor:#333;--red:#ff5252;--gold:#ffd700;--blue:#29b6f6}
-*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--txt);padding-bottom:80px}
-header{position:sticky;top:0;z-index:10;background:var(--card);padding:12px;text-align:center;border-bottom:1px solid var(--bor)}
-h1{font-size:1.15rem;color:var(--a);letter-spacing:1px}
-.container{max-width:650px;margin:auto;padding:10px}
-nav{position:fixed;bottom:0;left:0;right:0;z-index:20;background:var(--card);display:flex;border-top:1px solid var(--bor);padding:7px 0}
-nav button{width:25%;background:none;border:0;color:var(--sub);font-size:.7rem;display:flex;flex-direction:column;gap:2px;align-items:center}
-nav button.active{color:var(--a);font-weight:bold}
-.tab{display:none}.tab.active{display:block}
-.card{background:var(--card);border:1px solid var(--bor);border-radius:11px;padding:12px;margin-bottom:10px}
-.card h2{font-size:1rem;color:var(--a);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+:root{
+--bg:#121212;
+--card:#1e1e1e;
+--item:#252525;
+--input:#2a2a2a;
+--a:#00e676;
+--txt:#fff;
+--sub:#aaa;
+--bor:#333;
+--red:#ff5252;
+--gold:#ffd700;
+--blue:#29b6f6
+}
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+-webkit-tap-highlight-color:transparent
+}
+
+body{
+background:var(--bg);
+color:var(--txt);
+padding-bottom:80px
+}
+
+header{
+position:sticky;
+top:0;
+z-index:10;
+background:var(--card);
+padding:12px;
+text-align:center;
+border-bottom:1px solid var(--bor)
+}
+
+h1{
+font-size:1.15rem;
+color:var(--a);
+letter-spacing:1px
+}
+
+.container{
+max-width:650px;
+margin:auto;
+padding:10px
+}
+
+nav{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+z-index:20;
+background:var(--card);
+display:flex;
+border-top:1px solid var(--bor);
+padding:7px 0
+}
+
+nav button{
+width:25%;
+background:none;
+border:0;
+color:var(--sub);
+font-size:.7rem;
+display:flex;
+flex-direction:column;
+gap:2px;
+align-items:center
+}
+
+nav button.active{
+color:var(--a);
+font-weight:bold
+}
+
+.tab{display:none}
+.tab.active{display:block}
+
+.card{
+background:var(--card);
+border:1px solid var(--bor);
+border-radius:11px;
+padding:12px;
+margin-bottom:10px
+}
+
+.card h2{
+font-size:1rem;
+color:var(--a);
+margin-bottom:10px;
+display:flex;
+justify-content:space-between;
+align-items:center
+}
+
 button,.btn{cursor:pointer}
-.btn{background:var(--a);color:#000;border:0;border-radius:7px;padding:10px;width:100%;font-weight:bold}
-.out{background:transparent;color:var(--txt);border:1px solid var(--bor)}
-.danger{background:transparent;color:var(--red);border:1px solid var(--red)}
-.sm{width:auto;padding:5px 9px;font-size:.75rem}
-input,select{width:100%;background:var(--input);color:var(--txt);border:1px solid var(--bor);border-radius:6px;padding:8px;margin-bottom:7px;font-size:.88rem}
-label{font-size:.73rem;color:var(--sub)}
-.days{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.group{color:var(--sub);font-size:.73rem;text-transform:uppercase;margin:12px 0 6px}
-.ex{background:var(--item);padding:9px;border-radius:8px;margin-bottom:8px}
-.exhead{display:flex;justify-content:space-between;align-items:center;font-weight:bold;margin-bottom:6px}
-.badge{background:var(--gold);color:#000;border-radius:4px;padding:2px 5px;font-size:.62rem}
-.last,.suggest,.history{font-size:.7rem;padding:5px;border-radius:5px;margin-bottom:5px}
-.last{color:var(--a);background:#07351f;border:1px solid #176b43}
-.suggest{color:var(--blue);background:#062d3c;border:1px solid #17607c;cursor:pointer}
-table{width:100%;border-collapse:collapse}
-th{color:var(--sub);font-size:.63rem;font-weight:normal}
-td{text-align:center;padding:1px}
-td input{margin:0;text-align:center;padding:6px 1px}
-.rm,.vol{font-size:.7rem;margin-top:5px}
-.rm{color:var(--gold)}.vol{color:var(--a)}
-.row{display:flex;gap:5px;margin-top:6px}
-.finish{background:#333;color:#fff;border:1px solid var(--bor);padding:6px 9px;border-radius:6px;font-size:.68rem}
-.restbtn{width:100%;margin-top:7px;background:#333;color:#fff;border:1px solid var(--bor);padding:8px;border-radius:6px;font-size:.72rem}
-.save-ex{width:100%;margin-top:7px;background:#064d2d;color:#fff;border:1px solid #176b43;padding:8px;border-radius:6px;font-size:.72rem;font-weight:bold}
-.save-ex.saved{background:#00a854;color:#000}
-.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center}
-.cal{padding:7px 2px;background:var(--item);border-radius:5px;font-size:.75rem}
-.cal.on{background:var(--a);color:#000;font-weight:bold}
-.cal.empty{background:none}
-.statgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
-.stat{background:var(--item);padding:8px;border-radius:7px;text-align:center}
-.stat b{display:block;color:var(--a);font-size:1rem}.stat span{font-size:.66rem;color:var(--sub)}
-.report{border-bottom:1px solid var(--bor);padding:8px 0;font-size:.76rem}
-.empty{text-align:center;color:var(--sub);padding:15px;font-size:.8rem}
-.imgbox{display:none;text-align:center;margin:6px 0;padding:6px;background:#191919;border:1px solid var(--bor);border-radius:7px}
-.imgbox img{max-width:100%;max-height:320px;border-radius:6px}
-.imgbtn{background:#333;color:#fff;border:1px solid var(--bor);padding:5px 9px;border-radius:6px;font-size:.68rem}
-.loaded{color:var(--blue);background:#062d3c;border:1px solid #17607c;border-radius:6px;padding:6px;margin-bottom:8px;font-size:.7rem}
-.summary{background:#07351f;border:1px solid #176b43;border-radius:9px;padding:12px;margin-top:10px}
-.summary h3{color:var(--a);font-size:1rem;margin-bottom:8px;text-align:center}
-.summary div{font-size:.78rem;padding:3px 0}
-.summary .big{text-align:center;font-size:1.1rem;font-weight:bold;color:var(--a);margin:6px 0}
-.muscleReport{background:var(--item);border:1px solid var(--bor);border-radius:8px;padding:9px;margin:7px 0}
-.muscleReport h3{color:var(--a);font-size:.9rem;margin-bottom:6px}
-.muscleStats{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
-.muscleStat{text-align:center;background:#191919;border-radius:6px;padding:6px}
-.muscleStat b{display:block;color:var(--a);font-size:.85rem}.muscleStat span{font-size:.6rem;color:var(--sub)}
-.timerOverlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px}
-.timerBox{width:100%;max-width:330px;background:var(--card);border:1px solid var(--bor);border-radius:15px;padding:22px;text-align:center;box-shadow:0 10px 40px #000}
-.timerTitle{color:var(--a);font-size:1rem;margin-bottom:12px}
-.timerDisplay{font-size:4rem;font-weight:bold;letter-spacing:2px;margin:12px 0;color:#fff}
-.timerDisplay.warning{color:var(--gold)}.timerDisplay.last{color:var(--red);background:none;border:0;padding:0}
-.timerClose{background:#333;color:#fff;border:1px solid var(--bor);border-radius:7px;padding:9px 15px;font-size:.75rem}
-@media(max-width:380px){td input{font-size:.7rem;padding:5px 1px}.th{font-size:.58rem}.muscleStats{grid-template-columns:1fr 1fr}}
-@media print{nav,header,button,input,select,.timerOverlay,canvas{display:none!important}body{background:#fff;color:#000}.card{border:0;background:#fff}.report{color:#000}}
+
+.btn{
+background:var(--a);
+color:#000;
+border:0;
+border-radius:7px;
+padding:10px;
+width:100%;
+font-weight:bold
+}
+
+.out{
+background:transparent;
+color:var(--txt);
+border:1px solid var(--bor)
+}
+
+.danger{
+background:transparent;
+color:var(--red);
+border:1px solid var(--red)
+}
+
+.sm{
+width:auto;
+padding:5px 9px;
+font-size:.75rem
+}
+
+input,select{
+width:100%;
+background:var(--input);
+color:var(--txt);
+border:1px solid var(--bor);
+border-radius:6px;
+padding:8px;
+margin-bottom:7px;
+font-size:.88rem
+}
+
+label{
+font-size:.73rem;
+color:var(--sub)
+}
+
+.days{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:7px
+}
+
+.group{
+color:var(--sub);
+font-size:.73rem;
+text-transform:uppercase;
+margin:12px 0 6px
+}
+
+.ex{
+background:var(--item);
+padding:9px;
+border-radius:8px;
+margin-bottom:8px
+}
+
+.exhead{
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-weight:bold;
+margin-bottom:6px
+}
+
+.badge{
+background:var(--gold);
+color:#000;
+border-radius:4px;
+padding:2px 5px;
+font-size:.62rem
+}
+
+.last,.suggest,.history{
+font-size:.7rem;
+padding:5px;
+border-radius:5px;
+margin-bottom:5px
+}
+
+.last{
+color:var(--a);
+background:#07351f;
+border:1px solid #176b43
+}
+
+.suggest{
+color:var(--blue);
+background:#062d3c;
+border:1px solid #17607c;
+cursor:pointer
+}
+
+table{
+width:100%;
+border-collapse:collapse
+}
+
+th{
+color:var(--sub);
+font-size:.63rem;
+font-weight:normal
+}
+
+td{
+text-align:center;
+padding:1px
+}
+
+td input{
+margin:0;
+text-align:center;
+padding:6px 1px
+}
+
+.rm,.vol{
+font-size:.7rem;
+margin-top:5px
+}
+
+.rm{color:var(--gold)}
+.vol{color:var(--a)}
+
+.row{
+display:flex;
+gap:5px;
+margin-top:6px
+}
+
+.finish{
+background:#333;
+color:#fff;
+border:1px solid var(--bor);
+padding:6px 9px;
+border-radius:6px;
+font-size:.68rem
+}
+
+.restbtn{
+width:100%;
+margin-top:7px;
+background:#333;
+color:#fff;
+border:1px solid var(--bor);
+padding:8px;
+border-radius:6px;
+font-size:.72rem
+}
+
+.save-ex{
+width:100%;
+margin-top:7px;
+background:#064d2d;
+color:#fff;
+border:1px solid #176b43;
+padding:8px;
+border-radius:6px;
+font-size:.72rem;
+font-weight:bold
+}
+
+.save-ex.saved{
+background:#00a854;
+color:#000
+}
+
+.calendar{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:3px;
+text-align:center
+}
+
+.cal{
+padding:7px 2px;
+background:var(--item);
+border-radius:5px;
+font-size:.75rem
+}
+
+.cal.on{
+background:var(--a);
+color:#000;
+font-weight:bold
+}
+
+.cal.empty{
+background:none
+}
+
+.statgrid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:6px
+}
+
+.stat{
+background:var(--item);
+padding:8px;
+border-radius:7px;
+text-align:center
+}
+
+.stat b{
+display:block;
+color:var(--a);
+font-size:1rem
+}
+
+.stat span{
+font-size:.66rem;
+color:var(--sub)
+}
+
+.report{
+border-bottom:1px solid var(--bor);
+padding:8px 0;
+font-size:.76rem
+}
+
+.empty{
+text-align:center;
+color:var(--sub);
+padding:15px;
+font-size:.8rem
+}
+
+.imgbox{
+display:none;
+text-align:center;
+margin:6px 0;
+padding:6px;
+background:#191919;
+border:1px solid var(--bor);
+border-radius:7px
+}
+
+.imgbox img{
+max-width:100%;
+max-height:320px;
+border-radius:6px
+}
+
+.imgbtn{
+background:#333;
+color:#fff;
+border:1px solid var(--bor);
+padding:5px 9px;
+border-radius:6px;
+font-size:.68rem
+}
+
+.loaded{
+color:var(--blue);
+background:#062d3c;
+border:1px solid #17607c;
+border-radius:6px;
+padding:6px;
+margin-bottom:8px;
+font-size:.7rem
+}
+
+.summary{
+background:#07351f;
+border:1px solid #176b43;
+border-radius:9px;
+padding:12px;
+margin-top:10px
+}
+
+.summary h3{
+color:var(--a);
+font-size:1rem;
+margin-bottom:8px;
+text-align:center
+}
+
+.summary div{
+font-size:.78rem;
+padding:3px 0
+}
+
+.summary .big{
+text-align:center;
+font-size:1.1rem;
+font-weight:bold;
+color:var(--a);
+margin:6px 0
+}
+
+.muscleReport{
+background:var(--item);
+border:1px solid var(--bor);
+border-radius:8px;
+padding:9px;
+margin:7px 0
+}
+
+.muscleReport h3{
+color:var(--a);
+font-size:.9rem;
+margin-bottom:6px
+}
+
+.muscleStats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:5px
+}
+
+.muscleStat{
+text-align:center;
+background:#191919;
+border-radius:6px;
+padding:6px
+}
+
+.muscleStat b{
+display:block;
+color:var(--a);
+font-size:.85rem
+}
+
+.muscleStat span{
+font-size:.6rem;
+color:var(--sub)
+}
+
+.timerOverlay{
+display:none;
+position:fixed;
+inset:0;
+z-index:100;
+background:rgba(0,0,0,.78);
+align-items:center;
+justify-content:center;
+padding:20px
+}
+
+.timerBox{
+width:100%;
+max-width:330px;
+background:var(--card);
+border:1px solid var(--bor);
+border-radius:15px;
+padding:22px;
+text-align:center;
+box-shadow:0 10px 40px #000
+}
+
+.timerTitle{
+color:var(--a);
+font-size:1rem;
+margin-bottom:12px
+}
+
+.timerDisplay{
+font-size:4rem;
+font-weight:bold;
+letter-spacing:2px;
+margin:12px 0;
+color:#fff
+}
+
+.timerDisplay.warning{color:var(--gold)}
+.timerDisplay.last{
+color:var(--red);
+background:none;
+border:0;
+padding:0
+}
+
+.timerClose{
+background:#333;
+color:#fff;
+border:1px solid var(--bor);
+border-radius:7px;
+padding:9px 15px;
+font-size:.75rem
+}
+
+@media(max-width:380px){
+td input{
+font-size:.7rem;
+padding:5px 1px
+}
+
+.th{font-size:.58rem}
+
+.muscleStats{
+grid-template-columns:1fr 1fr
+}
+}
+
+@media print{
+nav,header,button,input,select,.timerOverlay,canvas{
+display:none!important
+}
+
+body{
+background:#fff;
+color:#000
+}
+
+.card{
+border:0;
+background:#fff
+}
+
+.report{
+color:#000
+}
+}
 </style>
 </head>
 
 <body>
 
-<header><h1>MI GIMNASIO PRO v4.5</h1></header>
+<header>
+<h1>MI GIMNASIO PRO v4.5</h1>
+</header>
 
 <div class="container">
 
 <section id="tab-entrenar" class="tab active">
 
 <div class="card">
+
 <h2>Selecciona el día</h2>
 
 <div class="days">
+
 <button class="btn out" onclick="selectDay(1)">Día 1</button>
 <button class="btn out" onclick="selectDay(2)">Día 2</button>
 <button class="btn out" onclick="selectDay(3)">Día 3</button>
 <button class="btn out" onclick="selectDay(4)">Día 4</button>
+
 </div>
 
 </div>
@@ -106,11 +565,14 @@ td input{margin:0;text-align:center;padding:6px 1px}
 <div id="loadedmsg"></div>
 
 <label>Fecha</label>
+
 <input type="date" id="date">
 
 <div id="form"></div>
 
-<button class="btn" onclick="saveWorkout()">💾 Guardar entrenamiento</button>
+<button class="btn" onclick="saveWorkout()">
+💾 Guardar entrenamiento
+</button>
 
 <div id="summary"></div>
 
@@ -129,15 +591,19 @@ td input{margin:0;text-align:center;padding:6px 1px}
 <label>Día</label>
 
 <select id="cfgday" onchange="loadConfig()">
+
 <option value="1">Día 1</option>
 <option value="2">Día 2</option>
 <option value="3">Día 3</option>
 <option value="4">Día 4</option>
+
 </select>
 
 <div id="editor"></div>
 
-<button class="btn" onclick="saveConfig()">Guardar configuración</button>
+<button class="btn" onclick="saveConfig()">
+Guardar configuración
+</button>
 
 </div>
 
@@ -146,13 +612,23 @@ td input{margin:0;text-align:center;padding:6px 1px}
 
 <h2>💾 Copia de seguridad</h2>
 
-<button class="btn out" onclick="exportData()">📦 Exportar JSON</button>
+<button class="btn out" onclick="exportData()">
+📦 Exportar JSON
+</button>
 
 <br><br>
 
-<button class="btn out" onclick="document.getElementById('file').click()">📥 Importar JSON</button>
+<button class="btn out"
+onclick="document.getElementById('file').click()">
+📥 Importar JSON
+</button>
 
-<input id="file" type="file" accept=".json" style="display:none" onchange="importData(event)">
+<input
+id="file"
+type="file"
+accept=".json"
+style="display:none"
+onchange="importData(event)">
 
 </div>
 
@@ -165,11 +641,15 @@ td input{margin:0;text-align:center;padding:6px 1px}
 
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
 
-<button class="btn out sm" onclick="month(-1)">❮</button>
+<button class="btn out sm" onclick="month(-1)">
+❮
+</button>
 
 <h2 id="monthname" style="margin:0"></h2>
 
-<button class="btn out sm" onclick="month(1)">❯</button>
+<button class="btn out sm" onclick="month(1)">
+❯
+</button>
 
 </div>
 
@@ -199,15 +679,23 @@ td input{margin:0;text-align:center;padding:6px 1px}
 
 <div style="display:flex;gap:5px;flex-wrap:wrap">
 
-<button class="btn out sm" onclick="report(15)">15 días</button>
+<button class="btn out sm" onclick="report(15)">
+15 días
+</button>
 
-<button class="btn out sm" onclick="report(30)">30 días</button>
+<button class="btn out sm" onclick="report(30)">
+30 días
+</button>
 
-<button class="btn out sm" onclick="window.print()">PDF</button>
+<button class="btn out sm" onclick="window.print()">
+PDF
+</button>
 
 </div>
 
-<div id="reports" class="empty">Selecciona un periodo.</div>
+<div id="reports" class="empty">
+Selecciona un periodo.
+</div>
 
 </div>
 
@@ -218,19 +706,23 @@ td input{margin:0;text-align:center;padding:6px 1px}
 
 <nav>
 
-<button id="n-entrenar" class="active" onclick="tab('entrenar')">
+<button id="n-entrenar" class="active"
+onclick="tab('entrenar')">
 🏋️<span>Entrenar</span>
 </button>
 
-<button id="n-rutina" onclick="tab('rutina')">
+<button id="n-rutina"
+onclick="tab('rutina')">
 ⚙️<span>Rutina</span>
 </button>
 
-<button id="n-calendario" onclick="tab('calendario')">
+<button id="n-calendario"
+onclick="tab('calendario')">
 📅<span>Calendario</span>
 </button>
 
-<button id="n-informes" onclick="tab('informes')">
+<button id="n-informes"
+onclick="tab('informes')">
 📊<span>Informes</span>
 </button>
 
@@ -241,11 +733,17 @@ td input{margin:0;text-align:center;padding:6px 1px}
 
 <div class="timerBox">
 
-<div class="timerTitle">⏱️ DESCANSO</div>
+<div class="timerTitle">
+⏱️ DESCANSO
+</div>
 
-<div id="timerDisplay" class="timerDisplay">02:00</div>
+<div id="timerDisplay" class="timerDisplay">
+02:00
+</div>
 
-<button class="timerClose" onclick="closeTimer()">Cerrar</button>
+<button class="timerClose" onclick="closeTimer()">
+Cerrar
+</button>
 
 </div>
 
@@ -253,6 +751,7 @@ td input{margin:0;text-align:center;padding:6px 1px}
 
 
 <script>
+
 "use strict";
 
 const K='gym_';
@@ -266,25 +765,35 @@ e2:['Ej 1','Ej 2'],
 img2:[]
 };
 
-let routine=JSON.parse(localStorage.getItem(K+'routine'))||{};
-let logs=JSON.parse(localStorage.getItem(K+'logs'))||[];
+let routine=
+JSON.parse(localStorage.getItem(K+'routine'))||{};
+
+let logs=
+JSON.parse(localStorage.getItem(K+'logs'))||[];
 
 let day=null,
 monthDate=new Date(),
 timerInterval=null,
 timerSeconds=0;
 
+
 for(let i=1;i<5;i++)
 if(!routine[i])
 routine[i]=JSON.parse(JSON.stringify(D));
 
-const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({
+
+const esc=s=>
+String(s??'').replace(
+/[&<>"']/g,
+m=>({
 '&':'&amp;',
 '<':'&lt;',
 '>':'&gt;',
 '"':'&quot;',
 "'":'&#39;'
-}[m]));
+}[m])
+);
+
 
 const num=v=>parseFloat(v)||0;
 
@@ -305,15 +814,22 @@ JSON.stringify(logs)
 
 
 function rm(w,r){
+
 return w&&r?w*(1+r/30):0
+
 }
 
 
 function volume(s){
+
 return(s||[]).reduce(
-(a,x)=>a+num(x.weight)*num(x.reps),
+(a,x)=>
+a+
+num(x.weight)*
+num(x.reps),
 0
 );
+
 }
 
 
@@ -322,7 +838,8 @@ function tab(x){
 document.querySelectorAll('.tab')
 .forEach(e=>e.classList.remove('active'));
 
-let t=document.getElementById('tab-'+x);
+let t=
+document.getElementById('tab-'+x);
 
 if(t)
 t.classList.add('active');
@@ -330,7 +847,8 @@ t.classList.add('active');
 document.querySelectorAll('nav button')
 .forEach(e=>e.classList.remove('active'));
 
-let n=document.getElementById('n-'+x);
+let n=
+document.getElementById('n-'+x);
 
 if(n)
 n.classList.add('active');
@@ -363,7 +881,9 @@ sets:e.sets||[]
 
 })));
 
-return a.sort((a,b)=>a.date-b.date);
+return a.sort(
+(a,b)=>a.date-b.date
+);
 
 }
 
@@ -374,8 +894,10 @@ let m=0;
 
 history(ex).forEach(x=>
 (x.sets||[]).forEach(s=>
-m=Math.max(m,num(s.weight))
-));
+m=Math.max(
+m,
+num(s.weight)
+)));
 
 return m;
 
@@ -390,9 +912,11 @@ history(ex).forEach(x=>
 (x.sets||[]).forEach(s=>
 m=Math.max(
 m,
-rm(num(s.weight),num(s.reps))
+rm(
+num(s.weight),
+num(s.reps)
 )
-));
+)));
 
 return Math.round(m*10)/10;
 
@@ -405,7 +929,10 @@ return Math.round(
 Math.max(
 0,
 ...(s||[]).map(
-x=>rm(num(x.weight),num(x.reps))
+x=>rm(
+num(x.weight),
+num(x.reps)
+)
 )
 )
 *10
@@ -422,8 +949,9 @@ closeTimer();
 
 timerSeconds=120;
 
-document.getElementById('timerOverlay')
-.style.display='flex';
+document.getElementById(
+'timerOverlay'
+).style.display='flex';
 
 updateTimerDisplay();
 
@@ -441,7 +969,10 @@ timerInterval=null;
 
 beep();
 
-setTimeout(closeTimer,700);
+setTimeout(
+closeTimer,
+700
+);
 
 }
 
@@ -452,19 +983,29 @@ setTimeout(closeTimer,700);
 
 function updateTimerDisplay(){
 
-let el=document.getElementById('timerDisplay');
+let el=
+document.getElementById(
+'timerDisplay'
+);
 
-if(!el)return;
+if(!el)
+return;
 
-let min=Math.floor(timerSeconds/60),
-sec=timerSeconds%60;
+let min=
+Math.floor(timerSeconds/60);
+
+let sec=
+timerSeconds%60;
 
 el.textContent=
 String(min).padStart(2,'0')+
 ':'+
 String(sec).padStart(2,'0');
 
-el.classList.remove('warning','last');
+el.classList.remove(
+'warning',
+'last'
+);
 
 if(timerSeconds<=10&&timerSeconds>3)
 el.classList.add('warning');
@@ -488,7 +1029,10 @@ timerInterval=null;
 
 }
 
-let o=document.getElementById('timerOverlay');
+let o=
+document.getElementById(
+'timerOverlay'
+);
 
 if(o)
 o.style.display='none';
@@ -515,7 +1059,10 @@ o.frequency.value=900;
 g.gain.value=.7;
 
 o.start();
-o.stop(c.currentTime+.18);
+
+o.stop(
+c.currentTime+.18
+);
 
 }catch(e){}
 
@@ -526,7 +1073,8 @@ o.stop(c.currentTime+.18);
 
 function toggleImage(id){
 
-let e=document.getElementById(id);
+let e=
+document.getElementById(id);
 
 if(e)
 e.style.display=
@@ -541,7 +1089,8 @@ e.style.display==='block'
 
 function previousDayLog(d){
 
-let a=logs.filter(
+let a=
+logs.filter(
 l=>Number(l.day)===Number(d)
 );
 
@@ -549,7 +1098,8 @@ if(!a.length)
 return null;
 
 a.sort(
-(x,y)=>new Date(x.date)-new Date(y.date)
+(x,y)=>
+new Date(x.date)-new Date(y.date)
 );
 
 return a[a.length-1];
@@ -578,12 +1128,23 @@ function selectDay(d){
 
 day=d;
 
-let work=document.getElementById('work'),
-daytitle=document.getElementById('daytitle'),
-date=document.getElementById('date'),
-summary=document.getElementById('summary'),
-loadedmsg=document.getElementById('loadedmsg'),
-form=document.getElementById('form');
+let work=
+document.getElementById('work');
+
+let daytitle=
+document.getElementById('daytitle');
+
+let date=
+document.getElementById('date');
+
+let summary=
+document.getElementById('summary');
+
+let loadedmsg=
+document.getElementById('loadedmsg');
+
+let form=
+document.getElementById('form');
 
 if(!work||
 !daytitle||
@@ -610,7 +1171,8 @@ new Date().toISOString().slice(0,10);
 
 summary.innerHTML='';
 
-let previous=previousDayLog(d);
+let previous=
+previousDayLog(d);
 
 loadedmsg.innerHTML=
 previous
@@ -629,12 +1191,14 @@ html+=
 
 (x[a[1]]||[]).forEach((ex,i)=>{
 
-let old=getPreviousExercise(
+let old=
+getPreviousExercise(
 previous,
 ex
 );
 
-let sets=old
+let sets=
+old
 ?(old.sets||[]).slice(0,3)
 :[];
 
@@ -644,13 +1208,19 @@ reps:'',
 weight:''
 });
 
-let lw=Math.max(
-...sets.map(s=>num(s.weight))
+let lw=
+Math.max(
+...sets.map(
+s=>num(s.weight)
+)
 );
 
 let suggestion=
 lw
-?Math.round(lw*1.025*10)/10
+?
+Math.round(
+lw*1.025*10
+)/10
 :0;
 
 let img=
@@ -666,16 +1236,20 @@ let iid=
 
 html+=`
 
-<div class="ex" id="exercise-${a[0]}-${i}">
+<div class="ex"
+id="exercise-${a[0]}-${i}">
 
 <div class="exhead">
 
 <span>${esc(ex)}</span>
 
-<span id="pr-${a[0]}-${i}"
+<span
+id="pr-${a[0]}-${i}"
 class="badge"
 style="display:none">
+
 🏆 PR
+
 </span>
 
 </div>
@@ -683,12 +1257,17 @@ style="display:none">
 
 ${img?`
 
-<button class="imgbtn"
+<button
+class="imgbtn"
 onclick="toggleImage('${iid}')">
+
 🖼️ Ver imagen
+
 </button>
 
-<div id="${iid}" class="imgbox">
+<div
+id="${iid}"
+class="imgbox">
 
 <img
 src="${esc(img)}"
@@ -697,14 +1276,19 @@ onerror="this.style.display='none';this.nextElementSibling.style.display='block'
 
 <div
 style="display:none;color:var(--red);font-size:.7rem;padding:5px">
+
 ⚠️ No se puede cargar la imagen.
+
 </div>
 
 <br>
 
-<button class="imgbtn"
+<button
+class="imgbtn"
 onclick="toggleImage('${iid}')">
+
 ✕ Cerrar imagen
+
 </button>
 
 </div>
@@ -720,18 +1304,31 @@ ${old?`
 ${new Date(previous.date).toLocaleDateString('es-ES')}:
 
 ${sets.map((s,j)=>
-`S${j+1} ${num(s.reps)||''}×${s.weight!==''&&s.weight!=null?s.weight:''}kg`
+`S${j+1} ${
+num(s.reps)||''
+}×${
+s.weight!==''&&
+s.weight!=null
+?s.weight:''
+}kg`
 ).join(' · ')}
 
 </div>
 
-`:'<div class="last">Sin registro previo</div>'}
+`
+:
+'<div class="last">Sin registro previo</div>'}
 
 
 ${suggestion?`
 
-<div class="suggest"
-onclick="suggest('${a[0]}',${i},${suggestion})">
+<div
+class="suggest"
+onclick="suggest(
+'${a[0]}',
+${i},
+${suggestion}
+)">
 
 💡 Propuesta: ${suggestion} kg (+2,5%)
 
@@ -743,16 +1340,19 @@ onclick="suggest('${a[0]}',${i},${suggestion})">
 <table>
 
 <thead>
+
 <tr>
 <th>S</th>
 <th>Reps</th>
 <th>Kg</th>
 <th></th>
 </tr>
+
 </thead>
 
 <tbody>
 `;
+
 
 sets.forEach((s,j)=>{
 
@@ -795,32 +1395,44 @@ oninput="calc('${a[0]}',${i});pr('${a[0]}',${i},'${esc(ex)}')">
 
 });
 
+
 html+=`
 
 </tbody>
+
 </table>
 
-<div class="rm"
+<div
+class="rm"
 id="rm-${a[0]}-${i}">
+
 🔥 1RM estimado: --
+
 </div>
 
-<div class="vol"
+<div
+class="vol"
 id="vol-${a[0]}-${i}">
+
 📦 Volumen: 0 kg
+
 </div>
 
 <button
 class="restbtn"
 onclick="startTimer()">
+
 ⏱️ Descanso 2:00
+
 </button>
 
 <button
 class="save-ex"
 id="save-${a[0]}-${i}"
 onclick="saveExercise('${a[0]}',${i},'${esc(ex)}')">
+
 💾 GUARDAR EJERCICIO
+
 </button>
 
 <div class="row">
@@ -828,12 +1440,15 @@ onclick="saveExercise('${a[0]}',${i},'${esc(ex)}')">
 <button
 class="finish"
 onclick="showHistory('${esc(ex)}')">
+
 📜 Historial
+
 </button>
 
 </div>
 
 </div>
+
 `;
 
 });
@@ -947,7 +1562,10 @@ if(e){
 e.value=w;
 
 e.dispatchEvent(
-new Event('input',{bubbles:true})
+new Event(
+'input',
+{bubbles:true}
+)
 );
 
 }
@@ -955,7 +1573,7 @@ new Event('input',{bubbles:true})
 }
 
 
-/* PR VISUAL DE LA PANTALLA */
+/* PR VISUAL */
 
 function pr(g,i,ex){
 
@@ -970,7 +1588,10 @@ document.getElementById(
 );
 
 if(e)
-v=Math.max(v,num(e.value));
+v=Math.max(
+v,
+num(e.value)
+);
 
 }
 
@@ -1065,9 +1686,12 @@ return;
 }
 
 let currentDate=
-document.getElementById('date').value;
+document.getElementById(
+'date'
+).value;
 
-let log=logs.find(l=>
+let log=
+logs.find(l=>
 Number(l.day)===Number(day)&&
 l.date===
 new Date(
@@ -1190,7 +1814,9 @@ alert(
 a.map(x=>
 `${x.date.toLocaleDateString('es-ES')} — `+
 x.sets
-.filter(s=>s.reps||s.weight)
+.filter(
+s=>s.reps||s.weight
+)
 .map(s=>
 `${num(s.reps)}×${num(s.weight)}kg`
 )
@@ -1229,7 +1855,14 @@ groups:[]
 
 let totalVol=0,
 totalSets=0,
-totalEx=0;
+totalExercises=0;
+
+
+/*
+SOLO GUARDAMOS COMO REALIZADOS
+LOS EJERCICIOS QUE TENGAN AL MENOS
+UNA SERIE CON REPETICIONES.
+*/
 
 [['g1','e1'],['g2','e2']].forEach(a=>{
 
@@ -1250,24 +1883,28 @@ data.sets.filter(
 s=>num(s.reps)>0
 );
 
+
+/*
+NO GUARDAR EJERCICIOS NO REALIZADOS
+*/
+
+if(!realizadas.length)
+return;
+
 let v=volume(realizadas);
 
-if(realizadas.length){
-
-totalEx++;
+totalExercises++;
 
 totalSets+=
 realizadas.length;
 
 totalVol+=v;
 
-}
-
 g.exercises.push({
 
 name:ex,
 
-sets:data.sets,
+sets:realizadas,
 
 volume:v,
 
@@ -1277,10 +1914,22 @@ rm:maxSetRM(realizadas)
 
 });
 
+
+/*
+SOLO GUARDAMOS EL GRUPO SI TIENE
+EJERCICIOS REALIZADOS.
+*/
+
+if(g.exercises.length)
 log.groups.push(g);
 
 });
 
+
+/*
+REEMPLAZAR LA SESIÓN DEL MISMO DÍA Y FECHA
+EN LUGAR DE DUPLICARLA.
+*/
 
 logs=logs.filter(l=>
 !(
@@ -1289,23 +1938,34 @@ l.date===log.date
 )
 );
 
+
+/*
+SI HAY AL MENOS UN EJERCICIO REALIZADO,
+GUARDAMOS LA SESIÓN.
+*/
+
+if(log.groups.length)
 logs.push(log);
 
 save();
 
 
-document.getElementById('summary').innerHTML=`
+document.getElementById(
+'summary'
+).innerHTML=`
 
 <div class="summary">
 
-<h3>🎉 ENTRENAMIENTO TERMINADO</h3>
+<h3>
+🎉 ENTRENAMIENTO TERMINADO
+</h3>
 
 <div class="big">
 Día ${day}
 </div>
 
 <div>
-💪 <b>${totalEx}</b>
+💪 <b>${totalExercises}</b>
 ejercicios realizados
 </div>
 
@@ -1319,10 +1979,11 @@ series realizadas
 kg de volumen realizado
 </div>
 
-<div style="margin-top:10px;color:var(--sub);font-size:.7rem">
+<div
+style="margin-top:10px;color:var(--sub);font-size:.7rem">
 
-Los ejercicios se pueden guardar individualmente
-con su botón GUARDAR EJERCICIO.
+Solo se han contabilizado ejercicios
+y series con repeticiones realizadas.
 
 </div>
 
@@ -1331,7 +1992,9 @@ con su botón GUARDAR EJERCICIO.
 <button
 class="btn"
 onclick="finishSummary()">
+
 Continuar
+
 </button>
 
 </div>
@@ -1361,10 +2024,14 @@ document.getElementById(
 function loadConfig(){
 
 let cfgday=
-document.getElementById('cfgday');
+document.getElementById(
+'cfgday'
+);
 
 let editor=
-document.getElementById('editor');
+document.getElementById(
+'editor'
+);
 
 let x=
 routine[cfgday.value];
@@ -1384,12 +2051,15 @@ Ejercicios
 <button
 class="btn out sm"
 onclick="add('g1')">
+
 + Añadir
+
 </button>
 
 </div>
 
 <div id="g1c">
+
 `;
 
 (x.e1||[]).forEach(
@@ -1418,12 +2088,15 @@ Ejercicios
 <button
 class="btn out sm"
 onclick="add('g2')">
+
 + Añadir
+
 </button>
 
 </div>
 
 <div id="g2c">
+
 `;
 
 (x.e2||[]).forEach(
@@ -1461,7 +2134,9 @@ placeholder="URL imagen/GIF">
 <button
 class="btn danger sm"
 onclick="this.parentElement.remove()">
+
 Eliminar
+
 </button>
 
 </div>
@@ -1493,14 +2168,16 @@ let x={
 
 g1:
 document.getElementById('g1n')
-.value.trim()||'Grupo 1',
+.value.trim()||
+'Grupo 1',
 
 e1:[],
 img1:[],
 
 g2:
 document.getElementById('g2n')
-.value.trim()||'Grupo 2',
+.value.trim()||
+'Grupo 2',
 
 e2:[],
 img2:[]
@@ -1731,7 +2408,9 @@ h+=`
 <div
 class="cal ${on?'on':''}"
 onclick="detail(${y},${m},${d})">
+
 ${d}
+
 </div>
 
 `;
@@ -1807,13 +2486,17 @@ style="display:flex;justify-content:space-between;align-items:center">
 <button
 class="btn out sm"
 onclick="editSession('${l.id}')">
+
 ✏️ Editar
+
 </button>
 
 <button
 class="btn danger sm"
 onclick="deleteSession('${l.id}')">
+
 🗑️ Eliminar
+
 </button>
 
 </div>
@@ -2046,13 +2729,17 @@ html+=`
 <div
 class="rm"
 id="rm-${a[0]}-${i}">
+
 🔥 1RM estimado: --
+
 </div>
 
 <div
 class="vol"
 id="vol-${a[0]}-${i}">
+
 📦 Volumen: 0 kg
+
 </div>
 
 </div>
@@ -2075,14 +2762,12 @@ document.getElementById(
 
 
 [['g1','e1'],['g2','e2']].forEach(a=>
-
 (x[a[1]]||[]).forEach((e,i)=>{
 
 calc(a[0],i);
 
-})
+}));
 
-);
 
 tab('entrenar');
 
@@ -2120,13 +2805,27 @@ return[...s]
 }
 
 
-/* ESTADISTICAS */
+/*
+========================================================
+ESTADISTICAS GENERALES
+========================================================
+
+IMPORTANTE:
+
+- Un ejercicio cuenta UNA SOLA VEZ.
+- Solo cuenta si tiene al menos una serie
+  con repeticiones > 0.
+- Las series se cuentan individualmente.
+- El volumen es peso × repeticiones.
+- Los ejercicios de la rutina que no se realizaron
+  NO cuentan.
+*/
 
 function stats(){
 
 let vol=0,
 sets=0,
-exerciseCount=0,
+exerciseNames=new Set(),
 days=new Set();
 
 logs.forEach(l=>{
@@ -2146,15 +2845,15 @@ return;
 
 sessionHasData=true;
 
-exerciseCount++;
+exerciseNames.add(e.name);
 
 realizadas.forEach(s=>{
+
+sets++;
 
 vol+=
 num(s.weight)*
 num(s.reps);
-
-sets++;
 
 });
 
@@ -2181,7 +2880,7 @@ document.getElementById(
 
 <div class="stat">
 
-<b>${exerciseCount}</b>
+<b>${exerciseNames.size}</b>
 
 <span>Ejercicios realizados</span>
 
@@ -2208,7 +2907,27 @@ document.getElementById(
 }
 
 
-/* INFORMES */
+/*
+========================================================
+INFORMES 15 / 30 DIAS
+========================================================
+
+Los ejercicios se cuentan como DISTINTOS.
+
+Ejemplo:
+
+Press banca:
+lunes = 3 series
+jueves = 3 series
+
+Resultado:
+
+1 ejercicio
+6 series
+volumen acumulado de las 6 series
+
+No 2 ejercicios.
+*/
 
 function report(days){
 
@@ -2223,8 +2942,7 @@ l=>new Date(l.date).getTime()>=cut
 )
 .sort(
 (x,y)=>
-new Date(x.date)-
-new Date(y.date)
+new Date(x.date)-new Date(y.date)
 );
 
 if(!a.length){
@@ -2243,6 +2961,8 @@ return;
 
 let groups={};
 
+let allExercisesDone=new Set();
+
 
 a.forEach(l=>
 (l.groups||[]).forEach(g=>{
@@ -2258,8 +2978,6 @@ groups[key]={
 volume:0,
 
 sets:0,
-
-exerciseCount:0,
 
 exercises:new Set(),
 
@@ -2286,12 +3004,27 @@ return;
 
 groupHasData=true;
 
-z.exerciseCount++;
+
+/*
+EJERCICIO DISTINTO
+*/
 
 z.exercises.add(e.name);
 
+allExercisesDone.add(e.name);
+
+
+/*
+SERIES REALIZADAS
+*/
+
 z.sets+=
 realizadas.length;
+
+
+/*
+VOLUMEN REALIZADO
+*/
 
 z.volume+=
 volume(realizadas);
@@ -2308,8 +3041,10 @@ l.id||l.date
 
 
 let totalVol=0,
-totalSets=0,
-totalExercises=0;
+totalSets=0;
+
+let totalExercises=
+allExercisesDone.size;
 
 
 let h=`
@@ -2317,15 +3052,20 @@ let h=`
 <div class="report">
 
 <b>
+
 📊 ${days===15
 ?'INFORME QUINCENAL (15 DÍAS)'
 :'INFORME MENSUAL (30 DÍAS)'}
+
 </b>
 
 <br>
 
 <span style="color:var(--sub)">
-Datos de ejercicios, series, repeticiones y pesos realizados
+
+Datos exclusivamente de ejercicios,
+series, repeticiones y pesos realizados
+
 </span>
 
 </div>
@@ -2336,7 +3076,7 @@ Datos de ejercicios, series, repeticiones y pesos realizados
 let entries=
 Object.entries(groups)
 .filter(([name,z])=>
-z.exerciseCount>0
+z.exercises.size>0
 )
 .sort(
 (a,b)=>
@@ -2366,16 +3106,15 @@ totalVol+=z.volume;
 
 totalSets+=z.sets;
 
-totalExercises+=
-z.exerciseCount;
-
 
 h+=`
 
 <div class="muscleReport">
 
 <h3>
+
 💪 ${esc(name)}
+
 </h3>
 
 <div class="muscleStats">
@@ -2383,7 +3122,7 @@ h+=`
 <div class="muscleStat">
 
 <b>
-${z.exerciseCount}
+${z.exercises.size}
 </b>
 
 <span>
@@ -2426,6 +3165,16 @@ ${z.sessions.size}
 
 </div>
 
+<div
+style="font-size:.65rem;color:var(--sub);margin-top:5px">
+
+Ejercicios:
+${[...z.exercises]
+.map(esc)
+.join(' · ')}
+
+</div>
+
 </div>
 
 `;
@@ -2442,25 +3191,32 @@ h+=`
 </h3>
 
 <div>
+
 💪 <b>${totalExercises}</b>
-ejercicios realizados
+ejercicios diferentes realizados
+
 </div>
 
 <div>
+
 🔢 <b>${totalSets}</b>
 series realizadas
+
 </div>
 
 <div>
+
 📦 <b>${Math.round(totalVol)} kg</b>
 de volumen realizado
+
 </div>
 
 <div
 style="font-size:.68rem;color:var(--sub);margin-top:5px">
 
-Los datos corresponden únicamente a los ejercicios
-y series que tienen repeticiones realizadas.
+Solo se contabilizan ejercicios que tienen
+al menos una serie con repeticiones realizadas.
+Las series vacías no cuentan.
 
 </div>
 
