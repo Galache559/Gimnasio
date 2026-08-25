@@ -794,37 +794,309 @@ document.getElementById('detail').innerHTML='';
 
 /* DETALLE CALENDARIO */
 function detail(y,m,d){
+
 let a=logs.filter(l=>{
+
 let z=new Date(l.date);
-return z.getFullYear()===y&&z.getMonth()===m&&z.getDate()===d;
+
+return(
+z.getFullYear()===y&&
+z.getMonth()===m&&
+z.getDate()===d
+);
+
 });
 
-let h=`<div class="group">${String(d).padStart(2,'0')}/${String(m+1).padStart(2,'0')}/${y}</div>`;
+let h=`
+
+<div class="group">
+
+${String(d).padStart(2,'0')}/
+${String(m+1).padStart(2,'0')}/
+${y}
+
+</div>
+
+`;
 
 if(!a.length){
-document.getElementById('detail').innerHTML=h+'<div class="empty">Sin entrenamiento.</div>';
+
+document.getElementById('detail').innerHTML=
+h+
+'<div class="empty">Sin entrenamiento.</div>';
+
 return;
+
 }
 
-a.forEach(l=>{
-h+=`<div class="report"><b>Día ${l.day}</b>`;
+a.forEach((l,index)=>{
+
+h+=`
+
+<div class="report">
+
+<div style="display:flex;justify-content:space-between;align-items:center">
+
+<b>Día ${l.day}</b>
+
+<div style="display:flex;gap:5px">
+
+<button
+class="btn out sm"
+onclick="editSession('${l.id}')">
+✏️ Editar
+</button>
+
+<button
+class="btn danger sm"
+onclick="deleteSession('${l.id}')">
+🗑️ Eliminar
+</button>
+
+</div>
+
+</div>
+
+`;
 
 (l.groups||[]).forEach(g=>{
-h+=`<div style="color:var(--a);margin-top:3px">${esc(g.name)}</div>`;
+
+h+=`
+
+<div
+style="color:var(--a);margin-top:7px">
+
+${esc(g.name)}
+
+</div>
+
+`;
 
 (g.exercises||[]).forEach(e=>{
-let realSets=(e.sets||[]).filter(s=>num(s.reps)>0);
-if(!realSets.length)return;
 
-h+=`<div>${esc(e.name)}: ${realSets.map((s,i)=>
-`S${i+1} ${s.reps}×${s.weight}kg`).join(' · ')}</div>`;
+let realSets=(e.sets||[]).filter(
+s=>num(s.reps)>0
+);
+
+if(!realSets.length)
+return;
+
+h+=`
+
+<div style="margin-top:3px">
+
+<b>${esc(e.name)}</b>:
+
+${realSets.map((s,i)=>
+
+`S${i+1} ${s.reps}×${s.weight}kg`
+
+).join(' · ')}
+
+</div>
+
+`;
+
 });
+
 });
 
 h+='</div>';
+
 });
 
 document.getElementById('detail').innerHTML=h;
+
+}
+function deleteSession(id){
+
+if(!confirm(
+'¿Seguro que quieres eliminar esta sesión completa?'
+))
+return;
+
+logs=logs.filter(l=>
+String(l.id)!==String(id)
+);
+
+save();
+
+renderCalendar();
+
+alert('Sesión eliminada.');
+
+}
+function editSession(id){
+
+let log=logs.find(l=>
+String(l.id)===String(id)
+);
+
+if(!log)
+return;
+
+day=Number(log.day);
+
+document.getElementById('work').style.display='block';
+
+document.getElementById('daytitle').innerText=
+'Editar entrenamiento - Día '+day;
+
+document.getElementById('date').value=
+new Date(log.date).toISOString().slice(0,10);
+
+document.getElementById('summary').innerHTML='';
+
+let x=routine[day];
+let html='';
+
+[['g1','e1'],['g2','e2']].forEach(a=>{
+
+html+=
+`<div class="group">${esc(x[a[0]])}</div>`;
+
+(x[a[1]]||[]).forEach((ex,i)=>{
+
+let old=null;
+
+(log.groups||[]).forEach(g=>{
+
+(g.exercises||[]).forEach(e=>{
+
+if(e.name===ex)
+old=e;
+
+});
+
+});
+
+let sets=old
+?(old.sets||[]).slice(0,3)
+:[];
+
+while(sets.length<3){
+
+sets.push({
+reps:'',
+weight:'',
+type:'E'
+});
+
+}
+
+html+=`
+
+<div class="ex">
+
+<div class="exhead">
+
+<span>${esc(ex)}</span>
+
+</div>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>S</th>
+<th>Reps</th>
+<th>Kg</th>
+<th></th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+`;
+
+sets.forEach((s,j)=>{
+
+html+=`
+
+<tr>
+
+<td>${j+1}</td>
+
+<td>
+
+<input
+type="number"
+min="0"
+id="${a[0]}-${i}-r${j}"
+value="${s.reps??''}"
+onfocus="selectCell(this)"
+oninput="calc('${a[0]}',${i})">
+
+</td>
+
+<td>
+
+<input
+type="number"
+min="0"
+step=".5"
+id="${a[0]}-${i}-w${j}"
+value="${s.weight??''}"
+onfocus="selectCell(this)"
+oninput="calc('${a[0]}',${i})">
+
+</td>
+
+<td></td>
+
+</tr>
+
+`;
+
+});
+
+html+=`
+
+</tbody>
+
+</table>
+
+<div
+class="rm"
+id="rm-${a[0]}-${i}">
+🔥 1RM estimado: --
+</div>
+
+<div
+class="vol"
+id="vol-${a[0]}-${i}">
+📦 Volumen: 0 kg
+</div>
+
+</div>
+
+`;
+
+});
+
+});
+
+document.getElementById('form').innerHTML=html;
+
+document.getElementById('loadedmsg').innerHTML=
+'<div class="loaded">✏️ Editando la sesión guardada. Modifica los datos y pulsa "Guardar entrenamiento".</div>';
+
+[['g1','e1'],['g2','e2']].forEach(a=>
+
+(x[a[1]]||[]).forEach((e,i)=>{
+
+calc(a[0],i);
+
+})
+
+);
+
+tab('entrenar');
+
 }
 
 /* TODOS LOS EJERCICIOS */
