@@ -146,12 +146,6 @@ td input{margin:0;text-align:center;padding:6px 1px}
 <h2>📊 Resumen</h2>
 <div id="stats" class="statgrid"></div>
 </div>
-
-<div class="card">
-<h2>🏆 Récords</h2>
-<div id="records"></div>
-</div>
-
 <div class="card">
 <h2>📋 Informes</h2>
 <div style="display:flex;gap:5px;flex-wrap:wrap">
@@ -210,7 +204,7 @@ document.querySelectorAll('nav button').forEach(e=>e.classList.remove('active'))
 let n=document.getElementById('n-'+x);if(n)n.classList.add('active');
 if(x==='rutina')loadConfig();
 if(x==='calendario')renderCalendar();
-if(x==='informes'){stats();records()}
+if(x==='informes')stats();
 }
 
 function history(ex){
@@ -1121,7 +1115,6 @@ logs.forEach(l=>{
 days.add(new Date(l.date).toDateString());
 
 (l.groups||[]).forEach(g=>(g.exercises||[]).forEach(e=>
-(e.sets||[]).forEach(s=>{
 if(num(s.reps)>0){
 vol+=num(s.weight)*num(s.reps);
 sets++;
@@ -1130,58 +1123,10 @@ sets++;
 ));
 });
 
-let prs=0;
-
-allExercises().forEach(e=>{
-let best=0;
-
-history(e).forEach(x=>(x.sets||[]).forEach(s=>{
-if(!num(s.reps))return;
-
-let w=num(s.weight);
-
-if(w>best){
-best=w;
-prs++;
-}
-}));
-});
-
-prs=Math.max(0,prs-allExercises().length);
-
 document.getElementById('stats').innerHTML=`
 <div class="stat"><b>${days.size}</b><span>Sesiones</span></div>
 <div class="stat"><b>${Math.round(vol)} kg</b><span>Volumen efectivo</span></div>
 <div class="stat"><b>${sets}</b><span>Series efectivas</span></div>
-<div class="stat"><b>${prs}</b><span>PR detectados</span></div>`;
-}
-
-/* RECORDS */
-function records(){
-let h='';
-
-allExercises().forEach(e=>{
-let w=max(e),r=0;
-
-history(e).forEach(x=>(x.sets||[]).forEach(s=>{
-if(!num(s.reps))return;
-r=Math.max(r,num(s.reps));
-}));
-
-let one=maxRM(e);
-
-if(w||r){
-h+=`
-<div class="report">
-<b>${esc(e)}</b>
-<div style="font-size:.7rem;color:var(--sub)">
-🏆 ${w} kg · 🔁 ${r} reps · 🔥 1RM ~${one} kg
-</div>
-</div>`;
-}
-});
-
-document.getElementById('records').innerHTML=h||'<div class="empty">Todavía no hay récords.</div>';
 }
 
 /* INFORMES */
