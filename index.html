@@ -179,15 +179,31 @@ td input{margin:0;text-align:center;padding:6px 1px}
 "use strict";
 
 const K='gym_';
-const D={g1:'Grupo 1',e1:['Ej 1','Ej 2'],img1:[],g2:'Grupo 2',e2:['Ej 1','Ej 2'],img2:[]};
+const D={
+g1:'Grupo 1',
+e1:['Ej 1','Ej 2'],
+img1:[],
+g2:'Grupo 2',
+e2:['Ej 1','Ej 2'],
+img2:[]
+};
 
 let routine=JSON.parse(localStorage.getItem(K+'routine'))||{};
 let logs=JSON.parse(localStorage.getItem(K+'logs'))||[];
 let day=null,monthDate=new Date(),timerInterval=null,timerSeconds=0;
 
-for(let i=1;i<5;i++)if(!routine[i])routine[i]=JSON.parse(JSON.stringify(D));
+for(let i=1;i<5;i++)
+if(!routine[i])
+routine[i]=JSON.parse(JSON.stringify(D));
 
-const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({
+'&':'&amp;',
+'<':'&lt;',
+'>':'&gt;',
+'"':'&quot;',
+"'":'&#39;'
+}[m]));
+
 const num=v=>parseFloat(v)||0;
 
 function save(){
@@ -195,48 +211,90 @@ localStorage.setItem(K+'routine',JSON.stringify(routine));
 localStorage.setItem(K+'logs',JSON.stringify(logs));
 }
 
-function rm(w,r){return w&&r?w*(1+r/30):0}
-function volume(s){return(s||[]).reduce((a,x)=>a+num(x.weight)*num(x.reps),0)}
+function rm(w,r){
+return w&&r?w*(1+r/30):0;
+}
+
+function volume(s){
+return(s||[]).reduce((a,x)=>a+num(x.weight)*num(x.reps),0);
+}
 
 function tab(x){
 document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
-let t=document.getElementById('tab-'+x);if(t)t.classList.add('active');
+
+let t=document.getElementById('tab-'+x);
+if(t)t.classList.add('active');
+
 document.querySelectorAll('nav button').forEach(e=>e.classList.remove('active'));
-let n=document.getElementById('n-'+x);if(n)n.classList.add('active');
+
+let n=document.getElementById('n-'+x);
+if(n)n.classList.add('active');
+
 if(x==='rutina')loadConfig();
 if(x==='calendario')renderCalendar();
-if(x==='informes'){stats()}
+if(x==='informes')stats();
 }
 
 function history(ex){
 let a=[];
-logs.forEach(l=>(l.groups||[]).forEach(g=>(g.exercises||[]).forEach(e=>{
-if(e.name===ex)a.push({date:new Date(l.date),sets:e.sets||[]});
-})));
+
+logs.forEach(l=>
+(l.groups||[]).forEach(g=>
+(g.exercises||[]).forEach(e=>{
+if(e.name===ex)
+a.push({
+date:new Date(l.date),
+sets:e.sets||[]
+});
+})
+)
+);
+
 return a.sort((a,b)=>a.date-b.date);
 }
 
 function max(ex){
 let m=0;
-history(ex).forEach(x=>(x.sets||[]).forEach(s=>m=Math.max(m,num(s.weight))));
+
+history(ex).forEach(x=>
+(x.sets||[]).forEach(s=>
+m=Math.max(m,num(s.weight))
+)
+);
+
 return m;
 }
 
 function maxRM(ex){
 let m=0;
-history(ex).forEach(x=>(x.sets||[]).forEach(s=>m=Math.max(m,rm(num(s.weight),num(s.reps)))));
+
+history(ex).forEach(x=>
+(x.sets||[]).forEach(s=>
+m=Math.max(m,rm(num(s.weight),num(s.reps)))
+)
+);
+
 return Math.round(m*10)/10;
 }
 
 function maxSetRM(s){
-return Math.round(Math.max(0,...(s||[]).map(x=>rm(num(x.weight),num(x.reps))))*10)/10;
+return Math.round(
+Math.max(
+0,
+...(s||[]).map(x=>rm(num(x.weight),num(x.reps)))
+)*10
+)/10;
 }
 
 /* CRONOMETRO */
+
 function startTimer(){
 closeTimer();
+
 timerSeconds=120;
+
 document.getElementById('timerOverlay').style.display='flex';
+
 updateTimerDisplay();
 
 timerInterval=setInterval(()=>{
@@ -254,576 +312,1380 @@ setTimeout(closeTimer,700);
 
 function updateTimerDisplay(){
 let el=document.getElementById('timerDisplay');
+
 if(!el)return;
 
-let min=Math.floor(timerSeconds/60),sec=timerSeconds%60;
-el.textContent=String(min).padStart(2,'0')+':'+String(sec).padStart(2,'0');
+let min=Math.floor(timerSeconds/60);
+let sec=timerSeconds%60;
+
+el.textContent=
+String(min).padStart(2,'0')+
+':'+
+String(sec).padStart(2,'0');
+
 el.classList.remove('warning','last');
 
-if(timerSeconds<=10&&timerSeconds>3)el.classList.add('warning');
-if(timerSeconds<=3)el.classList.add('last');
-if(timerSeconds<=3&&timerSeconds>0)beep();
+if(timerSeconds<=10&&timerSeconds>3)
+el.classList.add('warning');
+
+if(timerSeconds<=3)
+el.classList.add('last');
+
+if(timerSeconds<=3&&timerSeconds>0)
+beep();
 }
 
 function closeTimer(){
-if(timerInterval){clearInterval(timerInterval);timerInterval=null}
+if(timerInterval){
+clearInterval(timerInterval);
+timerInterval=null;
+}
+
 let o=document.getElementById('timerOverlay');
+
 if(o)o.style.display='none';
 }
 
 function beep(){
 try{
 let c=new(window.AudioContext||window.webkitAudioContext)();
-let o=c.createOscillator(),g=c.createGain();
-o.connect(g);g.connect(c.destination);
-o.frequency.value=900;g.gain.value=.7;
-o.start();o.stop(c.currentTime+.18);
+let o=c.createOscillator();
+let g=c.createGain();
+
+o.connect(g);
+g.connect(c.destination);
+
+o.frequency.value=900;
+g.gain.value=.7;
+
+o.start();
+o.stop(c.currentTime+.18);
 }catch(e){}
 }
 
 /* IMAGEN */
+
 function toggleImage(id){
 let e=document.getElementById(id);
-if(e)e.style.display=e.style.display==='block'?'none':'block';
+
+if(e)
+e.style.display=
+e.style.display==='block'?'none':'block';
 }
 
 /* ULTIMO ENTRENAMIENTO */
+
 function previousDayLog(d){
-let a=logs.filter(l=>Number(l.day)===Number(d));
-if(!a.length)return null;
+
+let a=uniqueWorkoutLogs(
+logs.filter(l=>Number(l.day)===Number(d))
+);
+
+if(!a.length)
+return null;
+
 a.sort((x,y)=>new Date(x.date)-new Date(y.date));
+
 return a[a.length-1];
 }
 
 function getPreviousExercise(log,name){
-if(!log)return null;
+
+if(!log)
+return null;
+
 for(let g of(log.groups||[]))
 for(let e of(g.exercises||[]))
-if(e.name===name)return e;
+if(e.name===name)
+return e;
+
 return null;
 }
 
-/* SELECCIONAR DIA */
-function selectDay(d){
-day=d;
-let work=document.getElementById('work'),
-daytitle=document.getElementById('daytitle'),
-date=document.getElementById('date'),
-summary=document.getElementById('summary'),
-loadedmsg=document.getElementById('loadedmsg'),
-form=document.getElementById('form');
+/* CLAVE UNICA DE SESION */
 
-if(!work||!daytitle||!date||!summary||!loadedmsg||!form){
+function sessionKey(l){
+
+let d=new Date(l.date);
+
+return Number(l.day)+'|'+
+d.getFullYear()+'-'+
+String(d.getMonth()+1).padStart(2,'0')+'-'+
+String(d.getDate()).padStart(2,'0');
+}
+
+/*
+CONSOLIDACION DE REGISTROS
+
+Una misma sesión es Día + Fecha.
+
+Si existen varios registros para esa sesión:
+- se unen los grupos
+- se unen los ejercicios
+- se conservan los datos reales
+- no se suman registros duplicados
+*/
+
+function uniqueWorkoutLogs(source){
+
+let map=new Map();
+
+(source||[]).forEach(l=>{
+
+if(!l||!l.date)
+return;
+
+let key=sessionKey(l);
+
+if(!map.has(key)){
+
+map.set(
+key,
+JSON.parse(JSON.stringify(l))
+);
+
+return;
+}
+
+let base=map.get(key);
+
+(l.groups||[]).forEach(g=>{
+
+let targetGroup=(base.groups||[]).find(
+x=>String(x.name)===String(g.name)
+);
+
+if(!targetGroup){
+
+if(!base.groups)
+base.groups=[];
+
+base.groups.push(
+JSON.parse(JSON.stringify(g))
+);
+
+return;
+}
+
+(g.exercises||[]).forEach(e=>{
+
+let targetExercise=
+(targetGroup.exercises||[]).find(
+x=>String(x.name)===String(e.name)
+);
+
+if(!targetExercise){
+
+if(!targetGroup.exercises)
+targetGroup.exercises=[];
+
+targetGroup.exercises.push(
+JSON.parse(JSON.stringify(e))
+);
+
+return;
+}
+
+let baseSets=(targetExercise.sets||[])
+.filter(s=>num(s.reps)>0);
+
+let newSets=(e.sets||[])
+.filter(s=>num(s.reps)>0);
+
+/*
+Si una versión tiene más series realizadas,
+se considera la versión más completa.
+*/
+if(newSets.length>baseSets.length){
+
+targetExercise.sets=
+JSON.parse(JSON.stringify(e.sets||[]));
+
+targetExercise.volume=
+volume(targetExercise.sets);
+
+targetExercise.rm=
+maxSetRM(targetExercise.sets);
+
+return;
+}
+
+/*
+Si tienen igual número de series, comprobamos
+si realmente son diferentes.
+*/
+if(newSets.length===baseSets.length&&newSets.length>0){
+
+let same=true;
+
+for(let i=0;i<newSets.length;i++){
+
+if(
+num(newSets[i].reps)!==num(baseSets[i].reps)||
+num(newSets[i].weight)!==num(baseSets[i].weight)
+){
+
+same=false;
+break;
+
+}
+
+}
+
+if(!same){
+
+targetExercise.sets=
+JSON.parse(JSON.stringify(e.sets||[]));
+
+targetExercise.volume=
+volume(targetExercise.sets);
+
+targetExercise.rm=
+maxSetRM(targetExercise.sets);
+
+}
+
+}
+
+});
+
+});
+
+});
+
+return [...map.values()]
+.sort((a,b)=>new Date(a.date)-new Date(b.date));
+
+}
+
+/* SELECCIONAR DIA */
+
+function selectDay(d){
+
+day=d;
+
+let work=document.getElementById('work');
+let daytitle=document.getElementById('daytitle');
+let date=document.getElementById('date');
+let summary=document.getElementById('summary');
+let loadedmsg=document.getElementById('loadedmsg');
+let form=document.getElementById('form');
+
+if(
+!work||
+!daytitle||
+!date||
+!summary||
+!loadedmsg||
+!form
+){
+
 alert('Error al cargar la pantalla de entrenamiento.');
+
 return;
 }
 
 work.style.display='block';
-daytitle.innerText='Entrenamiento - Día '+d;
-date.value=new Date().toISOString().slice(0,10);
+
+daytitle.innerText=
+'Entrenamiento - Día '+d;
+
+date.value=
+new Date().toISOString().slice(0,10);
+
 summary.innerHTML='';
 
 let previous=previousDayLog(d);
-loadedmsg.innerHTML=previous?'<div class="loaded">📋 Último entrenamiento disponible en el historial. Las celdas empiezan vacías para registrar el nuevo entrenamiento.</div>':'';
 
-let x=routine[d],html='';
+loadedmsg.innerHTML=
+previous?
+'<div class="loaded">📋 Último entrenamiento disponible en el historial. Las celdas empiezan vacías para registrar el nuevo entrenamiento.</div>'
+:'';
+
+let x=routine[d];
+let html='';
 
 [['g1','e1'],['g2','e2']].forEach(a=>{
+
 html+=`<div class="group">${esc(x[a[0]])}</div>`;
 
 (x[a[1]]||[]).forEach((ex,i)=>{
-let old=getPreviousExercise(previous,ex);
-let previousSets=old?(old.sets||[]).slice(0,3):[];
 
-while(previousSets.length<3)previousSets.push({reps:'',weight:''});
+let old=
+getPreviousExercise(previous,ex);
 
-let lw=Math.max(...previousSets.map(s=>num(s.weight)));
-let suggestion=lw?Math.round(lw*1.025*10)/10:0;
+let previousSets=
+old?(old.sets||[]).slice(0,3):[];
 
-// Las celdas del nuevo entrenamiento empiezan siempre vacías.
-// Los datos anteriores solo se muestran como referencia.
-let sets=[{reps:'',weight:''},{reps:'',weight:''},{reps:'',weight:''}];
-let img=(x[a[0]==='g1'?'img1':'img2']||[])[i]||'';
-let iid=`img-${a[0]}-${i}`;
+while(previousSets.length<3)
+previousSets.push({
+reps:'',
+weight:''
+});
+
+let lw=Math.max(
+...previousSets.map(s=>num(s.weight))
+);
+
+let suggestion=
+lw?
+Math.round(lw*1.025*10)/10:
+0;
+
+let sets=[
+{reps:'',weight:''},
+{reps:'',weight:''},
+{reps:'',weight:''}
+];
+
+let img=
+(x[a[0]==='g1'?'img1':'img2']||[])[i]||'';
+
+let iid=
+`img-${a[0]}-${i}`;
 
 html+=`
+
 <div class="ex" id="exercise-${a[0]}-${i}">
+
 <div class="exhead">
+
 <span>${esc(ex)}</span>
-<span id="pr-${a[0]}-${i}" class="badge" style="display:none">🏆 PR</span>
+
+<span id="pr-${a[0]}-${i}"
+class="badge"
+style="display:none">
+🏆 PR
+</span>
+
 </div>
 
 ${img?`
-<button class="imgbtn" onclick="toggleImage('${iid}')">🖼️ Ver imagen</button>
+
+<button class="imgbtn"
+onclick="toggleImage('${iid}')">
+🖼️ Ver imagen
+</button>
+
 <div id="${iid}" class="imgbox">
-<img src="${esc(img)}" alt="${esc(ex)}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-<div style="display:none;color:var(--red);font-size:.7rem;padding:5px">⚠️ No se puede cargar la imagen.</div>
+
+<img src="${esc(img)}"
+alt="${esc(ex)}"
+onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+
+<div style="display:none;color:var(--red);font-size:.7rem;padding:5px">
+⚠️ No se puede cargar la imagen.
+</div>
+
 <br>
-<button class="imgbtn" onclick="toggleImage('${iid}')">✕ Cerrar imagen</button>
-</div>`:''}
+
+<button class="imgbtn"
+onclick="toggleImage('${iid}')">
+✕ Cerrar imagen
+</button>
+
+</div>
+`:''}
 
 ${old?`
+
 <div class="last">
-Último ${new Date(previous.date).toLocaleDateString('es-ES')}:
-${previousSets.map((s,j)=>`S${j+1} ${num(s.reps)||''}×${s.weight!==''&&s.weight!=null?s.weight:''}kg`).join(' · ')}
-</div>`:'<div class="last">Sin registro previo</div>'}
+
+Último
+${new Date(previous.date).toLocaleDateString('es-ES')}:
+
+${previousSets.map((s,j)=>
+`S${j+1} ${num(s.reps)||''}×${s.weight!==''&&s.weight!=null?s.weight:''}kg`
+).join(' · ')}
+
+</div>
+
+`:
+'<div class="last">Sin registro previo</div>'
+}
 
 ${suggestion?`
-<div class="suggest" onclick="suggest('${a[0]}',${i},${suggestion})">
+
+<div class="suggest"
+onclick="suggest('${a[0]}',${i},${suggestion})">
+
 💡 Propuesta: ${suggestion} kg (+2,5%)
-</div>`:''}
+
+</div>
+`:''}
 
 <table>
-<thead><tr><th>S</th><th>Reps</th><th>Kg</th><th></th></tr></thead>
-<tbody>`;
+
+<thead>
+<tr>
+<th>S</th>
+<th>Reps</th>
+<th>Kg</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody>
+`;
 
 sets.forEach((s,j)=>{
+
 html+=`
+
 <tr>
+
 <td>${j+1}</td>
+
 <td>
-<input type="number" min="0" id="${a[0]}-${i}-r${j}" value="${s.reps??''}" onfocus="selectCell(this)" oninput="calc('${a[0]}',${i})">
+
+<input
+type="number"
+min="0"
+id="${a[0]}-${i}-r${j}"
+value="${s.reps??''}"
+onfocus="selectCell(this)"
+oninput="calc('${a[0]}',${i})">
+
 </td>
+
 <td>
-<input type="number" min="0" step=".5" id="${a[0]}-${i}-w${j}" value="${s.weight??''}" onfocus="selectCell(this)" oninput="calc('${a[0]}',${i});pr('${a[0]}',${i},'${esc(ex)}')">
+
+<input
+type="number"
+min="0"
+step=".5"
+id="${a[0]}-${i}-w${j}"
+value="${s.weight??''}"
+onfocus="selectCell(this)"
+oninput="calc('${a[0]}',${i});pr('${a[0]}',${i},'${esc(ex)}')">
+
 </td>
+
 <td></td>
-</tr>`;
+
+</tr>
+
+`;
+
 });
 
 html+=`
+
 </tbody>
+
 </table>
 
-<div class="rm" id="rm-${a[0]}-${i}">🔥 1RM estimado: --</div>
-<div class="vol" id="vol-${a[0]}-${i}">📦 Volumen: 0 kg</div>
+<div class="rm"
+id="rm-${a[0]}-${i}">
+🔥 1RM estimado: --
+</div>
 
-<button class="restbtn" onclick="startTimer()">⏱️ Descanso 2:00</button>
+<div class="vol"
+id="vol-${a[0]}-${i}">
+📦 Volumen: 0 kg
+</div>
 
-<button class="save-ex" id="save-${a[0]}-${i}" onclick="saveExercise('${a[0]}',${i},'${esc(ex)}')">
+<button class="restbtn"
+onclick="startTimer()">
+⏱️ Descanso 2:00
+</button>
+
+<button
+class="save-ex"
+id="save-${a[0]}-${i}"
+onclick="saveExercise('${a[0]}',${i},'${esc(ex)}')">
 💾 GUARDAR EJERCICIO
 </button>
 
 <div class="row">
-<button class="finish" onclick="showHistory('${esc(ex)}')">📜 Historial</button>
+
+<button
+class="finish"
+onclick="showHistory('${esc(ex)}')">
+📜 Historial
+</button>
+
 </div>
-</div>`;
+
+</div>
+
+`;
+
 });
+
 });
 
 form.innerHTML=html;
 
-[['g1','e1'],['g2','e2']].forEach(a=>(x[a[1]]||[]).forEach((e,i)=>{
+[['g1','e1'],['g2','e2']].forEach(a=>
+(x[a[1]]||[]).forEach((e,i)=>{
 calc(a[0],i);
 pr(a[0],i,e);
-}));
+})
+);
+
 }
 
 /* SELECCIONAR CELDA */
+
 function selectCell(el){
-setTimeout(()=>el.select(),10);
+
+setTimeout(()=>{
+el.select();
+},10);
+
 }
 
 /* CALCULOS */
+
 function calc(g,i){
-let best=0,vol=0;
+
+let best=0;
+let vol=0;
 
 for(let j=0;j<3;j++){
-let wEl=document.getElementById(`${g}-${i}-w${j}`),
-rEl=document.getElementById(`${g}-${i}-r${j}`);
-if(!wEl||!rEl)continue;
 
-let w=num(wEl.value),r=num(rEl.value);
+let wEl=
+document.getElementById(`${g}-${i}-w${j}`);
+
+let rEl=
+document.getElementById(`${g}-${i}-r${j}`);
+
+if(!wEl||!rEl)
+continue;
+
+let w=num(wEl.value);
+let r=num(rEl.value);
+
 if(w>0&&r>0){
-best=Math.max(best,rm(w,r));
+
+best=
+Math.max(
+best,
+rm(w,r)
+);
+
 vol+=w*r;
-}
+
 }
 
-let rmEl=document.getElementById(`rm-${g}-${i}`),
-volEl=document.getElementById(`vol-${g}-${i}`);
+}
 
-if(rmEl)rmEl.innerText=`🔥 1RM estimado: ${best?Math.round(best*10)/10+' kg':'--'}`;
-if(volEl)volEl.innerText=`📦 Volumen: ${Math.round(vol*10)/10} kg`;
+let rmEl=
+document.getElementById(`rm-${g}-${i}`);
+
+let volEl=
+document.getElementById(`vol-${g}-${i}`);
+
+if(rmEl)
+rmEl.innerText=
+`🔥 1RM estimado: ${
+best?
+Math.round(best*10)/10+' kg':
+'--'
+}`;
+
+if(volEl)
+volEl.innerText=
+`📦 Volumen: ${
+Math.round(vol*10)/10
+} kg`;
+
 }
 
 /* PROPUESTA */
+
 function suggest(g,i,w){
-let e=document.getElementById(`${g}-${i}-w2`);
+
+let e=
+document.getElementById(`${g}-${i}-w2`);
+
 if(e){
+
 e.value=w;
-e.dispatchEvent(new Event('input',{bubbles:true}));
+
+e.dispatchEvent(
+new Event('input',{bubbles:true})
+);
+
 }
+
 }
 
 /* PR */
+
 function pr(g,i,ex){
-let old=max(ex),v=0;
+
+let old=max(ex);
+let v=0;
 
 for(let j=0;j<3;j++){
-let e=document.getElementById(`${g}-${i}-w${j}`);
-if(e)v=Math.max(v,num(e.value));
+
+let e=
+document.getElementById(`${g}-${i}-w${j}`);
+
+if(e)
+v=Math.max(v,num(e.value));
+
 }
 
-let b=document.getElementById(`pr-${g}-${i}`);
-if(b)b.style.display=v>old&&old>0?'inline':'none';
+let b=
+document.getElementById(`pr-${g}-${i}`);
+
+if(b)
+b.style.display=
+v>old&&old>0?
+'inline':
+'none';
+
 }
 
 /* EJERCICIO ACTUAL */
+
 function getCurrentExerciseData(g,i,ex){
+
 let sets=[];
 
 for(let j=0;j<3;j++){
-let rEl=document.getElementById(`${g}-${i}-r${j}`),
-wEl=document.getElementById(`${g}-${i}-w${j}`);
-if(!rEl||!wEl)continue;
+
+let rEl=
+document.getElementById(`${g}-${i}-r${j}`);
+
+let wEl=
+document.getElementById(`${g}-${i}-w${j}`);
+
+if(!rEl||!wEl)
+continue;
 
 sets.push({
-reps:rEl.value===''?0:num(rEl.value),
-weight:wEl.value===''?0:num(wEl.value)
+
+reps:
+rEl.value===''?
+0:
+num(rEl.value),
+
+weight:
+wEl.value===''?
+0:
+num(wEl.value)
+
 });
+
 }
 
 return{
+
 name:ex,
+
 sets,
+
 volume:volume(sets),
+
 rm:maxSetRM(sets)
+
 };
+
 }
 
 /* GUARDAR EJERCICIO */
+
 function saveExercise(g,i,ex){
-if(day===null)return;
 
-let data=getCurrentExerciseData(g,i,ex);
-
-if(!data.sets.some(s=>num(s.reps)>0||num(s.weight)>0)){
-alert('No hay datos introducidos en este ejercicio.');
+if(day===null)
 return;
+
+let data=
+getCurrentExerciseData(g,i,ex);
+
+if(
+!data.sets.some(
+s=>num(s.reps)>0||num(s.weight)>0
+)
+){
+
+alert(
+'No hay datos introducidos en este ejercicio.'
+);
+
+return;
+
 }
 
-let currentDate=document.getElementById('date').value;
+let currentDate=
+document.getElementById('date').value;
 
-let log=logs.find(l=>
+let iso=
+new Date(currentDate+'T12:00:00').toISOString();
+
+let log=
+logs.find(l=>
 Number(l.day)===Number(day)&&
-l.date===new Date(currentDate+'T12:00:00').toISOString()
+sessionKey(l)===sessionKey({
+day:day,
+date:iso
+})
 );
 
 if(!log){
+
 log={
 id:Date.now(),
-date:new Date(currentDate+'T12:00:00').toISOString(),
+date:iso,
 day,
 groups:[]
 };
+
 logs.push(log);
+
 }
 
-let x=routine[day],groupName=null;
+let x=routine[day];
+let groupName=null;
 
-if((x.e1||[]).includes(ex))groupName=x.g1;
-else if((x.e2||[]).includes(ex))groupName=x.g2;
-if(!groupName)groupName='Grupo';
+if((x.e1||[]).includes(ex))
+groupName=x.g1;
 
-let group=log.groups.find(g=>g.name===groupName);
+else if((x.e2||[]).includes(ex))
+groupName=x.g2;
+
+if(!groupName)
+groupName='Grupo';
+
+let group=
+log.groups.find(g=>g.name===groupName);
 
 if(!group){
-group={name:groupName,exercises:[]};
+
+group={
+name:groupName,
+exercises:[]
+};
+
 log.groups.push(group);
+
 }
 
-let old=group.exercises.find(e=>e.name===ex);
+let old=
+group.exercises.find(e=>e.name===ex);
 
 if(old){
+
 old.sets=data.sets;
 old.volume=data.volume;
 old.rm=data.rm;
-}else group.exercises.push(data);
+
+}else{
+
+group.exercises.push(data);
+
+}
 
 save();
 
-let btn=document.getElementById(`save-${g}-${i}`);
+let btn=
+document.getElementById(`save-${g}-${i}`);
 
 if(btn){
+
 btn.classList.add('saved');
-btn.innerText='✓ EJERCICIO GUARDADO';
+
+btn.innerText=
+'✓ EJERCICIO GUARDADO';
 
 setTimeout(()=>{
+
 btn.classList.remove('saved');
-btn.innerText='💾 GUARDAR EJERCICIO';
+
+btn.innerText=
+'💾 GUARDAR EJERCICIO';
+
 },1500);
+
 }
+
 }
 
 /* HISTORIAL */
+
 function showHistory(ex){
-let a=history(ex).slice(-6).reverse();
+
+let a=
+history(ex).slice(-6).reverse();
 
 if(!a.length){
+
 alert('Sin historial');
+
 return;
+
 }
 
-alert(a.map(x=>
+alert(
+a.map(x=>
 `${x.date.toLocaleDateString('es-ES')} — `+
-x.sets.filter(s=>s.reps||s.weight).map(s=>`${num(s.reps)}×${num(s.weight)}kg`).join(' · ')
-).join('\n'));
+x.sets
+.filter(s=>s.reps||s.weight)
+.map(s=>`${num(s.reps)}×${num(s.weight)}kg`)
+.join(' · ')
+).join('\n')
+);
+
 }
 
 /* GUARDAR ENTRENAMIENTO */
+
 function saveWorkout(){
-if(!day)return;
+
+if(!day)
+return;
 
 let x=routine[day];
 
 let log={
 id:Date.now(),
-date:new Date(document.getElementById('date').value+'T12:00:00').toISOString(),
+date:new Date(
+document.getElementById('date').value+
+'T12:00:00'
+).toISOString(),
 day,
 groups:[]
 };
 
-let totalVol=0,totalSets=0,totalEx=0;
+let totalVol=0;
+let totalSets=0;
+let totalEx=0;
 
 [['g1','e1'],['g2','e2']].forEach(a=>{
-let g={name:x[a[0]],exercises:[]};
+
+let g={
+name:x[a[0]],
+exercises:[]
+};
 
 (x[a[1]]||[]).forEach((ex,i)=>{
-let data=getCurrentExerciseData(a[0],i,ex);
 
-let realizadas=data.sets.filter(s=>num(s.reps)>0);
-let v=volume(realizadas);
-let best=Math.max(...realizadas.map(s=>num(s.weight)),0);
+let data=
+getCurrentExerciseData(
+a[0],
+i,
+ex
+);
+
+let realizadas=
+data.sets.filter(
+s=>num(s.reps)>0
+);
+
+let v=
+volume(realizadas);
+
 if(realizadas.length){
+
 totalEx++;
 totalSets+=realizadas.length;
 totalVol+=v;
+
 }
 
 g.exercises.push({
+
 name:ex,
+
 sets:data.sets,
+
 volume:v,
+
 rm:maxSetRM(realizadas)
+
 });
+
 });
 
 log.groups.push(g);
+
 });
 
-logs=logs.filter(l=>!(Number(l.day)===Number(day)&&l.date===log.date));
+/*
+Sustituimos solamente el registro del mismo
+Día + Fecha. Los demás días permanecen intactos.
+*/
+
+let key=sessionKey(log);
+
+logs=
+logs.filter(
+l=>sessionKey(l)!==key
+);
+
 logs.push(log);
+
 save();
 
-// El entrenamiento ya está guardado. Preparar la pantalla para una nueva sesión
-// sin borrar ni modificar los datos que permanecen en el historial.
 clearWorkoutInputs();
 
 document.getElementById('summary').innerHTML=`
+
 <div class="summary">
+
 <h3>🎉 ENTRENAMIENTO TERMINADO</h3>
-<div class="big">Día ${day}</div>
-<div>💪 <b>${totalEx}</b> ejercicios realizados</div>
-<div>🔢 <b>${totalSets}</b> series realizadas</div>
-<div>📦 <b>${Math.round(totalVol)}</b> kg de volumen</div>
-<div style="margin-top:10px;color:var(--sub);font-size:.7rem">
-Los ejercicios se pueden guardar individualmente con su botón GUARDAR EJERCICIO.
+
+<div class="big">
+Día ${day}
 </div>
+
+<div>
+💪 <b>${totalEx}</b>
+ejercicios realizados
+</div>
+
+<div>
+🔢 <b>${totalSets}</b>
+series realizadas
+</div>
+
+<div>
+📦 <b>${Math.round(totalVol)}</b>
+kg de volumen
+</div>
+
+<div style="margin-top:10px;color:var(--sub);font-size:.7rem">
+
+Los ejercicios se pueden guardar individualmente
+con su botón GUARDAR EJERCICIO.
+
+</div>
+
 <br>
-<button class="btn" onclick="finishSummary()">Continuar</button>
-</div>`;
+
+<button class="btn"
+onclick="finishSummary()">
+Continuar
+</button>
+
+</div>
+
+`;
+
 }
 
-/* LIMPIAR PANTALLA TRAS GUARDAR */
+/* LIMPIAR PANTALLA */
+
 function clearWorkoutInputs(){
-  const form=document.getElementById('form');
-  if(!form)return;
 
-  form.querySelectorAll('input[type="number"]').forEach(el=>{
-    el.value='';
-  });
+const form=
+document.getElementById('form');
 
-  // Restablecer los cálculos visuales de cada ejercicio.
-  form.querySelectorAll('.rm').forEach(el=>{
-    el.innerText='🔥 1RM estimado: --';
-  });
-  form.querySelectorAll('.vol').forEach(el=>{
-    el.innerText='📦 Volumen: 0 kg';
-  });
+if(!form)
+return;
 
-  // El entrenamiento recién guardado no se carga de nuevo en las celdas.
-  form.querySelectorAll('.save-ex').forEach(btn=>{
-    btn.classList.remove('saved');
-    btn.innerText='💾 GUARDAR EJERCICIO';
-  });
+form
+.querySelectorAll('input[type="number"]')
+.forEach(el=>{
+el.value='';
+});
+
+form
+.querySelectorAll('.rm')
+.forEach(el=>{
+el.innerText=
+'🔥 1RM estimado: --';
+});
+
+form
+.querySelectorAll('.vol')
+.forEach(el=>{
+el.innerText=
+'📦 Volumen: 0 kg';
+});
+
+form
+.querySelectorAll('.save-ex')
+.forEach(btn=>{
+
+btn.classList.remove('saved');
+
+btn.innerText=
+'💾 GUARDAR EJERCICIO';
+
+});
+
 }
 
 /* FINALIZAR */
+
 function finishSummary(){
+
 document.getElementById('summary').innerHTML='';
+
 document.getElementById('work').style.display='none';
+
 }
 
 /* CONFIGURACION */
+
 function loadConfig(){
-let cfgday=document.getElementById('cfgday'),
-editor=document.getElementById('editor'),
-x=routine[cfgday.value];
+
+let cfgday=
+document.getElementById('cfgday');
+
+let editor=
+document.getElementById('editor');
+
+let x=
+routine[cfgday.value];
 
 let h=`
-<label>Grupo 1</label>
-<input id="g1n" value="${esc(x.g1)}">
-<div class="group">Ejercicios <button class="btn out sm" onclick="add('g1')">+ Añadir</button></div>
-<div id="g1c">`;
 
-(x.e1||[]).forEach((e,i)=>h+=field('g1',e,(x.img1||[])[i]));
+<label>Grupo 1</label>
+
+<input id="g1n"
+value="${esc(x.g1)}">
+
+<div class="group">
+
+Ejercicios
+
+<button
+class="btn out sm"
+onclick="add('g1')">
++ Añadir
+</button>
+
+</div>
+
+<div id="g1c">
+`;
+
+(x.e1||[]).forEach((e,i)=>
+h+=field(
+'g1',
+e,
+(x.img1||[])[i]
+)
+);
 
 h+=`
-</div>
-<label>Grupo 2</label>
-<input id="g2n" value="${esc(x.g2)}">
-<div class="group">Ejercicios <button class="btn out sm" onclick="add('g2')">+ Añadir</button></div>
-<div id="g2c">`;
 
-(x.e2||[]).forEach((e,i)=>h+=field('g2',e,(x.img2||[])[i]));
+</div>
+
+<label>Grupo 2</label>
+
+<input id="g2n"
+value="${esc(x.g2)}">
+
+<div class="group">
+
+Ejercicios
+
+<button
+class="btn out sm"
+onclick="add('g2')">
++ Añadir
+</button>
+
+</div>
+
+<div id="g2c">
+`;
+
+(x.e2||[]).forEach((e,i)=>
+h+=field(
+'g2',
+e,
+(x.img2||[])[i]
+)
+);
+
 h+='</div>';
 
 editor.innerHTML=h;
+
 }
 
 function field(g,n,img){
+
 return`
+
 <div class="ex">
-<input class="${g}e" value="${esc(n)}" placeholder="Ejercicio">
-<input class="${g}i" value="${esc(img||'')}" placeholder="URL imagen/GIF">
-<button class="btn danger sm" onclick="this.parentElement.remove()">Eliminar</button>
-</div>`;
+
+<input
+class="${g}e"
+value="${esc(n)}"
+placeholder="Ejercicio">
+
+<input
+class="${g}i"
+value="${esc(img||'')}"
+placeholder="URL imagen/GIF">
+
+<button
+class="btn danger sm"
+onclick="this.parentElement.remove()">
+Eliminar
+</button>
+
+</div>
+
+`;
+
 }
 
 function add(g){
-document.getElementById(g+'c').insertAdjacentHTML('beforeend',field(g,'',''));
+
+document
+.getElementById(g+'c')
+.insertAdjacentHTML(
+'beforeend',
+field(g,'','')
+);
+
 }
 
 function saveConfig(){
-let d=document.getElementById('cfgday').value;
+
+let d=
+document.getElementById('cfgday').value;
 
 let x={
-g1:document.getElementById('g1n').value.trim()||'Grupo 1',
-e1:[],img1:[],
-g2:document.getElementById('g2n').value.trim()||'Grupo 2',
-e2:[],img2:[]
+
+g1:
+document.getElementById('g1n').value.trim()||
+'Grupo 1',
+
+e1:[],
+img1:[],
+
+g2:
+document.getElementById('g2n').value.trim()||
+'Grupo 2',
+
+e2:[],
+img2:[]
+
 };
 
 ['g1','g2'].forEach(g=>{
-let ns=document.querySelectorAll('.'+g+'e'),
-ims=document.querySelectorAll('.'+g+'i');
+
+let ns=
+document.querySelectorAll('.'+g+'e');
+
+let ims=
+document.querySelectorAll('.'+g+'i');
 
 ns.forEach((e,i)=>{
+
 if(e.value.trim()){
-let en=g==='g1'?'e1':'e2',
-im=g==='g1'?'img1':'img2';
-x[en].push(e.value.trim());
-x[im].push(ims[i]?ims[i].value.trim():'');
+
+let en=
+g==='g1'?'e1':'e2';
+
+let im=
+g==='g1'?'img1':'img2';
+
+x[en].push(
+e.value.trim()
+);
+
+x[im].push(
+ims[i]?
+ims[i].value.trim():
+''
+);
+
 }
+
 });
+
 });
 
 routine[d]=x;
+
 save();
+
 alert('Rutina guardada');
+
 }
 
 /* EXPORTAR */
+
 function exportData(){
-let b=new Blob([JSON.stringify({
+
+let b=
+new Blob(
+[
+JSON.stringify(
+{
 version:4.5,
 exported:new Date().toISOString(),
 routine,
 logs
-},null,2)],{type:'application/json'});
+},
+null,
+2
+)
+],
+{
+type:'application/json'
+}
+);
 
-let a=document.createElement('a');
-a.href=URL.createObjectURL(b);
-a.download='gym_backup_'+new Date().toISOString().slice(0,10)+'.json';
+let a=
+document.createElement('a');
+
+a.href=
+URL.createObjectURL(b);
+
+a.download=
+'gym_backup_'+
+new Date().toISOString().slice(0,10)+
+'.json';
+
 a.click();
 
-setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+setTimeout(
+()=>URL.revokeObjectURL(a.href),
+1000
+);
+
 }
 
 /* IMPORTAR */
+
 function importData(e){
+
 let f=e.target.files[0];
-if(!f)return;
+
+if(!f)
+return;
 
 let r=new FileReader();
 
 r.onload=()=>{
-try{
-let d=JSON.parse(r.result);
-if(!d||typeof d!=='object')throw 0;
 
-if(d.routine)routine=d.routine;
-if(Array.isArray(d.logs))logs=d.logs;
+try{
+
+let d=
+JSON.parse(r.result);
+
+if(!d||typeof d!=='object')
+throw 0;
+
+if(d.routine)
+routine=d.routine;
+
+if(Array.isArray(d.logs))
+logs=d.logs;
 
 save();
+
 alert('Datos importados');
+
 location.reload();
+
 }catch(x){
+
 alert('Archivo JSON no válido');
+
 }
+
 };
 
 r.readAsText(f);
+
 }
 
 /* CALENDARIO */
+
 function month(n){
-monthDate.setMonth(monthDate.getMonth()+n);
+
+monthDate.setMonth(
+monthDate.getMonth()+n
+);
+
 renderCalendar();
+
 }
 
 function renderCalendar(){
-let y=monthDate.getFullYear(),
-m=monthDate.getMonth();
 
-let names=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+let y=
+monthDate.getFullYear();
 
-document.getElementById('monthname').innerText=names[m]+' '+y;
+let m=
+monthDate.getMonth();
 
-let first=(new Date(y,m,1).getDay()+6)%7;
-let days=new Date(y,m+1,0).getDate();
+let names=[
+'Enero','Febrero','Marzo','Abril',
+'Mayo','Junio','Julio','Agosto',
+'Septiembre','Octubre','Noviembre','Diciembre'
+];
 
-let h=['Lu','Ma','Mi','Ju','Vi','Sá','Do'].map(x=>
-`<b style="font-size:.68rem;color:var(--sub)">${x}</b>`).join('');
+document.getElementById('monthname').innerText=
+names[m]+' '+y;
 
-for(let i=0;i<first;i++)h+='<div class="cal empty"></div>';
+let first=
+(new Date(y,m,1).getDay()+6)%7;
+
+let days=
+new Date(y,m+1,0).getDate();
+
+let h=
+['Lu','Ma','Mi','Ju','Vi','Sá','Do']
+.map(x=>
+`<b style="font-size:.68rem;color:var(--sub)">${x}</b>`
+)
+.join('');
+
+for(let i=0;i<first;i++)
+h+='<div class="cal empty"></div>';
 
 for(let d=1;d<=days;d++){
-let on=logs.some(l=>{
-let z=new Date(l.date);
-return z.getFullYear()===y&&z.getMonth()===m&&z.getDate()===d;
+
+let on=
+logs.some(l=>{
+
+let z=
+new Date(l.date);
+
+return
+z.getFullYear()===y&&
+z.getMonth()===m&&
+z.getDate()===d;
+
 });
 
-h+=`<div class="cal ${on?'on':''}" onclick="detail(${y},${m},${d})">${d}</div>`;
+h+=`
+
+<div
+class="cal ${on?'on':''}"
+onclick="detail(${y},${m},${d})">
+${d}
+</div>
+
+`;
+
 }
 
 document.getElementById('calendar').innerHTML=h;
+
 document.getElementById('detail').innerHTML='';
+
 }
 
 /* DETALLE CALENDARIO */
+
 function detail(y,m,d){
 
-let a=logs.filter(l=>{
+let a=
+logs.filter(l=>{
 
-let z=new Date(l.date);
+let z=
+new Date(l.date);
 
-return(
+return
 z.getFullYear()===y&&
 z.getMonth()===m&&
-z.getDate()===d
-);
+z.getDate()===d;
 
 });
 
@@ -849,7 +1711,7 @@ return;
 
 }
 
-a.forEach((l,index)=>{
+a.forEach(l=>{
 
 h+=`
 
@@ -894,7 +1756,8 @@ ${esc(g.name)}
 
 (g.exercises||[]).forEach(e=>{
 
-let realSets=(e.sets||[]).filter(
+let realSets=
+(e.sets||[]).filter(
 s=>num(s.reps)>0
 );
 
@@ -908,9 +1771,7 @@ h+=`
 <b>${esc(e.name)}</b>:
 
 ${realSets.map((s,i)=>
-
 `S${i+1} ${s.reps}×${s.weight}kg`
-
 ).join(' · ')}
 
 </div>
@@ -928,6 +1789,7 @@ h+='</div>';
 document.getElementById('detail').innerHTML=h;
 
 }
+
 function deleteSession(id){
 
 if(!confirm(
@@ -935,8 +1797,9 @@ if(!confirm(
 ))
 return;
 
-logs=logs.filter(l=>
-String(l.id)!==String(id)
+logs=
+logs.filter(
+l=>String(l.id)!==String(id)
 );
 
 save();
@@ -946,16 +1809,19 @@ renderCalendar();
 alert('Sesión eliminada.');
 
 }
+
 function editSession(id){
 
-let log=logs.find(l=>
-String(l.id)===String(id)
+let log=
+logs.find(
+l=>String(l.id)===String(id)
 );
 
 if(!log)
 return;
 
-day=Number(log.day);
+day=
+Number(log.day);
 
 document.getElementById('work').style.display='block';
 
@@ -990,9 +1856,10 @@ old=e;
 
 });
 
-let sets=old
-?(old.sets||[]).slice(0,3)
-:[];
+let sets=
+old?
+(old.sets||[]).slice(0,3):
+[];
 
 while(sets.length<3){
 
@@ -1019,12 +1886,10 @@ html+=`
 <thead>
 
 <tr>
-
 <th>S</th>
 <th>Reps</th>
 <th>Kg</th>
 <th></th>
-
 </tr>
 
 </thead>
@@ -1106,13 +1971,9 @@ document.getElementById('loadedmsg').innerHTML=
 '<div class="loaded">✏️ Editando la sesión guardada. Modifica los datos y pulsa "Guardar entrenamiento".</div>';
 
 [['g1','e1'],['g2','e2']].forEach(a=>
-
 (x[a[1]]||[]).forEach((e,i)=>{
-
 calc(a[0],i);
-
 })
-
 );
 
 tab('entrenar');
@@ -1120,144 +1981,364 @@ tab('entrenar');
 }
 
 /* TODOS LOS EJERCICIOS */
+
 function allExercises(){
+
 let s=new Set();
 
 Object.values(routine).forEach(d=>{
+
 (d.e1||[]).forEach(e=>s.add(e));
 (d.e2||[]).forEach(e=>s.add(e));
+
 });
 
-logs.forEach(l=>(l.groups||[]).forEach(g=>(g.exercises||[]).forEach(e=>s.add(e.name))));
+logs.forEach(l=>
+(l.groups||[]).forEach(g=>
+(g.exercises||[]).forEach(e=>
+s.add(e.name)
+)
+)
+);
 
-return[...s].filter(Boolean).sort();
+return[...s]
+.filter(Boolean)
+.sort();
+
 }
 
-/* ESTADISTICAS */
+/* ESTADISTICAS CORREGIDAS */
+
 function stats(){
-  let vol=0,sets=0,exercises=0;
-  let sessions=new Set();
 
-  logs.forEach(l=>{
-    let sessionHasRealData=false;
+let vol=0;
+let sets=0;
+let exercises=0;
 
-    (l.groups||[]).forEach(g=>
-      (g.exercises||[]).forEach(e=>{
-        let effective=(e.sets||[]).filter(s=>num(s.reps)>0);
+let sessions=new Set();
 
-        if(!effective.length)return;
+let unique=
+uniqueWorkoutLogs(logs);
 
-        exercises++;
-        sets+=effective.length;
-        vol+=volume(effective);
-        sessionHasRealData=true;
-      })
-    );
+unique.forEach(l=>{
 
-    // Una sesión cuenta solo si contiene al menos un ejercicio realizado.
-    if(sessionHasRealData){
-      sessions.add(String(l.id||l.date));
-    }
-  });
+let sessionHasRealData=false;
 
-  document.getElementById('stats').innerHTML=`
-    <div class="stat"><b>${sessions.size}</b><span>Sesiones reales</span></div>
-    <div class="stat"><b>${exercises}</b><span>Ejercicios realizados</span></div>
-    <div class="stat"><b>${sets}</b><span>Series efectivas</span></div>
-    <div class="stat"><b>${Math.round(vol)} kg</b><span>Volumen efectivo</span></div>`;
+(l.groups||[]).forEach(g=>
+(g.exercises||[]).forEach(e=>{
+
+let effective=
+(e.sets||[]).filter(
+s=>num(s.reps)>0
+);
+
+if(!effective.length)
+return;
+
+exercises++;
+
+sets+=effective.length;
+
+vol+=volume(effective);
+
+sessionHasRealData=true;
+
+})
+);
+
+if(sessionHasRealData)
+sessions.add(sessionKey(l));
+
+});
+
+document.getElementById('stats').innerHTML=`
+
+<div class="stat">
+
+<b>${sessions.size}</b>
+
+<span>
+Sesiones reales
+</span>
+
+</div>
+
+<div class="stat">
+
+<b>${exercises}</b>
+
+<span>
+Ejercicios realizados
+</span>
+
+</div>
+
+<div class="stat">
+
+<b>${sets}</b>
+
+<span>
+Series efectivas
+</span>
+
+</div>
+
+<div class="stat">
+
+<b>${Math.round(vol)} kg</b>
+
+<span>
+Volumen efectivo
+</span>
+
+</div>
+
+`;
+
 }
 
 /* INFORMES */
+
 function isAbsGroup(name){
-let n=String(name||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+
+let n=
+String(name||'')
+.toLowerCase()
+.normalize('NFD')
+.replace(/[\u0300-\u036f]/g,'');
+
 return /abdominal|abdomen|\babs\b/.test(n);
+
 }
 
 function report(days){
-let cut=Date.now()-days*86400000;
 
-let a=logs.filter(l=>new Date(l.date).getTime()>=cut)
-.sort((x,y)=>new Date(x.date)-new Date(y.date));
+let cut=
+Date.now()-
+days*86400000;
+
+let a=
+uniqueWorkoutLogs(logs)
+.filter(l=>
+new Date(l.date).getTime()>=cut
+)
+.sort(
+(x,y)=>new Date(x.date)-new Date(y.date)
+);
 
 if(!a.length){
-document.getElementById('reports').innerHTML=`<div class="empty">Sin entrenamientos en ${days} días.</div>`;
+
+document.getElementById('reports').innerHTML=
+
+`<div class="empty">
+Sin entrenamientos en ${days} días.
+</div>`;
+
 return;
+
 }
 
 let groups={};
 
-a.forEach(l=>(l.groups||[]).forEach(g=>{
-if(isAbsGroup(g.name))return;
+a.forEach(l=>
+(l.groups||[]).forEach(g=>{
 
-let key=g.name||'Sin grupo';
+if(isAbsGroup(g.name))
+return;
+
+let key=
+g.name||
+'Sin grupo';
 
 if(!groups[key]){
-groups[key]={volume:0,sets:0,exercises:new Set(),sessions:new Set()};
+
+groups[key]={
+volume:0,
+sets:0,
+exercises:new Set(),
+sessions:new Set()
+};
+
 }
 
 let z=groups[key];
-z.sessions.add(l.id||l.date);
+
+z.sessions.add(
+sessionKey(l)
+);
 
 (g.exercises||[]).forEach(e=>{
-let effective=(e.sets||[]).filter(s=>num(s.reps)>0);
+
+let effective=
+(e.sets||[]).filter(
+s=>num(s.reps)>0
+);
 
 if(effective.length){
-z.exercises.add(e.name);
-z.sets+=effective.length;
-z.volume+=volume(effective);
-}
-});
-}));
 
-let totalVol=0,totalSets=0;
+z.exercises.add(e.name);
+
+z.sets+=
+effective.length;
+
+z.volume+=
+volume(effective);
+
+}
+
+});
+
+})
+);
+
+let totalVol=0;
+let totalSets=0;
 
 let h=`
-<div class="report">
-<b>📊 ${days===15?'INFORME QUINCENAL (15 DÍAS)':'INFORME MENSUAL (30 DÍAS)'}</b>
-<br>
-<span style="color:var(--sub)">Estadísticas agrupadas por grupo muscular</span>
-</div>`;
 
-let entries=Object.entries(groups).sort((a,b)=>a[0].localeCompare(b[0],'es'));
+<div class="report">
+
+<b>
+
+📊 ${
+days===15?
+'INFORME QUINCENAL (15 DÍAS)':
+'INFORME MENSUAL (30 DÍAS)'
+}
+
+</b>
+
+<br>
+
+<span style="color:var(--sub)">
+
+Estadísticas agrupadas por grupo muscular
+
+</span>
+
+</div>
+
+`;
+
+let entries=
+Object.entries(groups)
+.sort(
+(a,b)=>
+a[0].localeCompare(b[0],'es')
+);
 
 if(!entries.length){
-document.getElementById('reports').innerHTML=h+'<div class="empty">No hay datos con peso para grupos musculares en este periodo.</div>';
+
+document.getElementById('reports').innerHTML=
+
+h+
+'<div class="empty">No hay datos con peso para grupos musculares en este periodo.</div>';
+
 return;
+
 }
 
 entries.forEach(([name,z])=>{
+
 totalVol+=z.volume;
 totalSets+=z.sets;
 
 h+=`
+
 <div class="muscleReport">
-<h3>💪 ${esc(name)}</h3>
+
+<h3>
+💪 ${esc(name)}
+</h3>
+
 <div class="muscleStats">
-<div class="muscleStat"><b>${Math.round(z.volume)} kg</b><span>Volumen</span></div>
-<div class="muscleStat"><b>${z.sets}</b><span>Series efectivas</span></div>
-<div class="muscleStat"><b>${z.exercises.size}</b><span>Ejercicios</span></div>
+
+<div class="muscleStat">
+
+<b>
+${Math.round(z.volume)} kg
+</b>
+
+<span>
+Volumen
+</span>
+
 </div>
+
+<div class="muscleStat">
+
+<b>
+${z.sets}
+</b>
+
+<span>
+Series efectivas
+</span>
+
+</div>
+
+<div class="muscleStat">
+
+<b>
+${z.exercises.size}
+</b>
+
+<span>
+Ejercicios
+</span>
+
+</div>
+
+</div>
+
 <div style="font-size:.65rem;color:var(--sub);margin-top:6px">
+
 Sesiones: ${z.sessions.size}
+
 </div>
-</div>`;
+
+</div>
+
+`;
+
 });
 
 h+=`
+
 <div class="summary">
-<h3>📈 TOTAL DEL PERIODO</h3>
-<div>📦 <b>${Math.round(totalVol)} kg</b> de volumen efectivo</div>
-<div>🔢 <b>${totalSets}</b> series efectivas</div>
-<div style="font-size:.68rem;color:var(--sub);margin-top:5px">
-Los abdominales no se incluyen en los kg ni en las estadísticas de volumen.
+
+<h3>
+📈 TOTAL DEL PERIODO
+</h3>
+
+<div>
+📦 <b>${Math.round(totalVol)} kg</b>
+de volumen efectivo
 </div>
-</div>`;
+
+<div>
+🔢 <b>${totalSets}</b>
+series efectivas
+</div>
+
+<div style="font-size:.68rem;color:var(--sub);margin-top:5px">
+
+Los abdominales no se incluyen en los kg ni en las estadísticas de volumen.
+
+</div>
+
+</div>
+
+`;
 
 document.getElementById('reports').innerHTML=h;
+
 }
 
 /* INICIO */
+
 renderCalendar();
+
 </script>
 </body>
 </html>
