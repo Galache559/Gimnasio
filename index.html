@@ -1215,20 +1215,25 @@ function selectDay(d){
 
 day=d;
 
+/* Volvemos a leer la rutina actual guardada */
+routine=safeParse(
+localStorage.getItem(K+'routine'),
+structuredCloneSafe(DEFAULT_ROUTINE)
+);
+
+normalizeRoutine();
+
 let work=document.getElementById('work');
 let title=document.getElementById('daytitle');
 let date=document.getElementById('date');
 let summary=document.getElementById('summary');
 let loadedmsg=document.getElementById('loadedmsg');
-let form=document.getElementById('form');
 
 work.style.display='block';
 
-title.innerText=
-'Entrenamiento - Día '+d;
+title.innerText='Entrenamiento - Día '+d;
 
-date.value=
-new Date().toISOString().slice(0,10);
+date.value=new Date().toISOString().slice(0,10);
 
 summary.innerHTML='';
 
@@ -1239,7 +1244,6 @@ previous
 ?
 '<div class="loaded">📋 Último entrenamiento disponible. Las nuevas celdas empiezan vacías.</div>'
 :'';
-
 
 renderWorkout(previous);
 
@@ -2349,13 +2353,8 @@ img2:[]
 
 ['g1','g2'].forEach(g=>{
 
-let ns=document.querySelectorAll(
-'.'+g+'e'
-);
-
-let ims=document.querySelectorAll(
-'.'+g+'i'
-);
+let ns=document.querySelectorAll('.'+g+'e');
+let ims=document.querySelectorAll('.'+g+'i');
 
 ns.forEach((e,i)=>{
 
@@ -2381,18 +2380,30 @@ ims[i]
 
 });
 
+/* Guardamos SOLO la rutina.
+   Los entrenamientos (logs) no se modifican. */
+
 routine[d]=x;
 
 normalizeRoutine();
 
-save();
-
-alert(
-'Rutina guardada correctamente.'
+localStorage.setItem(
+K+'routine',
+JSON.stringify(routine)
 );
+
+/* Si estamos en Entrenar, refrescamos inmediatamente */
+if(day===Number(d)){
+
+let previous=previousDayLog(Number(d));
+
+renderWorkout(previous);
 
 }
 
+alert('Rutina guardada correctamente.');
+
+}
 
 /* =====================================================
    EXPORTAR COPIA COMPLETA
