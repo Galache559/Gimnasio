@@ -3,211 +3,494 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Mi Gimnasio Pro 5.0</title>
+<title>Mi Gimnasio Pro v5.0</title>
 <meta name="theme-color" content="#121212">
 
 <style>
 :root{
---bg:#121212;--card:#1e1e1e;--item:#252525;--input:#2a2a2a;
---a:#00e676;--txt:#fff;--sub:#aaa;--bor:#333;--red:#ff5252;
---gold:#ffd700;--blue:#29b6f6
+--bg:#121212;
+--card:#1e1e1e;
+--item:#252525;
+--input:#2a2a2a;
+--a:#00e676;
+--txt:#fff;
+--sub:#aaa;
+--bor:#333;
+--red:#ff5252;
+--gold:#ffd700;
+--blue:#29b6f6;
 }
 *{
-box-sizing:border-box;margin:0;padding:0;
+box-sizing:border-box;
+margin:0;
+padding:0;
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
--webkit-tap-highlight-color:transparent
+-webkit-tap-highlight-color:transparent;
 }
-body{background:var(--bg);color:var(--txt);padding-bottom:80px}
+body{
+background:var(--bg);
+color:var(--txt);
+padding-bottom:80px;
+}
 header{
-position:sticky;top:0;z-index:10;background:var(--card);
-padding:12px;text-align:center;border-bottom:1px solid var(--bor)
+position:sticky;
+top:0;
+z-index:10;
+background:var(--card);
+padding:12px;
+text-align:center;
+border-bottom:1px solid var(--bor);
 }
-h1{font-size:1.15rem;color:var(--a);letter-spacing:1px}
-.container{max-width:650px;margin:auto;padding:10px}
+h1{
+font-size:1.15rem;
+color:var(--a);
+letter-spacing:1px;
+}
+.container{
+max-width:680px;
+margin:auto;
+padding:10px;
+}
 nav{
-position:fixed;bottom:0;left:0;right:0;z-index:20;
-background:var(--card);display:flex;border-top:1px solid var(--bor);
-padding:7px 0
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+z-index:20;
+background:var(--card);
+display:flex;
+border-top:1px solid var(--bor);
+padding:7px 0;
 }
 nav button{
-width:25%;background:none;border:0;color:var(--sub);font-size:.7rem;
-display:flex;flex-direction:column;gap:2px;align-items:center
+width:25%;
+background:none;
+border:0;
+color:var(--sub);
+font-size:.7rem;
+display:flex;
+flex-direction:column;
+gap:2px;
+align-items:center;
 }
-nav button.active{color:var(--a);font-weight:bold}
-.tab{display:none}.tab.active{display:block}
+nav button.active{
+color:var(--a);
+font-weight:bold;
+}
+.tab{display:none}
+.tab.active{display:block}
+
 .card{
-background:var(--card);border:1px solid var(--bor);border-radius:11px;
-padding:12px;margin-bottom:10px
+background:var(--card);
+border:1px solid var(--bor);
+border-radius:11px;
+padding:12px;
+margin-bottom:10px;
 }
 .card h2{
-font-size:1rem;color:var(--a);margin-bottom:10px;
-display:flex;justify-content:space-between;align-items:center
+font-size:1rem;
+color:var(--a);
+margin-bottom:10px;
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
+
 button,.btn{cursor:pointer}
 .btn{
-background:var(--a);color:#000;border:0;border-radius:7px;
-padding:10px;width:100%;font-weight:bold
+background:var(--a);
+color:#000;
+border:0;
+border-radius:7px;
+padding:10px;
+width:100%;
+font-weight:bold;
 }
-.out{background:transparent;color:var(--txt);border:1px solid var(--bor)}
-.danger{background:transparent;color:var(--red);border:1px solid var(--red)}
-.sm{width:auto;padding:5px 9px;font-size:.75rem}
-input,select{
-width:100%;background:var(--input);color:var(--txt);
-border:1px solid var(--bor);border-radius:6px;padding:8px;
-margin-bottom:7px;font-size:.88rem
+.out{
+background:transparent;
+color:var(--txt);
+border:1px solid var(--bor);
 }
-label{font-size:.73rem;color:var(--sub)}
-.days{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.danger{
+background:transparent;
+color:var(--red);
+border:1px solid var(--red);
+}
+.sm{
+width:auto;
+padding:5px 9px;
+font-size:.75rem;
+}
+.blue{
+background:transparent;
+color:var(--blue);
+border:1px solid var(--blue);
+}
+.days{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:7px;
+}
 .group{
-color:var(--sub);font-size:.73rem;text-transform:uppercase;
-margin:12px 0 6px
+color:var(--sub);
+font-size:.73rem;
+text-transform:uppercase;
+margin:12px 0 6px;
 }
 .ex{
-background:var(--item);padding:9px;border-radius:8px;margin-bottom:8px
+background:var(--item);
+padding:9px;
+border-radius:8px;
+margin-bottom:8px;
 }
 .exhead{
-display:flex;justify-content:space-between;align-items:center;
-font-weight:bold;margin-bottom:6px
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-weight:bold;
+margin-bottom:6px;
 }
 .badge{
-background:var(--gold);color:#000;border-radius:4px;
-padding:2px 5px;font-size:.62rem
+background:var(--gold);
+color:#000;
+border-radius:4px;
+padding:2px 5px;
+font-size:.62rem;
 }
 .last,.suggest,.history{
-font-size:.7rem;padding:5px;border-radius:5px;margin-bottom:5px
+font-size:.7rem;
+padding:5px;
+border-radius:5px;
+margin-bottom:5px;
 }
 .last{
-color:var(--a);background:#07351f;border:1px solid #176b43
+color:var(--a);
+background:#07351f;
+border:1px solid #176b43;
 }
 .suggest{
-color:var(--blue);background:#062d3c;border:1px solid #17607c;
-cursor:pointer
+color:var(--blue);
+background:#062d3c;
+border:1px solid #17607c;
+cursor:pointer;
 }
-table{width:100%;border-collapse:collapse}
-th{color:var(--sub);font-size:.63rem;font-weight:normal}
-td{text-align:center;padding:1px}
-td input{margin:0;text-align:center;padding:6px 1px}
-.rm,.vol{font-size:.7rem;margin-top:5px}
+table{
+width:100%;
+border-collapse:collapse;
+}
+th{
+color:var(--sub);
+font-size:.63rem;
+font-weight:normal;
+}
+td{
+text-align:center;
+padding:1px;
+}
+td input{
+margin:0;
+text-align:center;
+padding:6px 1px;
+}
+input,select{
+width:100%;
+background:var(--input);
+color:var(--txt);
+border:1px solid var(--bor);
+border-radius:6px;
+padding:8px;
+margin-bottom:7px;
+font-size:.88rem;
+}
+label{
+font-size:.73rem;
+color:var(--sub);
+}
+.rm,.vol{
+font-size:.7rem;
+margin-top:5px;
+}
 .rm{color:var(--gold)}
 .vol{color:var(--a)}
-.row{display:flex;gap:5px;margin-top:6px}
+
+.row{
+display:flex;
+gap:5px;
+margin-top:6px;
+}
 .finish{
-background:#333;color:#fff;border:1px solid var(--bor);
-padding:6px 9px;border-radius:6px;font-size:.68rem
+background:#333;
+color:#fff;
+border:1px solid var(--bor);
+padding:6px 9px;
+border-radius:6px;
+font-size:.68rem;
 }
 .restbtn{
-width:100%;margin-top:7px;background:#333;color:#fff;
-border:1px solid var(--bor);padding:8px;border-radius:6px;font-size:.72rem
+width:100%;
+margin-top:7px;
+background:#333;
+color:#fff;
+border:1px solid var(--bor);
+padding:8px;
+border-radius:6px;
+font-size:.72rem;
 }
 .save-ex{
-width:100%;margin-top:7px;background:#064d2d;color:#fff;
-border:1px solid #176b43;padding:8px;border-radius:6px;
-font-size:.72rem;font-weight:bold
+width:100%;
+margin-top:7px;
+background:#064d2d;
+color:#fff;
+border:1px solid #176b43;
+padding:8px;
+border-radius:6px;
+font-size:.72rem;
+font-weight:bold;
 }
-.save-ex.saved{background:#00a854;color:#000}
+.save-ex.saved{
+background:#00a854;
+color:#000;
+}
+
 .calendar{
-display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:3px;
+text-align:center;
 }
 .cal{
-padding:7px 2px;background:var(--item);border-radius:5px;font-size:.75rem
+padding:7px 2px;
+background:var(--item);
+border-radius:5px;
+font-size:.75rem;
 }
-.cal.on{background:var(--a);color:#000;font-weight:bold}
-.cal.empty{background:none}
+.cal.on{
+background:var(--a);
+color:#000;
+font-weight:bold;
+}
+.cal.empty{
+background:none;
+}
+
 .statgrid{
-display:grid;grid-template-columns:repeat(2,1fr);gap:6px
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:6px;
 }
 .stat{
-background:var(--item);padding:8px;border-radius:7px;text-align:center
+background:var(--item);
+padding:8px;
+border-radius:7px;
+text-align:center;
 }
-.stat b{display:block;color:var(--a);font-size:1rem}
-.stat span{font-size:.66rem;color:var(--sub)}
-.report{border-bottom:1px solid var(--bor);padding:8px 0;font-size:.76rem}
-.empty{text-align:center;color:var(--sub);padding:15px;font-size:.8rem}
+.stat b{
+display:block;
+color:var(--a);
+font-size:1rem;
+}
+.stat span{
+font-size:.66rem;
+color:var(--sub);
+}
+.report{
+border-bottom:1px solid var(--bor);
+padding:8px 0;
+font-size:.76rem;
+}
+.empty{
+text-align:center;
+color:var(--sub);
+padding:15px;
+font-size:.8rem;
+}
+
 .imgbox{
-display:none;text-align:center;margin:6px 0;padding:6px;
-background:#191919;border:1px solid var(--bor);border-radius:7px
+display:none;
+text-align:center;
+margin:6px 0;
+padding:6px;
+background:#191919;
+border:1px solid var(--bor);
+border-radius:7px;
 }
-.imgbox img{max-width:100%;max-height:320px;border-radius:6px}
+.imgbox img{
+max-width:100%;
+max-height:320px;
+border-radius:6px;
+}
 .imgbtn{
-background:#333;color:#fff;border:1px solid var(--bor);
-padding:5px 9px;border-radius:6px;font-size:.68rem
+background:#333;
+color:#fff;
+border:1px solid var(--bor);
+padding:5px 9px;
+border-radius:6px;
+font-size:.68rem;
 }
 .loaded{
-color:var(--blue);background:#062d3c;border:1px solid #17607c;
-border-radius:6px;padding:6px;margin-bottom:8px;font-size:.7rem
+color:var(--blue);
+background:#062d3c;
+border:1px solid #17607c;
+border-radius:6px;
+padding:6px;
+margin-bottom:8px;
+font-size:.7rem;
 }
+
 .summary{
-background:#07351f;border:1px solid #176b43;border-radius:9px;
-padding:12px;margin-top:10px
+background:#07351f;
+border:1px solid #176b43;
+border-radius:9px;
+padding:12px;
+margin-top:10px;
 }
 .summary h3{
-color:var(--a);font-size:1rem;margin-bottom:8px;text-align:center
+color:var(--a);
+font-size:1rem;
+margin-bottom:8px;
+text-align:center;
 }
-.summary div{font-size:.78rem;padding:3px 0}
+.summary div{
+font-size:.78rem;
+padding:3px 0;
+}
 .summary .big{
-text-align:center;font-size:1.1rem;font-weight:bold;
-color:var(--a);margin:6px 0
+text-align:center;
+font-size:1.1rem;
+font-weight:bold;
+color:var(--a);
+margin:6px 0;
 }
+
 .muscleReport{
-background:var(--item);border:1px solid var(--bor);
-border-radius:8px;padding:9px;margin:7px 0
+background:var(--item);
+border:1px solid var(--bor);
+border-radius:8px;
+padding:9px;
+margin:7px 0;
 }
-.muscleReport h3{color:var(--a);font-size:.9rem;margin-bottom:6px}
+.muscleReport h3{
+color:var(--a);
+font-size:.9rem;
+margin-bottom:6px;
+}
 .muscleStats{
-display:grid;grid-template-columns:repeat(3,1fr);gap:5px
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:5px;
 }
 .muscleStat{
-text-align:center;background:#191919;border-radius:6px;padding:6px
+text-align:center;
+background:#191919;
+border-radius:6px;
+padding:6px;
 }
-.muscleStat b{display:block;color:var(--a);font-size:.85rem}
-.muscleStat span{font-size:.6rem;color:var(--sub)}
+.muscleStat b{
+display:block;
+color:var(--a);
+font-size:.85rem;
+}
+.muscleStat span{
+font-size:.6rem;
+color:var(--sub);
+}
+
 .timerOverlay{
-display:none;position:fixed;inset:0;z-index:100;
-background:rgba(0,0,0,.78);align-items:center;
-justify-content:center;padding:20px
+display:none;
+position:fixed;
+inset:0;
+z-index:100;
+background:rgba(0,0,0,.78);
+align-items:center;
+justify-content:center;
+padding:20px;
 }
 .timerBox{
-width:100%;max-width:330px;background:var(--card);
-border:1px solid var(--bor);border-radius:15px;padding:22px;
-text-align:center;box-shadow:0 10px 40px #000
+width:100%;
+max-width:330px;
+background:var(--card);
+border:1px solid var(--bor);
+border-radius:15px;
+padding:22px;
+text-align:center;
+box-shadow:0 10px 40px #000;
 }
-.timerTitle{color:var(--a);font-size:1rem;margin-bottom:12px}
+.timerTitle{
+color:var(--a);
+font-size:1rem;
+margin-bottom:12px;
+}
 .timerDisplay{
-font-size:4rem;font-weight:bold;letter-spacing:2px;
-margin:12px 0;color:#fff
+font-size:4rem;
+font-weight:bold;
+letter-spacing:2px;
+margin:12px 0;
+color:#fff;
 }
 .timerDisplay.warning{color:var(--gold)}
-.timerDisplay.last{color:var(--red);background:none;border:0;padding:0}
-.timerClose{
-background:#333;color:#fff;border:1px solid var(--bor);
-border-radius:7px;padding:9px 15px;font-size:.75rem
+.timerDisplay.last{
+color:var(--red);
+background:none;
+border:0;
+padding:0;
 }
+.timerClose{
+background:#333;
+color:#fff;
+border:1px solid var(--bor);
+border-radius:7px;
+padding:9px 15px;
+font-size:.75rem;
+}
+
 .backupBox{
-background:#062d3c;border:1px solid #17607c;border-radius:8px;
-padding:9px;margin-top:10px;font-size:.72rem
+background:#062d3c;
+border:1px solid #17607c;
+border-radius:8px;
+padding:10px;
+margin-top:10px;
+font-size:.72rem;
+line-height:1.4;
 }
 .backupOk{
-color:var(--a)
+color:var(--a);
 }
 .backupWarn{
-color:var(--gold)
+color:var(--gold);
 }
-.editorEx{
-background:var(--item);padding:9px;border-radius:8px;margin-bottom:8px
+
+.editorTitle{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:5px;
 }
-.editorButtons{
-display:flex;gap:5px;flex-wrap:wrap
-}
-.editorButtons button{flex:1}
+
 @media(max-width:380px){
-td input{font-size:.7rem;padding:5px 1px}
-.muscleStats{grid-template-columns:1fr 1fr}
+td input{
+font-size:.7rem;
+padding:5px 1px;
 }
+.muscleStats{
+grid-template-columns:1fr 1fr;
+}
+}
+
 @media print{
-nav,header,button,input,select,.timerOverlay,canvas{display:none!important}
-body{background:#fff;color:#000}
-.card{border:0;background:#fff}
-.report{color:#000}
+nav,header,button,input,select,.timerOverlay,canvas{
+display:none!important;
+}
+body{
+background:#fff;
+color:#000;
+}
+.card{
+border:0;
+background:#fff;
+}
+.report{
+color:#000;
+}
 }
 </style>
 </head>
@@ -215,23 +498,28 @@ body{background:#fff;color:#000}
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO 5.0</h1>
+<h1>MI GIMNASIO PRO v5.0</h1>
 </header>
 
 <div class="container">
 
-<!-- ================= ENTRENAR ================= -->
+<!-- =========================
+     ENTRENAR
+========================= -->
 
 <section id="tab-entrenar" class="tab active">
 
 <div class="card">
+
 <h2>Selecciona el día</h2>
 
 <div class="days">
+
 <button class="btn out" onclick="selectDay(1)">Día 1</button>
 <button class="btn out" onclick="selectDay(2)">Día 2</button>
 <button class="btn out" onclick="selectDay(3)">Día 3</button>
 <button class="btn out" onclick="selectDay(4)">Día 4</button>
+
 </div>
 </div>
 
@@ -256,10 +544,13 @@ body{background:#fff;color:#000}
 
 </div>
 </div>
+
 </section>
 
 
-<!-- ================= RUTINA ================= -->
+<!-- =========================
+     RUTINA
+========================= -->
 
 <section id="tab-rutina" class="tab">
 
@@ -279,7 +570,7 @@ body{background:#fff;color:#000}
 <div id="editor"></div>
 
 <button class="btn" onclick="saveConfig()">
-Guardar configuración
+💾 Guardar configuración
 </button>
 
 </div>
@@ -287,22 +578,24 @@ Guardar configuración
 
 <div class="card">
 
-<h2>💾 Copias de seguridad</h2>
+<h2>💾 Seguridad de datos</h2>
 
-<div style="font-size:.72rem;color:var(--sub);margin-bottom:10px">
-La copia contiene rutina, ejercicios, imágenes y entrenamientos.
-Guárdala fuera del navegador.
+<div style="font-size:.72rem;color:var(--sub);line-height:1.5;margin-bottom:10px">
+
+La rutina y los entrenamientos se guardan en el navegador.
+Para que una limpieza de datos del navegador no suponga
+perder el trabajo, utiliza regularmente la copia JSON.
+
 </div>
 
 <button class="btn out" onclick="exportData()">
-📦 Exportar copia completa
+📦 Crear copia de seguridad
 </button>
 
 <br><br>
 
-<button class="btn out"
-onclick="document.getElementById('file').click()">
-📥 Restaurar copia
+<button class="btn out" onclick="document.getElementById('file').click()">
+📥 Recuperar copia de seguridad
 </button>
 
 <input
@@ -313,14 +606,20 @@ style="display:none"
 onchange="importData(event)"
 >
 
-<div id="backupStatus" class="backupBox"></div>
+<div id="backupStatus" class="backupBox">
+<span class="backupWarn">
+⚠️ Todavía no se ha comprobado una copia externa.
+</span>
+</div>
 
 </div>
 
 </section>
 
 
-<!-- ================= CALENDARIO ================= -->
+<!-- =========================
+     CALENDARIO
+========================= -->
 
 <section id="tab-calendario" class="tab">
 
@@ -345,7 +644,9 @@ onchange="importData(event)"
 </section>
 
 
-<!-- ================= INFORMES ================= -->
+<!-- =========================
+     INFORMES
+========================= -->
 
 <section id="tab-informes" class="tab">
 
@@ -360,7 +661,7 @@ onchange="importData(event)"
 
 <div class="card">
 
-<h2>📋 Historial por grupos musculares</h2>
+<h2>📋 Historial por grupos</h2>
 
 <div style="display:flex;gap:5px;flex-wrap:wrap">
 
@@ -389,9 +690,14 @@ Selecciona un periodo.
 </div>
 
 
+<!-- =========================
+     NAVEGACIÓN
+========================= -->
+
 <nav>
 
-<button id="n-entrenar" class="active"
+<button id="n-entrenar"
+class="active"
 onclick="tab('entrenar')">
 🏋️<span>Entrenar</span>
 </button>
@@ -414,13 +720,17 @@ onclick="tab('informes')">
 </nav>
 
 
-<!-- ================= CRONOMETRO ================= -->
+<!-- =========================
+     CRONÓMETRO
+========================= -->
 
 <div id="timerOverlay" class="timerOverlay">
 
 <div class="timerBox">
 
-<div class="timerTitle">⏱️ DESCANSO</div>
+<div class="timerTitle">
+⏱️ DESCANSO
+</div>
 
 <div id="timerDisplay" class="timerDisplay">
 02:00
@@ -437,25 +747,207 @@ Cerrar
 <script>
 "use strict";
 
-/* =========================================================
-   MI GIMNASIO PRO 5.0
-   GESTIÓN SEGURA DE DATOS
-========================================================= */
+/* =====================================================
+   MI GIMNASIO PRO v5.0
+   ===================================================== */
 
 const K='gym_';
-const DATA_VERSION=5.0;
 
-const EMPTY_ROUTINE={
-g1:'Grupo 1',
-e1:[],
-img1:[],
-g2:'Grupo 2',
-e2:[],
-img2:[]
+/* =====================================================
+   RUTINA INICIAL
+   ===================================================== */
+
+const DEFAULT_ROUTINE={
+
+1:{
+g1:'PECHO',
+e1:[
+'Press de banca plano',
+'Press inclinado con mancuernas',
+'Aperturas con mancuernas',
+'Cruce de poleas a la altura del pecho',
+'Cruce de poleas de arriba hacia abajo'
+],
+img1:['','','','',''],
+
+g2:'TRICEPS',
+e2:[
+'Extensión en polea alta con barra',
+'Extensión en polea con cuerda',
+'Extensión a una mano en polea',
+'Press francés con mancuernas',
+'Press francés con barra Scott'
+],
+img2:['','','','','']
+},
+
+2:{
+g1:'ESPALDA',
+e1:[
+'Jalón al pecho con polea',
+'Remo con barra',
+'Remo con mancuerna a una mano',
+'Peso muerto',
+'Remo unilateral con polea'
+],
+img1:['','','','',''],
+
+g2:'BICEPS',
+e2:[
+'Curl con barra',
+'Curl martillo',
+'Curl alterno con mancuernas en rotación',
+'Curl predicador en banco Scott',
+'Curl en plano inclinado con mancuernas'
+],
+img2:['','','','','']
+},
+
+3:{
+g1:'PIERNAS',
+e1:[
+'Ejercicio 1',
+'Ejercicio 2',
+'Ejercicio 3',
+'Ejercicio 4',
+'Ejercicio 5'
+],
+img1:['','','','',''],
+
+g2:'PIERNAS',
+e2:[
+'Ejercicio 6',
+'Ejercicio 7',
+'Ejercicio 8',
+'Ejercicio 9',
+'Ejercicio 10'
+],
+img2:['','','','','']
+},
+
+4:{
+g1:'HOMBROS',
+e1:[
+'Ejercicio 1',
+'Ejercicio 2',
+'Ejercicio 3',
+'Ejercicio 4',
+'Ejercicio 5'
+],
+img1:['','','','',''],
+
+g2:'ABDOMINALES',
+e2:[
+'Ejercicio 6',
+'Ejercicio 7',
+'Ejercicio 8',
+'Ejercicio 9',
+'Ejercicio 10'
+],
+img2:['','','','','']
+}
+
 };
 
-let routine=loadRoutineSafe();
-let logs=loadLogsSafe();
+
+/* =====================================================
+   CARGA SEGURA
+   ===================================================== */
+
+function safeParse(value,fallback){
+
+try{
+
+if(!value)return fallback;
+
+let x=JSON.parse(value);
+
+return x??fallback;
+
+}catch(e){
+
+return fallback;
+
+}
+
+}
+
+
+let routine=safeParse(
+localStorage.getItem(K+'routine'),
+structuredCloneSafe(DEFAULT_ROUTINE)
+);
+
+
+let logs=safeParse(
+localStorage.getItem(K+'logs'),
+[]
+);
+
+
+if(!routine || typeof routine!=='object')
+routine=structuredCloneSafe(DEFAULT_ROUTINE);
+
+
+if(!Array.isArray(logs))
+logs=[];
+
+
+/* =====================================================
+   COPIA PROFUNDA
+   ===================================================== */
+
+function structuredCloneSafe(obj){
+
+return JSON.parse(JSON.stringify(obj));
+
+}
+
+
+/* =====================================================
+   NORMALIZACIÓN DE RUTINA
+   ===================================================== */
+
+function normalizeRoutine(){
+
+for(let d=1;d<=4;d++){
+
+if(!routine[d])
+routine[d]=structuredCloneSafe(DEFAULT_ROUTINE[d]);
+
+let x=routine[d];
+
+x.g1=String(x.g1||'Grupo 1');
+x.g2=String(x.g2||'Grupo 2');
+
+if(!Array.isArray(x.e1))
+x.e1=[];
+
+if(!Array.isArray(x.e2))
+x.e2=[];
+
+if(!Array.isArray(x.img1))
+x.img1=[];
+
+if(!Array.isArray(x.img2))
+x.img2=[];
+
+while(x.img1.length<x.e1.length)
+x.img1.push('');
+
+while(x.img2.length<x.e2.length)
+x.img2.push('');
+
+}
+
+}
+
+normalizeRoutine();
+
+
+/* =====================================================
+   VARIABLES
+   ===================================================== */
 
 let day=null;
 let monthDate=new Date();
@@ -463,12 +955,11 @@ let timerInterval=null;
 let timerSeconds=0;
 
 
-/* =========================================================
-   UTILIDADES
-========================================================= */
+/* =====================================================
+   ESCAPAR HTML
+   ===================================================== */
 
-function esc(s){
-return String(s??'').replace(
+const esc=s=>String(s??'').replace(
 /[&<>"']/g,
 m=>({
 '&':'&amp;',
@@ -478,134 +969,18 @@ m=>({
 "'":'&#39;'
 }[m])
 );
-}
 
 
-function num(v){
-return parseFloat(v)||0;
-}
+const num=v=>parseFloat(v)||0;
 
 
-function deepCopy(x){
-return JSON.parse(JSON.stringify(x));
-}
-
-
-/* =========================================================
-   RUTINA SEGURA
-========================================================= */
-
-function validDayRoutine(x){
-
-return !!(
-x &&
-typeof x==='object' &&
-typeof x.g1==='string' &&
-typeof x.g2==='string' &&
-Array.isArray(x.e1) &&
-Array.isArray(x.e2)
-);
-
-}
-
-
-function normalizeDayRoutine(x){
-
-if(!validDayRoutine(x))return null;
-
-let r=deepCopy(x);
-
-if(!Array.isArray(r.img1))r.img1=[];
-if(!Array.isArray(r.img2))r.img2=[];
-
-while(r.img1.length<r.e1.length)r.img1.push('');
-while(r.img2.length<r.e2.length)r.img2.push('');
-
-r.img1=r.img1.slice(0,r.e1.length);
-r.img2=r.img2.slice(0,r.e2.length);
-
-return r;
-
-}
-
-
-function loadRoutineSafe(){
-
-let raw=localStorage.getItem(K+'routine');
-
-if(!raw){
-
-return {
-1:deepCopy(EMPTY_ROUTINE),
-2:deepCopy(EMPTY_ROUTINE),
-3:deepCopy(EMPTY_ROUTINE),
-4:deepCopy(EMPTY_ROUTINE)
-};
-
-}
-
-try{
-
-let r=JSON.parse(raw);
-
-if(!r||typeof r!=='object')throw new Error();
-
-let result={};
-
-for(let i=1;i<=4;i++){
-
-let x=normalizeDayRoutine(r[i]);
-
-result[i]=x||deepCopy(EMPTY_ROUTINE);
-
-}
-
-return result;
-
-}catch(e){
-
-return {
-1:deepCopy(EMPTY_ROUTINE),
-2:deepCopy(EMPTY_ROUTINE),
-3:deepCopy(EMPTY_ROUTINE),
-4:deepCopy(EMPTY_ROUTINE)
-};
-
-}
-
-}
-
-
-/* =========================================================
-   LOGS SEGUROS
-========================================================= */
-
-function loadLogsSafe(){
-
-let raw=localStorage.getItem(K+'logs');
-
-if(!raw)return[];
-
-try{
-
-let x=JSON.parse(raw);
-
-return Array.isArray(x)?x:[];
-
-}catch(e){
-
-return[];
-
-}
-
-}
-
-
-/* =========================================================
-   GUARDADO
-========================================================= */
+/* =====================================================
+   GUARDAR
+   ===================================================== */
 
 function save(){
+
+try{
 
 localStorage.setItem(
 K+'routine',
@@ -617,71 +992,32 @@ K+'logs',
 JSON.stringify(logs)
 );
 
-updateBackupStatus();
+}catch(e){
+
+console.error('Error guardando datos',e);
+
+}
 
 }
 
 
-/* =========================================================
-   BACKUP AUTOMÁTICO INTERNO
-   Sirve como protección ante errores de código.
-   NO sustituye al archivo externo.
-========================================================= */
+/* =====================================================
+   VOLUMEN
+   ===================================================== */
 
-function createInternalBackup(){
+function volume(s){
 
-try{
-
-let backup={
-version:DATA_VERSION,
-created:new Date().toISOString(),
-routine:deepCopy(routine),
-logs:deepCopy(logs)
-};
-
-localStorage.setItem(
-K+'safety_backup',
-JSON.stringify(backup)
-);
-
-}catch(e){}
-
-}
-
-
-function updateBackupStatus(){
-
-let el=document.getElementById('backupStatus');
-
-if(!el)return;
-
-let count=uniqueSessions(logs).length;
-
-el.innerHTML=
-`<span class="backupOk">🛡️ Datos protegidos en esta instalación.</span>
-<br>
-Sesiones almacenadas: <b>${count}</b>
-<br>
-<span style="color:var(--sub)">
-Recomendación: exporta una copia después de cambios importantes.
-</span>`;
-
-}
-
-
-/* =========================================================
-   VOLUMEN / RM
-========================================================= */
-
-function volume(sets){
-
-return(sets||[]).reduce(
+return(s||[]).reduce(
 (a,x)=>a+num(x.weight)*num(x.reps),
 0
 );
 
 }
 
+
+/* =====================================================
+   1RM
+   ===================================================== */
 
 function rm(w,r){
 
@@ -698,25 +1034,29 @@ return Math.round(
 Math.max(
 0,
 ...(s||[]).map(
-x=>rm(num(x.weight),num(x.reps))
+x=>rm(
+num(x.weight),
+num(x.reps)
 )
-)*10
+)
+)
+*10
 )/10;
 
 }
 
 
-/* =========================================================
+/* =====================================================
    FECHAS
-========================================================= */
+   ===================================================== */
 
 function dateKey(value){
 
-if(!value)return'';
+if(!value)return '';
 
 let d=new Date(value);
 
-if(isNaN(d.getTime()))return'';
+if(isNaN(d.getTime()))return '';
 
 return d.getFullYear()+'-'+
 String(d.getMonth()+1).padStart(2,'0')+'-'+
@@ -724,6 +1064,33 @@ String(d.getDate()).padStart(2,'0');
 
 }
 
+
+/* =====================================================
+   SESIONES ÚNICAS
+   ===================================================== */
+
+function uniqueSessions(source){
+
+let map=new Map();
+
+(source||[]).forEach(l=>{
+
+let key=
+Number(l.day)+'|'+dateKey(l.date);
+
+if(!map.has(key))
+map.set(key,l);
+
+});
+
+return [...map.values()];
+
+}
+
+
+/* =====================================================
+   BUSCAR SESIÓN
+   ===================================================== */
 
 function findSession(d,date){
 
@@ -737,31 +1104,9 @@ dateKey(l.date)===key
 }
 
 
-function uniqueSessions(source){
-
-let map=new Map();
-
-(source||[]).forEach(l=>{
-
-if(!l)return;
-
-let key=
-Number(l.day)+'|'+dateKey(l.date);
-
-if(!map.has(key)){
-map.set(key,l);
-}
-
-});
-
-return[...map.values()];
-
-}
-
-
-/* =========================================================
+/* =====================================================
    PESTAÑAS
-========================================================= */
+   ===================================================== */
 
 function tab(x){
 
@@ -779,25 +1124,21 @@ let n=document.getElementById('n-'+x);
 
 if(n)n.classList.add('active');
 
-if(x==='rutina'){
+if(x==='rutina')
 loadConfig();
-updateBackupStatus();
-}
 
-if(x==='calendario'){
+if(x==='calendario')
 renderCalendar();
-}
 
-if(x==='informes'){
+if(x==='informes')
 stats();
-}
 
 }
 
 
-/* =========================================================
+/* =====================================================
    HISTORIAL DE EJERCICIO
-========================================================= */
+   ===================================================== */
 
 function history(ex){
 
@@ -824,160 +1165,16 @@ sets:e.sets||[]
 
 );
 
-return a.sort((a,b)=>a.date-b.date);
-
-}
-
-
-function max(ex){
-
-let m=0;
-
-history(ex).forEach(x=>
-
-(x.sets||[]).forEach(s=>
-
-m=Math.max(m,num(s.weight))
-
-)
-
+return a.sort(
+(a,b)=>a.date-b.date
 );
 
-return m;
-
 }
 
 
-/* =========================================================
-   CRONOMETRO
-========================================================= */
-
-function startTimer(){
-
-closeTimer();
-
-timerSeconds=120;
-
-document.getElementById(
-'timerOverlay'
-).style.display='flex';
-
-updateTimerDisplay();
-
-timerInterval=setInterval(()=>{
-
-timerSeconds--;
-
-updateTimerDisplay();
-
-if(timerSeconds<=0){
-
-clearInterval(timerInterval);
-timerInterval=null;
-
-beep();
-
-setTimeout(closeTimer,700);
-
-}
-
-},1000);
-
-}
-
-
-function updateTimerDisplay(){
-
-let el=document.getElementById('timerDisplay');
-
-if(!el)return;
-
-let min=Math.floor(timerSeconds/60);
-let sec=timerSeconds%60;
-
-el.textContent=
-String(min).padStart(2,'0')+':'+
-String(sec).padStart(2,'0');
-
-el.classList.remove('warning','last');
-
-if(timerSeconds<=10&&timerSeconds>3)
-el.classList.add('warning');
-
-if(timerSeconds<=3)
-el.classList.add('last');
-
-if(timerSeconds<=3&&timerSeconds>0)
-beep();
-
-}
-
-
-function closeTimer(){
-
-if(timerInterval){
-
-clearInterval(timerInterval);
-timerInterval=null;
-
-}
-
-let o=document.getElementById('timerOverlay');
-
-if(o)o.style.display='none';
-
-}
-
-
-function beep(){
-
-try{
-
-let c=new(
-window.AudioContext||
-window.webkitAudioContext
-)();
-
-let o=c.createOscillator();
-let g=c.createGain();
-
-o.connect(g);
-g.connect(c.destination);
-
-o.frequency.value=900;
-g.gain.value=.7;
-
-o.start();
-o.stop(c.currentTime+.18);
-
-}catch(e){}
-
-}
-
-
-/* =========================================================
-   IMAGEN
-========================================================= */
-
-function toggleImage(id){
-
-let e=document.getElementById(id);
-
-if(e){
-
-e.style.display=
-e.style.display==='block'
-?'none'
-:'block';
-
-}
-
-}
-
-
-/* =========================================================
-   ENTRENAMIENTO ANTERIOR
-========================================================= */
+/* =====================================================
+   ÚLTIMO ENTRENAMIENTO
+   ===================================================== */
 
 function previousDayLog(d){
 
@@ -1002,73 +1199,108 @@ if(!log)return null;
 
 for(let g of(log.groups||[]))
 for(let e of(g.exercises||[]))
-if(e.name===name)return e;
+if(e.name===name)
+return e;
 
 return null;
 
 }
 
 
-/* =========================================================
+/* =====================================================
    SELECCIONAR DÍA
-========================================================= */
+   ===================================================== */
 
 function selectDay(d){
 
 day=d;
 
 let work=document.getElementById('work');
+let title=document.getElementById('daytitle');
+let date=document.getElementById('date');
+let summary=document.getElementById('summary');
+let loadedmsg=document.getElementById('loadedmsg');
+let form=document.getElementById('form');
 
 work.style.display='block';
 
-document.getElementById('daytitle').innerText=
+title.innerText=
 'Entrenamiento - Día '+d;
 
-document.getElementById('date').value=
+date.value=
 new Date().toISOString().slice(0,10);
 
-document.getElementById('summary').innerHTML='';
+summary.innerHTML='';
 
 let previous=previousDayLog(d);
 
-document.getElementById('loadedmsg').innerHTML=
+loadedmsg.innerHTML=
 previous
 ?
-'<div class="loaded">📋 Último entrenamiento disponible. Las celdas empiezan vacías para registrar el nuevo entrenamiento.</div>'
+'<div class="loaded">📋 Último entrenamiento disponible. Las nuevas celdas empiezan vacías.</div>'
 :'';
 
-let x=routine[d];
+
+renderWorkout(previous);
+
+}
+
+
+/* =====================================================
+   RENDER ENTRENAMIENTO
+   ===================================================== */
+
+function renderWorkout(previous){
+
+let x=routine[day];
 let html='';
 
 [
-['g1','e1'],
-['g2','e2']
+['g1','e1','img1'],
+['g2','e2','img2']
 ].forEach(a=>{
 
-html+=`<div class="group">${esc(x[a[0]])}</div>`;
+html+=
+`<div class="group">${esc(x[a[0]])}</div>`;
 
 (x[a[1]]||[]).forEach((ex,i)=>{
 
-let old=getPreviousExercise(previous,ex);
+let old=
+getPreviousExercise(
+previous,
+ex
+);
 
 let previousSets=
-old?(old.sets||[]).slice(0,3):[];
+old
+?(old.sets||[]).slice(0,3)
+:[];
 
-while(previousSets.length<3)
-previousSets.push({reps:'',weight:''});
+while(previousSets.length<3){
+
+previousSets.push({
+reps:'',
+weight:''
+});
+
+}
 
 let lw=Math.max(
-0,
-...previousSets.map(s=>num(s.weight))
+...previousSets.map(
+s=>num(s.weight)
+)
 );
 
 let suggestion=
-lw?Math.round(lw*1.025*10)/10:0;
+lw
+?Math.round(lw*1.025*10)/10
+:0;
 
 let img=
-(x[a[0]==='g1'?'img1':'img2']||[])[i]||'';
+(x[a[2]]||[])[i]||'';
 
-let iid=`img-${a[0]}-${i}`;
+let iid=
+`img-${a[0]}-${i}`;
 
 html+=`
 
@@ -1078,47 +1310,61 @@ html+=`
 
 <span>${esc(ex)}</span>
 
-<span id="pr-${a[0]}-${i}"
+<span
+id="pr-${a[0]}-${i}"
 class="badge"
-style="display:none">🏆 PR</span>
+style="display:none">
+🏆 PR
+</span>
 
 </div>
 
+
 ${img?`
 
-<button class="imgbtn"
+<button
+class="imgbtn"
 onclick="toggleImage('${iid}')">
 🖼️ Ver imagen
 </button>
 
-<div id="${iid}" class="imgbox">
+<div
+id="${iid}"
+class="imgbox">
 
-<img src="${esc(img)}"
+<img
+src="${esc(img)}"
 alt="${esc(ex)}"
 onerror="
 this.style.display='none';
-this.nextElementSibling.style.display='block'
+this.nextElementSibling.style.display='block';
 ">
 
-<div style="display:none;color:var(--red);font-size:.7rem;padding:5px">
+<div
+style="display:none;color:var(--red);font-size:.7rem;padding:5px">
 ⚠️ No se puede cargar la imagen.
 </div>
 
 <br>
 
-<button class="imgbtn"
+<button
+class="imgbtn"
 onclick="toggleImage('${iid}')">
 ✕ Cerrar imagen
 </button>
 
 </div>
+
 `:''}
+
 
 ${old?`
 
 <div class="last">
 
-Último ${new Date(previous.date).toLocaleDateString('es-ES')}:
+Último
+${new Date(previous.date)
+.toLocaleDateString('es-ES')}:
 
 ${previousSets.map(
 (s,j)=>
@@ -1126,18 +1372,25 @@ ${previousSets.map(
 ).join(' · ')}
 
 </div>
+
 `
 :
 '<div class="last">Sin registro previo</div>'
 }
 
+
 ${suggestion?`
 
-<div class="suggest"
+<div
+class="suggest"
 onclick="suggest('${a[0]}',${i},${suggestion})">
+
 💡 Propuesta: ${suggestion} kg (+2,5%)
+
 </div>
+
 `:''}
+
 
 <table>
 
@@ -1162,27 +1415,32 @@ html+=`
 <td>${j+1}</td>
 
 <td>
-<input type="number"
+<input
+type="number"
 min="0"
 id="${a[0]}-${i}-r${j}"
 value=""
 onfocus="selectCell(this)"
-oninput="calc('${a[0]}',${i})">
+oninput="calc('${a[0]}',${i});pr('${a[0]}',${i},'${esc(ex)}')"
+>
 </td>
 
 <td>
-<input type="number"
+<input
+type="number"
 min="0"
 step=".5"
 id="${a[0]}-${i}-w${j}"
 value=""
 onfocus="selectCell(this)"
-oninput="calc('${a[0]}',${i});pr('${a[0]}',${i},'${esc(ex)}')">
+oninput="calc('${a[0]}',${i});pr('${a[0]}',${i},'${esc(ex)}')"
+>
 </td>
 
 <td></td>
 
 </tr>
+
 `;
 
 }
@@ -1192,22 +1450,26 @@ html+=`
 </tbody>
 </table>
 
-<div class="rm"
+<div
+class="rm"
 id="rm-${a[0]}-${i}">
 🔥 1RM estimado: --
 </div>
 
-<div class="vol"
+<div
+class="vol"
 id="vol-${a[0]}-${i}">
 📦 Volumen: 0 kg
 </div>
 
-<button class="restbtn"
+<button
+class="restbtn"
 onclick="startTimer()">
 ⏱️ Descanso 2:00
 </button>
 
-<button class="save-ex"
+<button
+class="save-ex"
 id="save-${a[0]}-${i}"
 onclick="saveExercise('${a[0]}',${i},'${esc(ex)}')">
 💾 GUARDAR EJERCICIO
@@ -1215,7 +1477,8 @@ onclick="saveExercise('${a[0]}',${i},'${esc(ex)}')">
 
 <div class="row">
 
-<button class="finish"
+<button
+class="finish"
 onclick="showHistory('${esc(ex)}')">
 📜 Historial
 </button>
@@ -1223,6 +1486,7 @@ onclick="showHistory('${esc(ex)}')">
 </div>
 
 </div>
+
 `;
 
 });
@@ -1246,20 +1510,23 @@ pr(a[0],i,e);
 }
 
 
-/* =========================================================
-   SELECCIÓN DE CELDA
-========================================================= */
+/* =====================================================
+   SELECCIONAR CELDA
+   ===================================================== */
 
 function selectCell(el){
 
-setTimeout(()=>el.select(),10);
+setTimeout(
+()=>el.select(),
+10
+);
 
 }
 
 
-/* =========================================================
+/* =====================================================
    CÁLCULOS
-========================================================= */
+   ===================================================== */
 
 function calc(g,i){
 
@@ -1268,8 +1535,13 @@ let vol=0;
 
 for(let j=0;j<3;j++){
 
-let wEl=document.getElementById(`${g}-${i}-w${j}`);
-let rEl=document.getElementById(`${g}-${i}-r${j}`);
+let wEl=document.getElementById(
+`${g}-${i}-w${j}`
+);
+
+let rEl=document.getElementById(
+`${g}-${i}-r${j}`
+);
 
 if(!wEl||!rEl)continue;
 
@@ -1278,43 +1550,65 @@ let r=num(rEl.value);
 
 if(w>0&&r>0){
 
-best=Math.max(best,rm(w,r));
+best=Math.max(
+best,
+rm(w,r)
+);
+
 vol+=w*r;
 
 }
 
 }
 
-let rmEl=document.getElementById(`rm-${g}-${i}`);
-let volEl=document.getElementById(`vol-${g}-${i}`);
+let rmEl=document.getElementById(
+`rm-${g}-${i}`
+);
 
-if(rmEl)
+let volEl=document.getElementById(
+`vol-${g}-${i}`
+);
+
+if(rmEl){
+
 rmEl.innerText=
 `🔥 1RM estimado: ${
-best?Math.round(best*10)/10+' kg':'--'
+best
+?Math.round(best*10)/10+' kg'
+:'--'
 }`;
 
-if(volEl)
+}
+
+if(volEl){
+
 volEl.innerText=
 `📦 Volumen: ${Math.round(vol*10)/10} kg`;
 
 }
 
+}
 
-/* =========================================================
+
+/* =====================================================
    PROPUESTA
-========================================================= */
+   ===================================================== */
 
 function suggest(g,i,w){
 
-let e=document.getElementById(`${g}-${i}-w2`);
+let e=document.getElementById(
+`${g}-${i}-w2`
+);
 
 if(e){
 
 e.value=w;
 
 e.dispatchEvent(
-new Event('input',{bubbles:true})
+new Event(
+'input',
+{bubbles:true}
+)
 );
 
 }
@@ -1322,35 +1616,67 @@ new Event('input',{bubbles:true})
 }
 
 
-/* =========================================================
+/* =====================================================
    PR
-========================================================= */
+   ===================================================== */
+
+function maxWeight(ex){
+
+let m=0;
+
+history(ex).forEach(x=>
+
+(x.sets||[]).forEach(s=>
+
+m=Math.max(
+m,
+num(s.weight)
+)
+
+)
+
+);
+
+return m;
+
+}
+
 
 function pr(g,i,ex){
 
-let old=max(ex);
+let old=maxWeight(ex);
 let v=0;
 
 for(let j=0;j<3;j++){
 
-let e=document.getElementById(`${g}-${i}-w${j}`);
+let e=document.getElementById(
+`${g}-${i}-w${j}`
+);
 
-if(e)v=Math.max(v,num(e.value));
+if(e)
+v=Math.max(v,num(e.value));
 
 }
 
-let b=document.getElementById(`pr-${g}-${i}`);
+let b=document.getElementById(
+`pr-${g}-${i}`
+);
 
-if(b)
+if(b){
+
 b.style.display=
-v>old&&old>0?'inline':'none';
+v>old&&old>0
+?'inline'
+:'none';
+
+}
 
 }
 
 
-/* =========================================================
-   DATOS DEL EJERCICIO
-========================================================= */
+/* =====================================================
+   DATOS EJERCICIO
+   ===================================================== */
 
 function getCurrentExerciseData(g,i,ex){
 
@@ -1358,43 +1684,63 @@ let sets=[];
 
 for(let j=0;j<3;j++){
 
-let rEl=document.getElementById(`${g}-${i}-r${j}`);
-let wEl=document.getElementById(`${g}-${i}-w${j}`);
+let rEl=document.getElementById(
+`${g}-${i}-r${j}`
+);
+
+let wEl=document.getElementById(
+`${g}-${i}-w${j}`
+);
 
 if(!rEl||!wEl)continue;
 
 sets.push({
-reps:rEl.value===''?0:num(rEl.value),
-weight:wEl.value===''?0:num(wEl.value)
+
+reps:
+rEl.value===''?0:num(rEl.value),
+
+weight:
+wEl.value===''?0:num(wEl.value)
+
 });
 
 }
 
+let realSets=sets.filter(
+s=>num(s.reps)>0
+);
+
 return{
+
 name:ex,
+
 sets,
-volume:volume(sets),
-rm:maxSetRM(sets)
+
+realSets,
+
+volume:volume(realSets),
+
+rm:maxSetRM(realSets)
+
 };
 
 }
 
 
-/* =========================================================
+/* =====================================================
    GUARDAR EJERCICIO
-========================================================= */
+   ===================================================== */
 
 function saveExercise(g,i,ex){
 
 if(day===null)return;
 
-let data=getCurrentExerciseData(g,i,ex);
-
-let realSets=data.sets.filter(
-s=>num(s.reps)>0
+let data=
+getCurrentExerciseData(
+g,i,ex
 );
 
-if(!realSets.length){
+if(!data.realSets.length){
 
 alert(
 'No hay repeticiones introducidas en este ejercicio.'
@@ -1404,24 +1750,23 @@ return;
 
 }
 
-let currentDate=document.getElementById('date').value;
+let currentDate=
+document.getElementById('date').value;
 
 if(!currentDate)return;
 
-
-/*
-COPIA DE SEGURIDAD ANTES DE MODIFICAR.
-*/
-
-createInternalBackup();
-
-let log=findSession(day,currentDate);
+let log=findSession(
+day,
+currentDate
+);
 
 if(!log){
 
 log={
 id:Date.now(),
-date:new Date(currentDate+'T12:00:00').toISOString(),
+date:new Date(
+currentDate+'T12:00:00'
+).toISOString(),
 day:Number(day),
 groups:[]
 };
@@ -1432,16 +1777,13 @@ logs.push(log);
 
 let x=routine[day];
 
-let groupName=null;
+let groupName=
+(x.e1||[]).includes(ex)
+?x.g1
+:x.g2;
 
-if((x.e1||[]).includes(ex))
-groupName=x.g1;
-else if((x.e2||[]).includes(ex))
-groupName=x.g2;
-
-if(!groupName)groupName='Grupo';
-
-let group=(log.groups||[]).find(
+let group=
+(log.groups||[]).find(
 g=>g.name===groupName
 );
 
@@ -1452,15 +1794,12 @@ name:groupName,
 exercises:[]
 };
 
-if(!log.groups)log.groups=[];
+if(!log.groups)
+log.groups=[];
 
 log.groups.push(group);
 
 }
-
-let old=(group.exercises||[]).find(
-e=>e.name===ex
-);
 
 let cleanSets=data.sets.map(
 s=>({
@@ -1469,57 +1808,108 @@ weight:num(s.weight)
 })
 );
 
-let exerciseData={
-name:ex,
-sets:cleanSets,
-volume:volume(realSets),
-rm:maxSetRM(realSets)
-};
+let old=
+(group.exercises||[]).find(
+e=>e.name===ex
+);
 
 if(old){
 
-old.sets=exerciseData.sets;
-old.volume=exerciseData.volume;
-old.rm=exerciseData.rm;
+old.sets=cleanSets;
+old.volume=data.volume;
+old.rm=data.rm;
 
 }else{
 
-group.exercises.push(exerciseData);
+group.exercises.push({
+
+name:ex,
+sets:cleanSets,
+volume:data.volume,
+rm:data.rm
+
+});
 
 }
 
+cleanSession(log);
+
 save();
 
-let btn=document.getElementById(`save-${g}-${i}`);
+showSavedButton(
+`save-${g}-${i}`
+);
 
-if(btn){
+}
+
+
+/* =====================================================
+   LIMPIAR SESIÓN
+   ===================================================== */
+
+function cleanSession(log){
+
+(log.groups||[]).forEach(g=>{
+
+g.exercises=
+(g.exercises||[]).filter(e=>
+(e.sets||[]).some(
+s=>num(s.reps)>0
+)
+);
+
+});
+
+log.groups=
+(log.groups||[]).filter(
+g=>(g.exercises||[]).length>0
+);
+
+}
+
+
+/* =====================================================
+   BOTÓN GUARDADO
+   ===================================================== */
+
+function showSavedButton(id){
+
+let btn=document.getElementById(id);
+
+if(!btn)return;
 
 btn.classList.add('saved');
-btn.innerText='✓ EJERCICIO GUARDADO';
+
+btn.innerText=
+'✓ EJERCICIO GUARDADO';
 
 setTimeout(()=>{
 
 btn.classList.remove('saved');
-btn.innerText='💾 GUARDAR EJERCICIO';
+
+btn.innerText=
+'💾 GUARDAR EJERCICIO';
 
 },1500);
 
 }
 
-}
 
-
-/* =========================================================
-   HISTORIAL EJERCICIO
-========================================================= */
+/* =====================================================
+   HISTORIAL
+   ===================================================== */
 
 function showHistory(ex){
 
-let a=history(ex).slice(-6).reverse();
+let a=
+history(ex)
+.slice(-10)
+.reverse();
 
 if(!a.length){
 
 alert('Sin historial');
+
 return;
 
 }
@@ -1529,7 +1919,9 @@ a.map(x=>
 `${x.date.toLocaleDateString('es-ES')} — `+
 x.sets
 .filter(s=>s.reps>0)
-.map(s=>`${num(s.reps)}×${num(s.weight)}kg`)
+.map(
+s=>`${num(s.reps)}×${num(s.weight)}kg`
+)
 .join(' · ')
 ).join('\n')
 );
@@ -1537,37 +1929,37 @@ x.sets
 }
 
 
-/* =========================================================
+/* =====================================================
    GUARDAR ENTRENAMIENTO
-========================================================= */
+   ===================================================== */
 
 function saveWorkout(){
 
 if(!day)return;
 
-let currentDate=document.getElementById('date').value;
+let currentDate=
+document.getElementById('date').value;
 
 if(!currentDate){
 
 alert('Selecciona una fecha.');
+
 return;
 
 }
 
-
-/*
-COPIA ANTES DE MODIFICAR.
-*/
-
-createInternalBackup();
-
-let log=findSession(day,currentDate);
+let log=findSession(
+day,
+currentDate
+);
 
 if(!log){
 
 log={
 id:Date.now(),
-date:new Date(currentDate+'T12:00:00').toISOString(),
+date:new Date(
+currentDate+'T12:00:00'
+).toISOString(),
 day:Number(day),
 groups:[]
 };
@@ -1576,11 +1968,11 @@ logs.push(log);
 
 }
 
+let x=routine[day];
+
 let totalVol=0;
 let totalSets=0;
 let totalEx=0;
-
-let x=routine[day];
 
 [
 ['g1','e1'],
@@ -1589,7 +1981,8 @@ let x=routine[day];
 
 let groupName=x[a[0]];
 
-let group=(log.groups||[]).find(
+let group=
+(log.groups||[]).find(
 g=>g.name===groupName
 );
 
@@ -1604,15 +1997,18 @@ log.groups.push(group);
 
 }
 
-(x[a[1]]||[]).forEach((ex,i)=>{
+(x[a[1]]||[]).forEach(
+(ex,i)=>{
 
-let data=getCurrentExerciseData(a[0],i,ex);
-
-let realSets=data.sets.filter(
-s=>num(s.reps)>0
+let data=
+getCurrentExerciseData(
+a[0],
+i,
+ex
 );
 
-if(!realSets.length)return;
+if(!data.realSets.length)
+return;
 
 let cleanSets=data.sets.map(
 s=>({
@@ -1621,16 +2017,17 @@ weight:num(s.weight)
 })
 );
 
+let old=
+(group.exercises||[]).find(
+e=>e.name===ex
+);
+
 let exerciseData={
 name:ex,
 sets:cleanSets,
-volume:volume(realSets),
-rm:maxSetRM(realSets)
+volume:data.volume,
+rm:data.rm
 };
-
-let old=(group.exercises||[]).find(
-e=>e.name===ex
-);
 
 if(old){
 
@@ -1640,80 +2037,69 @@ old.rm=exerciseData.rm;
 
 }else{
 
-group.exercises.push(exerciseData);
+group.exercises.push(
+exerciseData
+);
 
 }
 
 totalEx++;
-totalSets+=realSets.length;
-totalVol+=volume(realSets);
-
-});
-
-});
-
-
-/*
-LIMPIAMOS SOLO LO QUE ESTÁ REALMENTE VACÍO.
-*/
-
-(log.groups||[]).forEach(g=>{
-
-g.exercises=(g.exercises||[]).filter(
-e=>(e.sets||[]).some(
-s=>num(s.reps)>0
-)
-);
-
-});
-
-log.groups=(log.groups||[]).filter(
-g=>(g.exercises||[]).length>0
-);
-
-
-if(totalSets===0){
-
-save();
-
-alert('No hay datos nuevos para guardar.');
-return;
+totalSets+=data.realSets.length;
+totalVol+=data.volume;
 
 }
+);
+
+});
+
+cleanSession(log);
 
 save();
 
 clearWorkoutInputs();
 
-document.getElementById('summary').innerHTML=`
+document.getElementById(
+'summary'
+).innerHTML=`
 
 <div class="summary">
 
 <h3>🎉 ENTRENAMIENTO GUARDADO</h3>
 
-<div class="big">Día ${day}</div>
+<div class="big">
+Día ${day}
+</div>
 
-<div>💪 <b>${totalEx}</b> ejercicios realizados</div>
+<div>
+💪 <b>${totalEx}</b> ejercicios realizados
+</div>
 
-<div>🔢 <b>${totalSets}</b> series realizadas</div>
+<div>
+🔢 <b>${totalSets}</b> series realizadas
+</div>
 
-<div>📦 <b>${Math.round(totalVol)}</b> kg de volumen realizado</div>
+<div>
+📦 <b>${Math.round(totalVol)}</b> kg de volumen realizado
+</div>
 
 <br>
 
-<button class="btn" onclick="finishSummary()">
+<button
+class="btn"
+onclick="finishSummary()">
 Continuar
 </button>
 
 </div>
+
 `;
 
 }
 
 
-/* =========================================================
+/* =====================================================
    LIMPIAR PANTALLA
-========================================================= */
+   ===================================================== */
 
 function clearWorkoutInputs(){
 
@@ -1721,166 +2107,227 @@ let form=document.getElementById('form');
 
 if(!form)return;
 
-form.querySelectorAll(
+form
+.querySelectorAll(
 'input[type="number"]'
-).forEach(el=>el.value='');
+)
+.forEach(el=>{
+el.value='';
+});
 
-form.querySelectorAll('.rm')
-.forEach(el=>el.innerText='🔥 1RM estimado: --');
+form
+.querySelectorAll('.rm')
+.forEach(el=>{
+el.innerText=
+'🔥 1RM estimado: --';
+});
 
-form.querySelectorAll('.vol')
-.forEach(el=>el.innerText='📦 Volumen: 0 kg');
-
-form.querySelectorAll('.save-ex')
-.forEach(btn=>{
-
-btn.classList.remove('saved');
-btn.innerText='💾 GUARDAR EJERCICIO';
-
+form
+.querySelectorAll('.vol')
+.forEach(el=>{
+el.innerText=
+'📦 Volumen: 0 kg';
 });
 
 }
 
 
-/* =========================================================
+/* =====================================================
    FINALIZAR
-========================================================= */
+   ===================================================== */
 
 function finishSummary(){
 
-document.getElementById('summary').innerHTML='';
-document.getElementById('work').style.display='none';
+document.getElementById(
+'summary'
+).innerHTML='';
+
+document.getElementById(
+'work'
+).style.display='none';
 
 }
 
 
-/* =========================================================
-   CONFIGURACIÓN DE RUTINA
-========================================================= */
+/* =====================================================
+   CONFIGURACIÓN
+   ===================================================== */
 
 function loadConfig(){
 
-let cfgday=document.getElementById('cfgday');
-let editor=document.getElementById('editor');
+let cfgday=
+document.getElementById('cfgday').value;
 
-let x=routine[cfgday.value];
+let x=routine[cfgday];
 
-if(!x){
-x=deepCopy(EMPTY_ROUTINE);
-routine[cfgday.value]=x;
-}
-
-let h=`
+let html=`
 
 <label>Grupo 1</label>
 
-<input id="g1n" value="${esc(x.g1)}">
+<input
+id="g1n"
+value="${esc(x.g1)}"
+>
 
-<div class="group">
+<div class="editorTitle">
+
+<span class="group">
 Ejercicios del grupo 1
+</span>
+
+<button
+class="btn out sm"
+onclick="addExercise('g1')">
++ Añadir
+</button>
+
 </div>
 
 <div id="g1c">
 `;
 
 (x.e1||[]).forEach(
-(e,i)=>h+=field('g1',e,(x.img1||[])[i]||'',i)
+(e,i)=>
+html+=field(
+'g1',
+e,
+(x.img1||[])[i]||''
+)
 );
 
-h+=`
-
-<button class="btn out sm"
-onclick="add('g1')">
-+ Añadir ejercicio
-</button>
+html+=`
 
 </div>
 
-<label style="display:block;margin-top:15px">
-Grupo 2
-</label>
+<label>Grupo 2</label>
 
-<input id="g2n" value="${esc(x.g2)}">
+<input
+id="g2n"
+value="${esc(x.g2)}"
+>
 
-<div class="group">
+<div class="editorTitle">
+
+<span class="group">
 Ejercicios del grupo 2
+</span>
+
+<button
+class="btn out sm"
+onclick="addExercise('g2')">
++ Añadir
+</button>
+
 </div>
 
 <div id="g2c">
 `;
 
 (x.e2||[]).forEach(
-(e,i)=>h+=field('g2',e,(x.img2||[])[i]||'',i)
+(e,i)=>
+html+=field(
+'g2',
+e,
+(x.img2||[])[i]||''
+)
 );
 
-h+=`
+html+=`</div>`;
 
-<button class="btn out sm"
-onclick="add('g2')">
-+ Añadir ejercicio
-</button>
-
-</div>
-`;
-
-editor.innerHTML=h;
+document.getElementById(
+'editor'
+).innerHTML=html;
 
 }
 
 
-function field(g,n,img,i){
+/* =====================================================
+   CAMPO EDITOR
+   ===================================================== */
+
+function field(g,n,img){
 
 return`
 
-<div class="editorEx">
+<div class="ex">
 
-<label>Ejercicio</label>
+<label>Nombre del ejercicio</label>
 
-<input class="${g}e"
+<input
+class="${g}e"
 value="${esc(n)}"
-placeholder="Nombre del ejercicio">
+placeholder="Ejercicio"
+>
 
 <label>Imagen / GIF</label>
 
-<input class="${g}i"
+<input
+class="${g}i"
 value="${esc(img||'')}"
-placeholder="URL de la imagen o GIF">
+placeholder="URL de imagen o GIF"
+>
 
-<div class="editorButtons">
+<div style="display:flex;gap:5px">
 
-<button class="btn out sm"
-onclick="this.parentElement.parentElement.remove()">
+<button
+class="btn danger sm"
+onclick="removeExercise(this)">
 🗑️ Eliminar
 </button>
 
 </div>
 
 </div>
+
 `;
 
 }
 
 
-function add(g){
+/* =====================================================
+   AÑADIR EJERCICIO
+   ===================================================== */
 
-document.getElementById(g+'c')
+function addExercise(g){
+
+document
+.getElementById(g+'c')
 .insertAdjacentHTML(
 'beforeend',
-field(g,'','',Date.now())
+field(g,'','')
 );
 
 }
 
 
-/* =========================================================
+/* =====================================================
+   ELIMINAR EJERCICIO
+   ===================================================== */
+
+function removeExercise(btn){
+
+let box=btn.closest('.ex');
+
+if(!box)return;
+
+if(!confirm(
+'¿Eliminar este ejercicio de la rutina?'
+))
+return;
+
+box.remove();
+
+}
+
+
+/* =====================================================
    GUARDAR CONFIGURACIÓN
-========================================================= */
+   ===================================================== */
 
 function saveConfig(){
 
-let d=document.getElementById('cfgday').value;
-
-let oldRoutine=deepCopy(routine);
+let d=
+document.getElementById('cfgday').value;
 
 let x={
 
@@ -1902,8 +2349,13 @@ img2:[]
 
 ['g1','g2'].forEach(g=>{
 
-let ns=document.querySelectorAll('.'+g+'e');
-let ims=document.querySelectorAll('.'+g+'i');
+let ns=document.querySelectorAll(
+'.'+g+'e'
+);
+
+let ims=document.querySelectorAll(
+'.'+g+'i'
+);
 
 ns.forEach((e,i)=>{
 
@@ -1911,41 +2363,40 @@ let name=e.value.trim();
 
 if(!name)return;
 
-let en=g==='g1'?'e1':'e2';
-let im=g==='g1'?'img1':'img2';
+let en=
+g==='g1'?'e1':'e2';
+
+let im=
+g==='g1'?'img1':'img2';
 
 x[en].push(name);
 
 x[im].push(
-ims[i]?ims[i].value.trim():''
+ims[i]
+?ims[i].value.trim()
+:''
 );
 
 });
 
 });
 
-
-/*
-SEGURIDAD:
-solo cambiamos el día seleccionado.
-*/
-
-createInternalBackup();
-
 routine[d]=x;
+
+normalizeRoutine();
 
 save();
 
 alert(
-'Rutina del Día '+d+' guardada correctamente.'
+'Rutina guardada correctamente.'
 );
 
 }
 
 
-/* =========================================================
-   EXPORTAR
-========================================================= */
+/* =====================================================
+   EXPORTAR COPIA COMPLETA
+   ===================================================== */
 
 function exportData(){
 
@@ -1953,32 +2404,41 @@ let data={
 
 app:'Mi Gimnasio Pro',
 
-version:DATA_VERSION,
+version:'5.0',
 
 exported:new Date().toISOString(),
 
-routine:deepCopy(routine),
+routine:routine,
 
-logs:deepCopy(logs)
+logs:logs
 
 };
 
-let json=JSON.stringify(data,null,2);
-
 let blob=new Blob(
-[json],
-{type:'application/json'}
+[
+JSON.stringify(
+data,
+null,
+2
+)
+],
+{
+type:'application/json'
+}
 );
 
-let url=URL.createObjectURL(blob);
+let url=
+URL.createObjectURL(blob);
 
-let a=document.createElement('a');
+let a=
+document.createElement('a');
 
 a.href=url;
 
 a.download=
-'gimnasio_backup_'+
-new Date().toISOString()
+'gym_backup_completo_'+
+new Date()
+.toISOString()
 .slice(0,10)+
 '.json';
 
@@ -1993,70 +2453,29 @@ setTimeout(
 1000
 );
 
-alert(
-'Copia completa exportada correctamente.'
-);
+document.getElementById(
+'backupStatus'
+).innerHTML=
+`
+<span class="backupOk">
+✓ Copia completa creada correctamente.
+<br>
+Guárdala en un lugar seguro.
+</span>
+`;
 
 }
 
 
-/* =========================================================
-   VALIDACIÓN DE IMPORTACIÓN
-========================================================= */
-
-function validateImportData(d){
-
-if(!d||typeof d!=='object')
-return{
-ok:false,
-message:'Archivo inválido.'
-};
-
-if(!d.routine||typeof d.routine!=='object')
-return{
-ok:false,
-message:'El archivo no contiene una rutina válida.'
-};
-
-let validDays=0;
-
-for(let i=1;i<=4;i++){
-
-if(validDayRoutine(d.routine[i]))
-validDays++;
-
-}
-
-if(validDays===0)
-return{
-ok:false,
-message:'El archivo no contiene ningún día de rutina válido.'
-};
-
-if(!Array.isArray(d.logs))
-return{
-ok:false,
-message:'El archivo no contiene un historial válido.'
-};
-
-return{
-ok:true,
-validDays,
-logs:d.logs.length
-};
-
-}
-
-
-/* =========================================================
-   IMPORTAR CON PROTECCIÓN
-========================================================= */
+/* =====================================================
+   IMPORTAR COPIA
+   ===================================================== */
 
 function importData(e){
 
-let f=e.target.files[0];
+let file=e.target.files[0];
 
-if(!f)return;
+if(!file)return;
 
 let reader=new FileReader();
 
@@ -2064,132 +2483,68 @@ reader.onload=()=>{
 
 try{
 
-let d=JSON.parse(reader.result);
-
-let validation=validateImportData(d);
-
-if(!validation.ok){
-
-alert(
-'❌ IMPORTACIÓN CANCELADA\\n\\n'+
-validation.message+
-'\\n\\nTus datos actuales NO han sido modificados.'
+let data=JSON.parse(
+reader.result
 );
 
-e.target.value='';
+if(
+!data||
+typeof data!=='object'
+)
+throw new Error();
 
-return;
+if(
+!data.routine||
+typeof data.routine!=='object'
+)
+throw new Error();
 
-}
+if(
+!Array.isArray(data.logs)
+)
+throw new Error();
 
 
 /*
-ANTES DE IMPORTAR:
-COPIA DE SEGURIDAD INTERNA.
+Primero hacemos una copia
+de lo que tenemos actualmente.
 */
 
-createInternalBackup();
+let oldRoutine=
+structuredCloneSafe(routine);
 
+let oldLogs=
+structuredCloneSafe(logs);
 
-let importedRoutine={};
-let validRoutineDays=0;
+try{
 
-
-/*
-Solo aceptamos días realmente válidos.
-Los días inexistentes o defectuosos
-NO sustituyen los actuales.
-*/
-
-for(let i=1;i<=4;i++){
-
-let r=normalizeDayRoutine(
-d.routine[i]
+routine=
+structuredCloneSafe(
+data.routine
 );
 
-if(r){
-
-importedRoutine[i]=r;
-validRoutineDays++;
-
-}else{
-
-importedRoutine[i]=deepCopy(routine[i]);
-
-}
-
-}
-
-
-/*
-CONFIRMACIÓN ESPECIAL SI EL ARCHIVO
-NO TIENE ENTRENAMIENTOS.
-*/
-
-if(d.logs.length===0&&logs.length>0){
-
-let ok=confirm(
-'⚠️ ATENCIÓN\\n\\n'+
-'La copia seleccionada contiene 0 entrenamientos, '+
-'pero actualmente tienes '+logs.length+' registros.\\n\\n'+
-'Si continúas, se sustituirá el historial actual por un historial vacío.\\n\\n'+
-'¿Quieres continuar?'
+logs=
+structuredCloneSafe(
+data.logs
 );
 
-if(!ok){
-
-alert(
-'Importación cancelada. Tus datos siguen intactos.'
-);
-
-e.target.value='';
-
-return;
-
-}
-
-}
-
-
-/*
-CONFIRMACIÓN SI LA COPIA TIENE MENOS DÍAS.
-*/
-
-if(validRoutineDays<4){
-
-let ok=confirm(
-'⚠️ La copia contiene solo '+
-validRoutineDays+
-' días de rutina válidos.\\n\\n'+
-'Los días que no estén en la copia conservarán '+
-'la rutina actual.\\n\\n'+
-'¿Continuar?'
-);
-
-if(!ok){
-
-e.target.value='';
-
-return;
-
-}
-
-}
-
-
-/*
-IMPORTACIÓN CONTROLADA.
-*/
-
-routine=importedRoutine;
-logs=deepCopy(d.logs);
+normalizeRoutine();
 
 save();
 
+}catch(err){
+
+routine=oldRoutine;
+logs=oldLogs;
+save();
+
+throw err;
+
+}
+
 alert(
-'✅ Copia restaurada correctamente.\\n\\n'+
-'Rutinas recuperadas: '+validRoutineDays+'/4\\n'+
-'Entrenamientos: '+logs.length
+'✓ Datos recuperados correctamente.\n\n'+
+'Rutina, ejercicios, imágenes y entrenamientos han sido restaurados.'
 );
 
 location.reload();
@@ -2197,8 +2552,7 @@ location.reload();
 }catch(err){
 
 alert(
-'❌ No se ha podido leer el archivo.\\n\\n'+
-'Tus datos actuales NO han sido modificados.'
+'⚠️ El archivo no es una copia válida de Mi Gimnasio.'
 );
 
 }
@@ -2207,14 +2561,14 @@ e.target.value='';
 
 };
 
-reader.readAsText(f);
+reader.readAsText(file);
 
 }
 
 
-/* =========================================================
+/* =====================================================
    CALENDARIO
-========================================================= */
+   ===================================================== */
 
 function month(n){
 
@@ -2233,28 +2587,42 @@ let y=monthDate.getFullYear();
 let m=monthDate.getMonth();
 
 let names=[
-'Enero','Febrero','Marzo','Abril','Mayo','Junio',
-'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'
+'Enero','Febrero','Marzo','Abril',
+'Mayo','Junio','Julio','Agosto',
+'Septiembre','Octubre','Noviembre','Diciembre'
 ];
 
-document.getElementById('monthname').innerText=
+document.getElementById(
+'monthname'
+).innerText=
 names[m]+' '+y;
 
-let first=(new Date(y,m,1).getDay()+6)%7;
-let days=new Date(y,m+1,0).getDate();
+let first=
+(new Date(y,m,1).getDay()+6)%7;
+
+let days=
+new Date(y,m+1,0).getDate();
 
 let h=
-['Lu','Ma','Mi','Ju','Vi','Sá','Do']
-.map(x=>
-`<b style="font-size:.68rem;color:var(--sub)">${x}</b>`
-).join('');
+[
+'Lu','Ma','Mi','Ju','Vi','Sá','Do'
+]
+.map(
+x=>
+`<b style="font-size:.68rem;color:var(--sub)">
+${x}
+</b>`
+)
+.join('');
 
 for(let i=0;i<first;i++)
 h+='<div class="cal empty"></div>';
 
 for(let d=1;d<=days;d++){
 
-let on=uniqueSessions(logs).some(l=>{
+let on=
+uniqueSessions(logs)
+.some(l=>{
 
 let z=new Date(l.date);
 
@@ -2268,7 +2636,8 @@ z.getDate()===d
 
 h+=`
 
-<div class="cal ${on?'on':''}"
+<div
+class="cal ${on?'on':''}"
 onclick="detail(${y},${m},${d})">
 ${d}
 </div>
@@ -2276,19 +2645,26 @@ ${d}
 
 }
 
-document.getElementById('calendar').innerHTML=h;
-document.getElementById('detail').innerHTML='';
+document.getElementById(
+'calendar'
+).innerHTML=h;
+
+document.getElementById(
+'detail'
+).innerHTML='';
 
 }
 
 
-/* =========================================================
+/* =====================================================
    DETALLE CALENDARIO
-========================================================= */
+   ===================================================== */
 
 function detail(y,m,d){
 
-let a=uniqueSessions(logs).filter(l=>{
+let a=
+uniqueSessions(logs)
+.filter(l=>{
 
 let z=new Date(l.date);
 
@@ -2313,8 +2689,11 @@ ${y}
 
 if(!a.length){
 
-document.getElementById('detail').innerHTML=
-h+'<div class="empty">Sin entrenamiento.</div>';
+document.getElementById(
+'detail'
+).innerHTML=
+h+
+'<div class="empty">Sin entrenamiento.</div>';
 
 return;
 
@@ -2326,18 +2705,21 @@ h+=`
 
 <div class="report">
 
-<div style="display:flex;justify-content:space-between;align-items:center">
+<div
+style="display:flex;justify-content:space-between;align-items:center">
 
 <b>Día ${l.day}</b>
 
 <div style="display:flex;gap:5px">
 
-<button class="btn out sm"
+<button
+class="btn out sm"
 onclick="editSession('${l.id}')">
 ✏️ Editar
 </button>
 
-<button class="btn danger sm"
+<button
+class="btn danger sm"
 onclick="deleteSession('${l.id}')">
 🗑️ Eliminar
 </button>
@@ -2351,14 +2733,18 @@ onclick="deleteSession('${l.id}')">
 
 h+=`
 
-<div style="color:var(--a);margin-top:7px">
+<div
+style="color:var(--a);margin-top:7px">
+
 ${esc(g.name)}
+
 </div>
 `;
 
 (g.exercises||[]).forEach(e=>{
 
-let realSets=(e.sets||[]).filter(
+let realSets=
+(e.sets||[]).filter(
 s=>num(s.reps)>0
 );
 
@@ -2386,24 +2772,26 @@ h+='</div>';
 
 });
 
-document.getElementById('detail').innerHTML=h;
+document.getElementById(
+'detail'
+).innerHTML=h;
 
 }
 
 
-/* =========================================================
+/* =====================================================
    ELIMINAR SESIÓN
-========================================================= */
+   ===================================================== */
 
 function deleteSession(id){
 
 if(!confirm(
 '¿Seguro que quieres eliminar esta sesión completa?'
-))return;
+))
+return;
 
-createInternalBackup();
-
-logs=logs.filter(
+logs=
+logs.filter(
 l=>String(l.id)!==String(id)
 );
 
@@ -2411,18 +2799,21 @@ save();
 
 renderCalendar();
 
-alert('Sesión eliminada.');
+alert(
+'Sesión eliminada.'
+);
 
 }
 
 
-/* =========================================================
+/* =====================================================
    EDITAR SESIÓN
-========================================================= */
+   ===================================================== */
 
 function editSession(id){
 
-let log=logs.find(
+let log=
+logs.find(
 l=>String(l.id)===String(id)
 );
 
@@ -2430,41 +2821,70 @@ if(!log)return;
 
 day=Number(log.day);
 
-document.getElementById('work').style.display='block';
+document.getElementById(
+'work'
+).style.display='block';
 
-document.getElementById('daytitle').innerText=
+document.getElementById(
+'daytitle'
+).innerText=
 'Editar entrenamiento - Día '+day;
 
-document.getElementById('date').value=
+document.getElementById(
+'date'
+).value=
 dateKey(log.date);
 
-document.getElementById('summary').innerHTML='';
+document.getElementById(
+'summary'
+).innerHTML='';
 
 let x=routine[day];
 
 let html='';
 
 [
-['g1','e1'],
-['g2','e2']
+['g1','e1','img1'],
+['g2','e2','img2']
 ].forEach(a=>{
 
-html+=`<div class="group">${esc(x[a[0]])}</div>`;
+html+=
+`<div class="group">${esc(x[a[0]])}</div>`;
 
-(x[a[1]]||[]).forEach((ex,i)=>{
+(x[a[1]]||[]).forEach(
+(ex,i)=>{
 
 let old=null;
 
-(log.groups||[]).forEach(g=>
-(g.exercises||[]).forEach(e=>{
-if(e.name===ex)old=e;
-})
+(log.groups||[]).forEach(
+g=>
+(g.exercises||[]).forEach(
+e=>{
+if(e.name===ex)
+old=e;
+}
+)
 );
 
-let sets=old?(old.sets||[]).slice(0,3):[];
+let sets=
+old
+?(old.sets||[]).slice(0,3)
+:[];
 
-while(sets.length<3)
-sets.push({reps:'',weight:''});
+while(sets.length<3){
+
+sets.push({
+reps:'',
+weight:''
+});
+
+}
+
+let img=
+(x[a[2]]||[])[i]||'';
+
+let iid=
+`edit-img-${a[0]}-${i}`;
 
 html+=`
 
@@ -2473,6 +2893,43 @@ html+=`
 <div class="exhead">
 <span>${esc(ex)}</span>
 </div>
+
+${img?`
+
+<button
+class="imgbtn"
+onclick="toggleImage('${iid}')">
+🖼️ Ver imagen
+</button>
+
+<div
+id="${iid}"
+class="imgbox">
+
+<img
+src="${esc(img)}"
+alt="${esc(ex)}"
+onerror="
+this.style.display='none';
+this.nextElementSibling.style.display='block';
+">
+
+<div
+style="display:none;color:var(--red);font-size:.7rem;padding:5px">
+⚠️ No se puede cargar la imagen.
+</div>
+
+<br>
+
+<button
+class="imgbtn"
+onclick="toggleImage('${iid}')">
+✕ Cerrar imagen
+</button>
+
+</div>
+
+`:''}
 
 <table>
 
@@ -2497,27 +2954,36 @@ html+=`
 <td>${j+1}</td>
 
 <td>
-<input type="number"
+
+<input
+type="number"
 min="0"
 id="${a[0]}-${i}-r${j}"
 value="${s.reps??''}"
 onfocus="selectCell(this)"
-oninput="calc('${a[0]}',${i})">
+oninput="calc('${a[0]}',${i})"
+>
+
 </td>
 
 <td>
-<input type="number"
+
+<input
+type="number"
 min="0"
 step=".5"
 id="${a[0]}-${i}-w${j}"
 value="${s.weight??''}"
 onfocus="selectCell(this)"
-oninput="calc('${a[0]}',${i})">
+oninput="calc('${a[0]}',${i})"
+>
+
 </td>
 
 <td></td>
 
 </tr>
+
 `;
 
 });
@@ -2527,12 +2993,14 @@ html+=`
 </tbody>
 </table>
 
-<div class="rm"
+<div
+class="rm"
 id="rm-${a[0]}-${i}">
 🔥 1RM estimado: --
 </div>
 
-<div class="vol"
+<div
+class="vol"
 id="vol-${a[0]}-${i}">
 📦 Volumen: 0 kg
 </div>
@@ -2544,10 +3012,14 @@ id="vol-${a[0]}-${i}">
 
 });
 
-document.getElementById('form').innerHTML=html;
+document.getElementById(
+'form'
+).innerHTML=html;
 
-document.getElementById('loadedmsg').innerHTML=
-'<div class="loaded">✏️ Editando la sesión guardada. Modifica los datos y pulsa "Guardar entrenamiento".</div>';
+document.getElementById(
+'loadedmsg'
+).innerHTML=
+'<div class="loaded">✏️ Editando una sesión guardada. Modifica los datos y pulsa Guardar entrenamiento.</div>';
 
 [
 ['g1','e1'],
@@ -2563,37 +3035,27 @@ tab('entrenar');
 }
 
 
-/* =========================================================
-   TODOS LOS EJERCICIOS
-========================================================= */
+/* =====================================================
+   IMÁGENES
+   ===================================================== */
 
-function allExercises(){
+function toggleImage(id){
 
-let s=new Set();
+let e=document.getElementById(id);
 
-Object.values(routine).forEach(d=>{
+if(!e)return;
 
-(d.e1||[]).forEach(e=>s.add(e));
-(d.e2||[]).forEach(e=>s.add(e));
-
-});
-
-uniqueSessions(logs).forEach(l=>
-(l.groups||[]).forEach(g=>
-(g.exercises||[]).forEach(
-e=>s.add(e.name)
-)
-)
-);
-
-return[...s].filter(Boolean).sort();
+e.style.display=
+e.style.display==='block'
+?'none'
+:'block';
 
 }
 
 
-/* =========================================================
-   RESUMEN
-========================================================= */
+/* =====================================================
+   ESTADÍSTICAS
+   ========================== ========================== */
 
 function stats(){
 
@@ -2603,29 +3065,35 @@ let exercises=0;
 
 let sessions=new Set();
 
-uniqueSessions(logs).forEach(l=>{
+uniqueSessions(logs)
+.forEach(l=>{
 
-let hasData=false;
+let realSession=false;
 
 (l.groups||[]).forEach(g=>
+
 (g.exercises||[]).forEach(e=>{
 
-let realSets=(e.sets||[]).filter(
+let effective=
+(e.sets||[]).filter(
 s=>num(s.reps)>0
 );
 
-if(!realSets.length)return;
+if(!effective.length)return;
 
 exercises++;
-sets+=realSets.length;
-vol+=volume(realSets);
 
-hasData=true;
+sets+=effective.length;
+
+vol+=volume(effective);
+
+realSession=true;
 
 })
+
 );
 
-if(hasData){
+if(realSession){
 
 sessions.add(
 Number(l.day)+'|'+dateKey(l.date)
@@ -2635,42 +3103,69 @@ Number(l.day)+'|'+dateKey(l.date)
 
 });
 
-document.getElementById('stats').innerHTML=`
+document.getElementById(
+'stats'
+).innerHTML=`
 
 <div class="stat">
+
 <b>${sessions.size}</b>
-<span>Sesiones realizadas</span>
+
+<span>
+Sesiones realizadas
+</span>
+
 </div>
 
 <div class="stat">
+
 <b>${exercises}</b>
-<span>Ejercicios realizados</span>
+
+<span>
+Ejercicios realizados
+</span>
+
 </div>
 
 <div class="stat">
+
 <b>${sets}</b>
-<span>Series realizadas</span>
+
+<span>
+Series realizadas
+</span>
+
 </div>
 
 <div class="stat">
+
 <b>${Math.round(vol)} kg</b>
-<span>Volumen realizado</span>
+
+<span>
+Volumen realizado
+</span>
+
 </div>
+
 `;
 
 }
 
 
-/* =========================================================
-   INFORMES 15 / 30 DÍAS
-========================================================= */
+/* =====================================================
+   INFORMES
+   ===================================================== */
 
 function isAbsGroup(name){
 
-let n=String(name||'')
+let n=
+String(name||'')
 .toLowerCase()
 .normalize('NFD')
-.replace(/[\u0300-\u036f]/g,'');
+.replace(
+/[\u0300-\u036f]/g,
+''
+);
 
 return /abdominal|abdomen|\babs\b/.test(n);
 
@@ -2681,7 +3176,9 @@ function report(days){
 
 let today=new Date();
 
-today.setHours(23,59,59,999);
+today.setHours(
+23,59,59,999
+);
 
 let cut=new Date(today);
 
@@ -2689,29 +3186,38 @@ cut.setDate(
 cut.getDate()-(days-1)
 );
 
-cut.setHours(0,0,0,0);
+cut.setHours(
+0,0,0,0
+);
 
-let a=uniqueSessions(logs)
+let a=
+uniqueSessions(logs)
 .filter(l=>{
 
 let d=new Date(l.date);
 
 return(
-d.getTime()>=cut.getTime()&&
-d.getTime()<=today.getTime()
+d>=cut&&
+d<=today
 );
 
 })
 .sort(
-(x,y)=>new Date(x.date)-new Date(y.date)
+(x,y)=>
+new Date(x.date)-
+new Date(y.date)
 );
 
 if(!a.length){
 
-document.getElementById('reports').innerHTML=
-`<div class="empty">
+document.getElementById(
+'reports'
+).innerHTML=
+`
+<div class="empty">
 Sin entrenamientos realizados en ${days} días.
-</div>`;
+</div>
+`;
 
 return;
 
@@ -2723,9 +3229,11 @@ a.forEach(l=>
 
 (l.groups||[]).forEach(g=>{
 
-if(isAbsGroup(g.name))return;
+if(isAbsGroup(g.name))
+return;
 
-let key=g.name||'Sin grupo';
+let key=
+g.name||'Sin grupo';
 
 if(!groups[key]){
 
@@ -2746,24 +3254,24 @@ Number(l.day)+'|'+dateKey(l.date)
 
 (g.exercises||[]).forEach(e=>{
 
-let realSets=(e.sets||[]).filter(
+let effective=
+(e.sets||[]).filter(
 s=>num(s.reps)>0
 );
 
-if(!realSets.length)return;
+if(!effective.length)return;
 
 z.exercises.add(e.name);
 
-z.sets+=realSets.length;
+z.sets+=effective.length;
 
-z.volume+=volume(realSets);
+z.volume+=volume(effective);
 
 });
 
 })
 
 );
-
 
 let totalVol=0;
 let totalSets=0;
@@ -2783,20 +3291,27 @@ days===15
 <br>
 
 <span style="color:var(--sub)">
-Solo ejercicios y series realmente realizados.
+Datos de ejercicios realmente realizados.
 </span>
 
 </div>
 `;
 
-let entries=Object.entries(groups)
+let entries=
+Object.entries(groups)
 .sort(
-(a,b)=>a[0].localeCompare(b[0],'es')
+(a,b)=>
+a[0].localeCompare(
+b[0],
+'es'
+)
 );
 
 if(!entries.length){
 
-document.getElementById('reports').innerHTML=
+document.getElementById(
+'reports'
+).innerHTML=
 h+
 '<div class="empty">No hay ejercicios realizados en este periodo.</div>';
 
@@ -2804,7 +3319,8 @@ return;
 
 }
 
-entries.forEach(([name,z])=>{
+entries.forEach(
+([name,z])=>{
 
 totalVol+=z.volume;
 totalSets+=z.sets;
@@ -2813,70 +3329,254 @@ h+=`
 
 <div class="muscleReport">
 
-<h3>💪 ${esc(name)}</h3>
+<h3>
+💪 ${esc(name)}
+</h3>
 
 <div class="muscleStats">
 
 <div class="muscleStat">
-<b>${Math.round(z.volume)} kg</b>
-<span>Volumen realizado</span>
+
+<b>
+${Math.round(z.volume)} kg
+</b>
+
+<span>
+Volumen realizado
+</span>
+
 </div>
 
 <div class="muscleStat">
-<b>${z.sets}</b>
-<span>Series realizadas</span>
+
+<b>
+${z.sets}
+</b>
+
+<span>
+Series realizadas
+</span>
+
 </div>
 
 <div class="muscleStat">
-<b>${z.exercises.size}</b>
-<span>Ejercicios realizados</span>
-</div>
+
+<b>
+${z.exercises.size}
+</b>
+
+<span>
+Ejercicios realizados
+</span>
 
 </div>
 
-<div style="font-size:.65rem;color:var(--sub);margin-top:6px">
+</div>
+
+<div
+style="font-size:.65rem;color:var(--sub);margin-top:6px">
+
 Sesiones realizadas: ${z.sessions.size}
+
 </div>
 
 </div>
+
 `;
 
-});
+}
+);
 
 h+=`
 
 <div class="summary">
 
-<h3>📈 TOTAL DEL PERIODO</h3>
+<h3>
+📈 TOTAL DEL PERIODO
+</h3>
 
 <div>
-📦 <b>${Math.round(totalVol)} kg</b>
+📦 <b>
+${Math.round(totalVol)} kg
+</b>
 de volumen realizado
 </div>
 
 <div>
-🔢 <b>${totalSets}</b>
+🔢 <b>
+${totalSets}
+</b>
 series realizadas
 </div>
 
-<div style="font-size:.68rem;color:var(--sub);margin-top:5px">
+<div
+style="font-size:.68rem;color:var(--sub);margin-top:5px">
+
 Los abdominales no se incluyen en el volumen en kg.
+
 </div>
 
 </div>
 `;
 
-document.getElementById('reports').innerHTML=h;
+document.getElementById(
+'reports'
+).innerHTML=h;
 
 }
 
 
-/* =========================================================
+/* =====================================================
+   CRONÓMETRO
+   ===================================================== */
+
+function startTimer(){
+
+closeTimer();
+
+timerSeconds=120;
+
+document.getElementById(
+'timerOverlay'
+).style.display='flex';
+
+updateTimerDisplay();
+
+timerInterval=
+setInterval(()=>{
+
+timerSeconds--;
+
+updateTimerDisplay();
+
+if(timerSeconds<=0){
+
+clearInterval(timerInterval);
+
+timerInterval=null;
+
+beep();
+
+setTimeout(
+closeTimer,
+700
+);
+
+}
+
+},1000);
+
+}
+
+
+function updateTimerDisplay(){
+
+let el=
+document.getElementById(
+'timerDisplay'
+);
+
+if(!el)return;
+
+let min=
+Math.floor(timerSeconds/60);
+
+let sec=
+timerSeconds%60;
+
+el.textContent=
+String(min).padStart(2,'0')+
+':'+
+String(sec).padStart(2,'0');
+
+el.classList.remove(
+'warning',
+'last'
+);
+
+if(
+timerSeconds<=10&&
+timerSeconds>3
+)
+el.classList.add('warning');
+
+if(timerSeconds<=3)
+el.classList.add('last');
+
+if(
+timerSeconds<=3&&
+timerSeconds>0
+)
+beep();
+
+}
+
+
+function closeTimer(){
+
+if(timerInterval){
+
+clearInterval(
+timerInterval
+);
+
+timerInterval=null;
+
+}
+
+let o=
+document.getElementById(
+'timerOverlay'
+);
+
+if(o)
+o.style.display='none';
+
+}
+
+
+function beep(){
+
+try{
+
+let c=
+new(
+window.AudioContext||
+window.webkitAudioContext
+)();
+
+let o=c.createOscillator();
+
+let g=c.createGain();
+
+o.connect(g);
+
+g.connect(c.destination);
+
+o.frequency.value=900;
+
+g.gain.value=.7;
+
+o.start();
+
+o.stop(
+c.currentTime+.18
+);
+
+}catch(e){}
+
+}
+
+
+/* =====================================================
    INICIO
-========================================================= */
+   ===================================================== */
+
+save();
 
 renderCalendar();
-updateBackupStatus();
+
+loadConfig();
 
 </script>
 
