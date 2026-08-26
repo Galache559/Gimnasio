@@ -148,11 +148,6 @@ td input{margin:0;text-align:center;padding:6px 1px}
 </div>
 
 <div class="card">
-<h2>🏆 Récords</h2>
-<div id="records"></div>
-</div>
-
-<div class="card">
 <h2>📋 Informes</h2>
 <div style="display:flex;gap:5px;flex-wrap:wrap">
 <button class="btn out sm" onclick="report(15)">15 días</button>
@@ -210,7 +205,7 @@ document.querySelectorAll('nav button').forEach(e=>e.classList.remove('active'))
 let n=document.getElementById('n-'+x);if(n)n.classList.add('active');
 if(x==='rutina')loadConfig();
 if(x==='calendario')renderCalendar();
-if(x==='informes'){stats();records()}
+if(x==='informes'){stats()}
 }
 
 function history(ex){
@@ -329,7 +324,7 @@ date.value=new Date().toISOString().slice(0,10);
 summary.innerHTML='';
 
 let previous=previousDayLog(d);
-loadedmsg.innerHTML=previous?'<div class="loaded">🔄 Datos del último entrenamiento cargados. Puedes modificarlos antes de guardar.</div>':'';
+loadedmsg.innerHTML=previous?'<div class="loaded">📋 Último entrenamiento disponible en el historial. Las celdas empiezan vacías para registrar el nuevo entrenamiento.</div>':'';
 
 let x=routine[d],html='';
 
@@ -338,12 +333,16 @@ html+=`<div class="group">${esc(x[a[0]])}</div>`;
 
 (x[a[1]]||[]).forEach((ex,i)=>{
 let old=getPreviousExercise(previous,ex);
-let sets=old?(old.sets||[]).slice(0,3):[];
+let previousSets=old?(old.sets||[]).slice(0,3):[];
 
-while(sets.length<3)sets.push({reps:'',weight:''});
+while(previousSets.length<3)previousSets.push({reps:'',weight:''});
 
-let lw=Math.max(...sets.map(s=>num(s.weight)));
+let lw=Math.max(...previousSets.map(s=>num(s.weight)));
 let suggestion=lw?Math.round(lw*1.025*10)/10:0;
+
+// Las celdas del nuevo entrenamiento empiezan siempre vacías.
+// Los datos anteriores solo se muestran como referencia.
+let sets=[{reps:'',weight:''},{reps:'',weight:''},{reps:'',weight:''}];
 let img=(x[a[0]==='g1'?'img1':'img2']||[])[i]||'';
 let iid=`img-${a[0]}-${i}`;
 
@@ -366,7 +365,7 @@ ${img?`
 ${old?`
 <div class="last">
 Último ${new Date(previous.date).toLocaleDateString('es-ES')}:
-${sets.map((s,j)=>`S${j+1} ${num(s.reps)||''}×${s.weight!==''&&s.weight!=null?s.weight:''}kg`).join(' · ')}
+${previousSets.map((s,j)=>`S${j+1} ${num(s.reps)||''}×${s.weight!==''&&s.weight!=null?s.weight:''}kg`).join(' · ')}
 </div>`:'<div class="last">Sin registro previo</div>'}
 
 ${suggestion?`
@@ -585,7 +584,7 @@ day,
 groups:[]
 };
 
-let totalVol=0,totalSets=0,totalEx=0,newPR=0;
+let totalVol=0,totalSets=0,totalEx=0;
 
 [['g1','e1'],['g2','e2']].forEach(a=>{
 let g={name:x[a[0]],exercises:[]};
@@ -596,10 +595,6 @@ let data=getCurrentExerciseData(a[0],i,ex);
 let realizadas=data.sets.filter(s=>num(s.reps)>0);
 let v=volume(realizadas);
 let best=Math.max(...realizadas.map(s=>num(s.weight)),0);
-let old=max(ex);
-
-if(best>old&&old>0)newPR++;
-
 if(realizadas.length){
 totalEx++;
 totalSets+=realizadas.length;
@@ -621,7 +616,9 @@ logs=logs.filter(l=>!(Number(l.day)===Number(day)&&l.date===log.date));
 logs.push(log);
 save();
 
-let textoPR=newPR===1?'nuevo récord':'nuevos récords';
+// El entrenamiento ya está guardado. Preparar la pantalla para una nueva sesión
+// sin borrar ni modificar los datos que permanecen en el historial.
+clearWorkoutInputs();
 
 document.getElementById('summary').innerHTML=`
 <div class="summary">
@@ -630,13 +627,36 @@ document.getElementById('summary').innerHTML=`
 <div>💪 <b>${totalEx}</b> ejercicios realizados</div>
 <div>🔢 <b>${totalSets}</b> series realizadas</div>
 <div>📦 <b>${Math.round(totalVol)}</b> kg de volumen</div>
-<div>🏆 <b>${newPR}</b> ${textoPR}</div>
 <div style="margin-top:10px;color:var(--sub);font-size:.7rem">
 Los ejercicios se pueden guardar individualmente con su botón GUARDAR EJERCICIO.
 </div>
 <br>
 <button class="btn" onclick="finishSummary()">Continuar</button>
 </div>`;
+}
+
+/* LIMPIAR PANTALLA TRAS GUARDAR */
+function clearWorkoutInputs(){
+  const form=document.getElementById('form');
+  if(!form)return;
+
+  form.querySelectorAll('input[type="number"]').forEach(el=>{
+    el.value='';
+  });
+
+  // Restablecer los cálculos visuales de cada ejercicio.
+  form.querySelectorAll('.rm').forEach(el=>{
+    el.innerText='🔥 1RM estimado: --';
+  });
+  form.querySelectorAll('.vol').forEach(el=>{
+    el.innerText='📦 Volumen: 0 kg';
+  });
+
+  // El entrenamiento recién guardado no se carga de nuevo en las celdas.
+  form.querySelectorAll('.save-ex').forEach(btn=>{
+    btn.classList.remove('saved');
+    btn.innerText='💾 GUARDAR EJERCICIO';
+  });
 }
 
 /* FINALIZAR */
@@ -1115,73 +1135,36 @@ return[...s].filter(Boolean).sort();
 
 /* ESTADISTICAS */
 function stats(){
-let vol=0,sets=0,days=new Set();
+  let vol=0,sets=0,exercises=0;
+  let sessions=new Set();
 
-logs.forEach(l=>{
-days.add(new Date(l.date).toDateString());
+  logs.forEach(l=>{
+    let sessionHasRealData=false;
 
-(l.groups||[]).forEach(g=>(g.exercises||[]).forEach(e=>
-(e.sets||[]).forEach(s=>{
-if(num(s.reps)>0){
-vol+=num(s.weight)*num(s.reps);
-sets++;
-}
-})
-));
-});
+    (l.groups||[]).forEach(g=>
+      (g.exercises||[]).forEach(e=>{
+        let effective=(e.sets||[]).filter(s=>num(s.reps)>0);
 
-let prs=0;
+        if(!effective.length)return;
 
-allExercises().forEach(e=>{
-let best=0;
+        exercises++;
+        sets+=effective.length;
+        vol+=volume(effective);
+        sessionHasRealData=true;
+      })
+    );
 
-history(e).forEach(x=>(x.sets||[]).forEach(s=>{
-if(!num(s.reps))return;
+    // Una sesión cuenta solo si contiene al menos un ejercicio realizado.
+    if(sessionHasRealData){
+      sessions.add(String(l.id||l.date));
+    }
+  });
 
-let w=num(s.weight);
-
-if(w>best){
-best=w;
-prs++;
-}
-}));
-});
-
-prs=Math.max(0,prs-allExercises().length);
-
-document.getElementById('stats').innerHTML=`
-<div class="stat"><b>${days.size}</b><span>Sesiones</span></div>
-<div class="stat"><b>${Math.round(vol)} kg</b><span>Volumen efectivo</span></div>
-<div class="stat"><b>${sets}</b><span>Series efectivas</span></div>
-<div class="stat"><b>${prs}</b><span>PR detectados</span></div>`;
-}
-
-/* RECORDS */
-function records(){
-let h='';
-
-allExercises().forEach(e=>{
-let w=max(e),r=0;
-
-history(e).forEach(x=>(x.sets||[]).forEach(s=>{
-if(!num(s.reps))return;
-r=Math.max(r,num(s.reps));
-}));
-
-let one=maxRM(e);
-
-if(w||r){
-h+=`
-<div class="report">
-<b>${esc(e)}</b>
-<div style="font-size:.7rem;color:var(--sub)">
-🏆 ${w} kg · 🔁 ${r} reps · 🔥 1RM ~${one} kg
-</div>
-</div>`;
-}
-});
-
-document.getElementById('records').innerHTML=h||'<div class="empty">Todavía no hay récords.</div>';
+  document.getElementById('stats').innerHTML=`
+    <div class="stat"><b>${sessions.size}</b><span>Sesiones reales</span></div>
+    <div class="stat"><b>${exercises}</b><span>Ejercicios realizados</span></div>
+    <div class="stat"><b>${sets}</b><span>Series efectivas</span></div>
+    <div class="stat"><b>${Math.round(vol)} kg</b><span>Volumen efectivo</span></div>`;
 }
 
 /* INFORMES */
