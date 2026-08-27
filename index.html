@@ -3185,38 +3185,35 @@ return /abdominal|abdomen|\babs\b/.test(n);
 
 function report(days){
 
+/*
+   INFORMES: trabajamos con FECHAS DE CALENDARIO (YYYY-MM-DD),
+   igual que Calendario, y no con horas/UTC.
+   Así evitamos que los entrenamientos guardados con ISO
+   queden fuera del periodo por diferencias de zona horaria.
+*/
+
 let today=new Date();
+let todayKey=dateKey(today);
 
-today.setHours(
-23,59,59,999
+let start=new Date(
+ today.getFullYear(),
+ today.getMonth(),
+ today.getDate()-(days-1)
 );
 
-let cut=new Date(today);
-
-cut.setDate(
-cut.getDate()-(days-1)
-);
-
-cut.setHours(
-0,0,0,0
-);
+let cutKey=dateKey(start);
 
 let a=
 uniqueSessions(logs)
 .filter(l=>{
 
-let d=new Date(l.date);
+let key=dateKey(l.date);
 
-return(
-d>=cut&&
-d<=today
-);
+return key>=cutKey && key<=todayKey;
 
 })
 .sort(
-(x,y)=>
-new Date(x.date)-
-new Date(y.date)
+(x,y)=>dateKey(x.date).localeCompare(dateKey(y.date))
 );
 
 if(!a.length){
@@ -3265,6 +3262,7 @@ Number(l.day)+'|'+dateKey(l.date)
 
 (g.exercises||[]).forEach(e=>{
 
+/* Solo cuentan las series realmente realizadas. */
 let effective=
 (e.sets||[]).filter(
 s=>num(s.reps)>0
@@ -3273,15 +3271,12 @@ s=>num(s.reps)>0
 if(!effective.length)return;
 
 z.exercises.add(e.name);
-
 z.sets+=effective.length;
-
 z.volume+=volume(effective);
 
 });
 
 })
-
 );
 
 let totalVol=0;
