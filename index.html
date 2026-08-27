@@ -3186,10 +3186,9 @@ return /abdominal|abdomen|\babs\b/.test(n);
 function report(days){
 
 /*
-   INFORMES: trabajamos con FECHAS DE CALENDARIO (YYYY-MM-DD),
-   igual que Calendario, y no con horas/UTC.
-   Así evitamos que los entrenamientos guardados con ISO
-   queden fuera del periodo por diferencias de zona horaria.
+   INFORMES:
+   Trabajamos con fechas de calendario (YYYY-MM-DD).
+   Solo se muestran ejercicios que tienen series realmente realizadas.
 */
 
 let today=new Date();
@@ -3237,9 +3236,6 @@ a.forEach(l=>
 
 (l.groups||[]).forEach(g=>{
 
-if(isAbsGroup(g.name))
-return;
-
 let key=
 g.name||'Sin grupo';
 
@@ -3249,20 +3245,22 @@ groups[key]={
 volume:0,
 sets:0,
 exercises:new Set(),
-sessions:new Set()
+sessions:new Set(),
+exercisesData:[]
 };
 
 }
 
 let z=groups[key];
 
-z.sessions.add(
-Number(l.day)+'|'+dateKey(l.date)
-);
+let groupHasRealData=false;
 
 (g.exercises||[]).forEach(e=>{
 
-/* Solo cuentan las series realmente realizadas. */
+/*
+   SOLO SERIES REALMENTE REALIZADAS:
+   una serie cuenta si tiene repeticiones > 0.
+*/
 let effective=
 (e.sets||[]).filter(
 s=>num(s.reps)>0
@@ -3270,11 +3268,65 @@ s=>num(s.reps)>0
 
 if(!effective.length)return;
 
+groupHasRealData=true;
+
 z.exercises.add(e.name);
+
 z.sets+=effective.length;
+
+/*
+   Los abdominales cuentan ejercicios y series,
+   pero no aportan volumen en kg.
+*/
+if(!isAbsGroup(g.name)){
+
 z.volume+=volume(effective);
 
+}
+
+/*
+   Guardamos el detalle para mostrarlo
+   posteriormente en el historial.
+*/
+let existing=
+z.exercisesData.find(
+x=>x.name===e.name
+);
+
+if(existing){
+
+existing.sets.push({
+date:dateKey(l.date),
+sets:effective
 });
+
+}else{
+
+z.exercisesData.push({
+name:e.name,
+sets:[
+{
+date:dateKey(l.date),
+sets:effective
+}
+]
+});
+
+}
+
+});
+
+/*
+   La sesión solo cuenta para el grupo
+   si realmente hubo algún ejercicio realizado.
+*/
+if(groupHasRealData){
+
+z.sessions.add(
+Number(l.day)+'|'+dateKey(l.date)
+);
+
+}
 
 })
 );
@@ -3301,6 +3353,7 @@ Datos de ejercicios realmente realizados.
 </span>
 
 </div>
+
 `;
 
 let entries=
@@ -3386,6 +3439,76 @@ Sesiones realizadas: ${z.sessions.size}
 
 </div>
 
+`;
+
+/*
+   =====================================================
+   DETALLE DE EJERCICIOS REALIZADOS
+   =====================================================
+*/
+
+z.exercisesData.forEach(ex=>{
+
+h+=`
+
+<div
+style="
+margin-top:9px;
+padding-top:7px;
+border-top:1px solid var(--bor);
+">
+
+<div
+style="
+font-weight:bold;
+font-size:.75rem;
+color:#fff;
+margin-bottom:4px;
+">
+
+${esc(ex.name)}
+
+</div>
+
+`;
+
+ex.sets.forEach(record=>{
+
+h+=`
+
+<div
+style="
+font-size:.68rem;
+color:var(--sub);
+margin-bottom:3px;
+">
+
+${new Date(record.date+'T12:00:00')
+.toLocaleDateString('es-ES')}
+
+&nbsp;→&nbsp;
+
+${record.sets.map(
+(s,i)=>
+`S${i+1} ${num(s.reps)}×${num(s.weight)} kg`
+).join(' · ')}
+
+</div>
+
+`;
+
+});
+
+h+=`
+
+</div>
+
+`;
+
+});
+
+h+=`
+
 </div>
 
 `;
@@ -3423,6 +3546,7 @@ Los abdominales no se incluyen en el volumen en kg.
 </div>
 
 </div>
+
 `;
 
 document.getElementById(
