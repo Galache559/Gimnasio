@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Mi Gimnasio Pro v6.0</title>
+<title>Mi Gimnasio Pro v6.1</title>
 <meta name="theme-color" content="#121212">
 
 <style>
@@ -543,6 +543,71 @@ color:var(--a);
 font-size:.82rem;
 }
 
+/* =====================================================
+   SALIR Y COPIA AUTOMÁTICA
+===================================================== */
+
+.exitBox{
+margin-top:15px;
+padding-top:10px;
+border-top:1px solid var(--bor);
+}
+
+.exitBtn{
+background:#333;
+color:#fff;
+border:1px solid var(--bor);
+border-radius:7px;
+padding:10px;
+width:100%;
+font-weight:bold;
+font-size:.8rem;
+}
+
+.exitBtn:hover{
+background:#444;
+}
+
+.closeScreen{
+display:none;
+position:fixed;
+inset:0;
+z-index:500;
+background:var(--bg);
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+
+.closeCard{
+width:100%;
+max-width:420px;
+background:var(--card);
+border:1px solid var(--bor);
+border-radius:15px;
+padding:25px;
+text-align:center;
+}
+
+.closeCard h2{
+color:var(--a);
+font-size:1.2rem;
+margin-bottom:12px;
+}
+
+.closeCard p{
+color:var(--sub);
+font-size:.8rem;
+line-height:1.5;
+margin-bottom:15px;
+}
+
+.closeDate{
+color:var(--a);
+font-size:.72rem;
+margin-bottom:15px;
+}
+
 @media(max-width:380px){
 
 td input{
@@ -558,7 +623,7 @@ grid-template-columns:1fr 1fr;
 
 @media print{
 
-nav,header,button,input,select,.timerOverlay,canvas{
+nav,header,button,input,select,.timerOverlay,canvas,.exitBox{
 display:none!important;
 }
 
@@ -577,13 +642,14 @@ color:#000;
 }
 
 }
+
 </style>
 </head>
 
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v6.0</h1>
+<h1>MI GIMNASIO PRO v6.1</h1>
 </header>
 
 <div class="container">
@@ -632,6 +698,14 @@ color:#000;
 </div>
 </div>
 
+<div class="card exitBox">
+
+<button class="exitBtn" onclick="exitApp()">
+🚪 SALIR Y GUARDAR
+</button>
+
+</div>
+
 </section>
 
 
@@ -672,19 +746,24 @@ color:#000;
 
 <div style="font-size:.72rem;color:var(--sub);line-height:1.5;margin-bottom:10px">
 
-La rutina y los entrenamientos se guardan en el navegador.
-Utiliza regularmente la copia JSON para conservar tus datos.
+La aplicación guarda automáticamente los datos.
+Al utilizar "Salir y guardar" se crea una copia interna
+adicional de seguridad.
+
+<br><br>
+
+La copia JSON manual se mantiene como respaldo externo.
 
 </div>
 
 <button class="btn out" onclick="exportData()">
-📦 Crear copia de seguridad
+📦 Crear copia de seguridad JSON
 </button>
 
 <br><br>
 
 <button class="btn out" onclick="document.getElementById('file').click()">
-📥 Recuperar copia de seguridad
+📥 Recuperar copia JSON
 </button>
 
 <input
@@ -698,10 +777,18 @@ onchange="importData(event)"
 <div id="backupStatus" class="backupBox">
 
 <span class="backupWarn">
-⚠️ Todavía no se ha comprobado una copia externa.
+⚠️ Comprobando copia automática...
 </span>
 
 </div>
+
+</div>
+
+<div class="card exitBox">
+
+<button class="exitBtn" onclick="exitApp()">
+🚪 SALIR Y GUARDAR
+</button>
 
 </div>
 
@@ -729,6 +816,14 @@ onchange="importData(event)"
 <div class="calendar" id="calendar"></div>
 
 <div id="detail"></div>
+
+</div>
+
+<div class="card exitBox">
+
+<button class="exitBtn" onclick="exitApp()">
+🚪 SALIR Y GUARDAR
+</button>
 
 </div>
 
@@ -773,6 +868,14 @@ PDF
 <div id="reports" class="empty">
 Selecciona un periodo.
 </div>
+
+</div>
+
+<div class="card exitBox">
+
+<button class="exitBtn" onclick="exitApp()">
+🚪 SALIR Y GUARDAR
+</button>
 
 </div>
 
@@ -836,25 +939,66 @@ Cerrar
 </div>
 
 
+<!-- =====================================================
+     PANTALLA DE CIERRE
+===================================================== -->
+
+<div id="closeScreen" class="closeScreen">
+
+<div class="closeCard">
+
+<h2>✓ DATOS GUARDADOS</h2>
+
+<p>
+La copia automática se ha realizado correctamente.
+</p>
+
+<div id="closeDate" class="closeDate"></div>
+
+<p>
+Puedes cerrar esta pestaña o utilizar el botón
+<strong>← Atrás</strong> del navegador.
+</p>
+
+<button class="btn" onclick="reopenApp()">
+↩️ VOLVER A LA APLICACIÓN
+</button>
+
+</div>
+
+</div>
+
+
 <script>
 "use strict";
 
 /* =====================================================
-   MI GIMNASIO PRO v6.0
+   MI GIMNASIO PRO v6.1
    ===================================================== */
 
 /*
-   IMPORTANTE:
-   v6 utiliza una clave diferente de almacenamiento.
-   Así no mezcla los datos de v5 con los de v6.
+   v6.1 incorpora:
+
+   - Copia automática interna.
+   - Copia anterior de seguridad.
+   - Recuperación automática.
+   - Botón SALIR Y GUARDAR.
+   - Copia automática al abandonar la página.
+   - Se mantiene exportación/importación JSON.
 */
 
 const K='gym_v6_';
 
+const AUTO_BACKUP=K+'auto_backup';
+const PREV_BACKUP=K+'auto_backup_previous';
+const BACKUP_DATE=K+'auto_backup_date';
+
+let isExiting=false;
+
 
 /* =====================================================
    RUTINA INICIAL v6
-   ===================================================== */
+===================================================== */
 
 const DEFAULT_ROUTINE={
 
@@ -1159,15 +1303,10 @@ return result;
 
 
 /* =====================================================
-   MIGRACIÓN DE ESTRUCTURA v5
+   MIGRACIÓN
 ===================================================== */
 
 function migrateOldRoutine(){
-
-/*
-   Si por alguna razón existe una rutina antigua
-   dentro del almacenamiento v6, la convertimos.
-*/
 
 for(let d=1;d<=5;d++){
 
@@ -1245,7 +1384,7 @@ const num=v=>parseFloat(v)||0;
 
 
 /* =====================================================
-   GUARDAR
+   GUARDAR DATOS NORMALES
 ===================================================== */
 
 function save(){
@@ -1269,6 +1408,335 @@ console.error('Error guardando datos',e);
 }
 
 }
+
+
+/* =====================================================
+   COPIA AUTOMÁTICA
+===================================================== */
+
+function createAutoBackup(){
+
+try{
+
+/*
+   Antes de sustituir la copia actual,
+   la guardamos como copia anterior.
+*/
+
+let current=
+localStorage.getItem(AUTO_BACKUP);
+
+if(current){
+
+localStorage.setItem(
+PREV_BACKUP,
+current
+);
+
+}
+
+/*
+   Guardamos primero los datos actuales.
+*/
+
+save();
+
+let data={
+app:'Mi Gimnasio Pro',
+version:'6.1',
+backupType:'automatic',
+created:new Date().toISOString(),
+routine:structuredCloneSafe(routine),
+logs:structuredCloneSafe(logs)
+};
+
+localStorage.setItem(
+AUTO_BACKUP,
+JSON.stringify(data)
+);
+
+localStorage.setItem(
+BACKUP_DATE,
+data.created
+);
+
+return true;
+
+}catch(e){
+
+console.error(
+'Error creando copia automática',
+e
+);
+
+return false;
+
+}
+
+}
+
+
+/* =====================================================
+   RECUPERACIÓN AUTOMÁTICA
+===================================================== */
+
+function restoreAutoBackupIfNeeded(){
+
+try{
+
+let raw=
+localStorage.getItem(AUTO_BACKUP);
+
+if(!raw){
+
+updateBackupStatus();
+
+return false;
+
+}
+
+let data=
+JSON.parse(raw);
+
+if(
+!data||
+typeof data!=='object'||
+!data.routine||
+!Array.isArray(data.logs)
+){
+
+updateBackupStatus();
+
+return false;
+
+}
+
+/*
+   Normalmente los datos principales existen.
+   No los sustituimos innecesariamente.
+
+   Si faltan o están vacíos,
+   usamos la copia automática.
+*/
+
+let mainRoutine=
+localStorage.getItem(K+'routine');
+
+let mainLogs=
+localStorage.getItem(K+'logs');
+
+let needRestore=false;
+
+if(!mainRoutine){
+
+needRestore=true;
+
+}
+
+if(!mainLogs){
+
+needRestore=true;
+
+}
+
+if(needRestore){
+
+routine=
+structuredCloneSafe(data.routine);
+
+logs=
+structuredCloneSafe(data.logs);
+
+normalizeRoutine();
+
+save();
+
+console.log(
+'✓ Copia automática restaurada.'
+);
+
+}
+
+updateBackupStatus();
+
+return needRestore;
+
+}catch(e){
+
+console.error(
+'Error comprobando copia automática',
+e
+);
+
+return false;
+
+}
+
+}
+
+
+/* =====================================================
+   ESTADO DE COPIA
+===================================================== */
+
+function updateBackupStatus(){
+
+let box=
+document.getElementById('backupStatus');
+
+if(!box)return;
+
+let d=
+localStorage.getItem(BACKUP_DATE);
+
+if(!d){
+
+box.innerHTML=`
+<span class="backupWarn">
+⚠️ Todavía no existe una copia automática.
+</span>
+`;
+
+return;
+
+}
+
+let fecha;
+
+try{
+
+fecha=
+new Date(d)
+.toLocaleString(
+'es-ES',
+{
+dateStyle:'short',
+timeStyle:'short'
+}
+);
+
+}catch(e){
+
+fecha=d;
+
+}
+
+box.innerHTML=`
+<span class="backupOk">
+✓ Copia automática disponible.
+<br>
+Última copia: ${esc(fecha)}
+</span>
+`;
+
+}
+
+
+/* =====================================================
+   SALIR Y GUARDAR
+===================================================== */
+
+function exitApp(){
+
+if(isExiting)return;
+
+isExiting=true;
+
+/*
+   Si estamos en medio de un entrenamiento,
+   guardamos primero los datos principales.
+*/
+
+save();
+
+let ok=
+createAutoBackup();
+
+let now=
+new Date()
+.toLocaleString(
+'es-ES',
+{
+dateStyle:'short',
+timeStyle:'short'
+}
+);
+
+let screen=
+document.getElementById(
+'closeScreen'
+);
+
+let dateEl=
+document.getElementById(
+'closeDate'
+);
+
+if(dateEl){
+
+dateEl.innerText=
+ok
+?'Última copia: '+now
+:'⚠️ No se pudo crear la copia automática.';
+
+}
+
+if(screen){
+
+screen.style.display='flex';
+
+}
+
+}
+
+
+/* =====================================================
+   VOLVER A LA APLICACIÓN
+===================================================== */
+
+function reopenApp(){
+
+isExiting=false;
+
+let screen=
+document.getElementById(
+'closeScreen'
+);
+
+if(screen)
+screen.style.display='none';
+
+}
+
+
+/* =====================================================
+   COPIA AL ABANDONAR LA PÁGINA
+===================================================== */
+
+window.addEventListener(
+'pagehide',
+function(){
+
+/*
+   No mostramos ventanas ni alertas.
+   Solo guardamos silenciosamente.
+*/
+
+try{
+
+createAutoBackup();
+
+}catch(e){
+
+console.error(
+'Error en copia automática de cierre',
+e
+);
+
+}
+
+}
+);
 
 
 /* =====================================================
@@ -1407,7 +1875,7 @@ stats();
 
 
 /* =====================================================
-   HISTORIAL DE EJERCICIO
+   HISTORIAL
 ===================================================== */
 
 function history(ex){
@@ -1790,7 +2258,7 @@ setTimeout(
 
 
 /* =====================================================
-   OBTENER DATOS ACTUALES
+   DATOS ACTUALES
 ===================================================== */
 
 function getCurrentExerciseData(prefix,ex){
@@ -2416,7 +2884,7 @@ document.getElementById(
 
 
 /* =====================================================
-   CONFIGURACIÓN DE RUTINA
+   CONFIGURACIÓN
 ===================================================== */
 
 function loadConfig(){
@@ -2747,7 +3215,7 @@ alert(
 
 
 /* =====================================================
-   EXPORTAR COPIA
+   EXPORTAR JSON
 ===================================================== */
 
 function exportData(){
@@ -2756,7 +3224,7 @@ let data={
 
 app:'Mi Gimnasio Pro',
 
-version:'6.0',
+version:'6.1',
 
 exported:new Date().toISOString(),
 
@@ -2812,7 +3280,7 @@ document.getElementById(
 
 <span class="backupOk">
 
-✓ Copia completa creada correctamente.
+✓ Copia JSON completa creada correctamente.
 
 <br>
 
@@ -2826,7 +3294,7 @@ Guárdala en un lugar seguro.
 
 
 /* =====================================================
-   IMPORTAR COPIA
+   IMPORTAR JSON
 ===================================================== */
 
 function importData(e){
@@ -4017,10 +4485,31 @@ c.currentTime+.18
 
 
 /* =====================================================
-   INICIO
+   INICIO v6.1
 ===================================================== */
 
+/*
+   Primero intentamos recuperar una copia automática
+   si faltan los datos principales.
+*/
+
+restoreAutoBackupIfNeeded();
+
+/*
+   Guardado normal inicial.
+*/
+
 save();
+
+/*
+   Mostramos estado de la copia.
+*/
+
+updateBackupStatus();
+
+/*
+   Dibujamos la aplicación.
+*/
 
 renderCalendar();
 
