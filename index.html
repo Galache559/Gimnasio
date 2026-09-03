@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -543,10 +544,6 @@ color:var(--a);
 font-size:.82rem;
 }
 
-/* =====================================================
-   SALIR Y COPIA AUTOMÁTICA
-===================================================== */
-
 .exitBox{
 margin-top:15px;
 padding-top:10px;
@@ -644,6 +641,7 @@ color:#000;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -654,10 +652,6 @@ color:#000;
 
 <div class="container">
 
-<!-- =====================================================
-     ENTRENAR
-===================================================== -->
-
 <section id="tab-entrenar" class="tab active">
 
 <div class="card">
@@ -666,11 +660,7 @@ color:#000;
 
 <div class="days">
 
-<button class="btn out" onclick="selectDay(1)">Día 1</button>
-<button class="btn out" onclick="selectDay(2)">Día 2</button>
-<button class="btn out" onclick="selectDay(3)">Día 3</button>
-<button class="btn out" onclick="selectDay(4)">Día 4</button>
-<button class="btn out" onclick="selectDay(5)">Día 5</button>
+<button class="btn out" onclick="selectDay(1)">Día 1</button> <button class="btn out" onclick="selectDay(2)">Día 2</button> <button class="btn out" onclick="selectDay(3)">Día 3</button> <button class="btn out" onclick="selectDay(4)">Día 4</button> <button class="btn out" onclick="selectDay(5)">Día 5</button>
 
 </div>
 
@@ -684,8 +674,7 @@ color:#000;
 
 <div id="loadedmsg"></div>
 
-<label>Fecha</label>
-<input type="date" id="date">
+<label>Fecha</label> <input type="date" id="date">
 
 <div id="form"></div>
 
@@ -707,11 +696,6 @@ color:#000;
 </div>
 
 </section>
-
-
-<!-- =====================================================
-     RUTINA
-===================================================== -->
 
 <section id="tab-rutina" class="tab">
 
@@ -738,7 +722,6 @@ color:#000;
 </button>
 
 </div>
-
 
 <div class="card">
 
@@ -772,6 +755,7 @@ type="file"
 accept=".json"
 style="display:none"
 onchange="importData(event)"
+
 >
 
 <div id="backupStatus" class="backupBox">
@@ -793,11 +777,6 @@ onchange="importData(event)"
 </div>
 
 </section>
-
-
-<!-- =====================================================
-     CALENDARIO
-===================================================== -->
 
 <section id="tab-calendario" class="tab">
 
@@ -829,11 +808,6 @@ onchange="importData(event)"
 
 </section>
 
-
-<!-- =====================================================
-     INFORMES
-===================================================== -->
-
 <section id="tab-informes" class="tab">
 
 <div class="card">
@@ -843,7 +817,6 @@ onchange="importData(event)"
 <div id="stats" class="statgrid"></div>
 
 </div>
-
 
 <div class="card">
 
@@ -883,40 +856,26 @@ Selecciona un periodo.
 
 </div>
 
-
-<!-- =====================================================
-     NAVEGACIÓN
-===================================================== -->
-
 <nav>
 
 <button id="n-entrenar"
 class="active"
 onclick="tab('entrenar')">
-🏋️<span>Entrenar</span>
-</button>
+🏋️<span>Entrenar</span> </button>
 
 <button id="n-rutina"
 onclick="tab('rutina')">
-⚙️<span>Rutina</span>
-</button>
+⚙️<span>Rutina</span> </button>
 
 <button id="n-calendario"
 onclick="tab('calendario')">
-📅<span>Calendario</span>
-</button>
+📅<span>Calendario</span> </button>
 
 <button id="n-informes"
 onclick="tab('informes')">
-📊<span>Informes</span>
-</button>
+📊<span>Informes</span> </button>
 
 </nav>
-
-
-<!-- =====================================================
-     CRONÓMETRO
-===================================================== -->
 
 <div id="timerOverlay" class="timerOverlay">
 
@@ -937,11 +896,6 @@ Cerrar
 </div>
 
 </div>
-
-
-<!-- =====================================================
-     PANTALLA DE CIERRE
-===================================================== -->
 
 <div id="closeScreen" class="closeScreen">
 
@@ -968,24 +922,8 @@ Puedes cerrar esta pestaña o utilizar el botón
 
 </div>
 
-
 <script>
 "use strict";
-
-/* =====================================================
-   MI GIMNASIO PRO v6.1
-   ===================================================== */
-
-/*
-   v6.1 incorpora:
-
-   - Copia automática interna.
-   - Copia anterior de seguridad.
-   - Recuperación automática.
-   - Botón SALIR Y GUARDAR.
-   - Copia automática al abandonar la página.
-   - Se mantiene exportación/importación JSON.
-*/
 
 const K='gym_v6_';
 
@@ -994,11 +932,6 @@ const PREV_BACKUP=K+'auto_backup_previous';
 const BACKUP_DATE=K+'auto_backup_date';
 
 let isExiting=false;
-
-
-/* =====================================================
-   RUTINA INICIAL v6
-===================================================== */
 
 const DEFAULT_ROUTINE={
 
@@ -1205,21 +1138,9 @@ images:['','','','','']
 
 };
 
-
-/* =====================================================
-   COPIA PROFUNDA
-===================================================== */
-
 function structuredCloneSafe(obj){
-
 return JSON.parse(JSON.stringify(obj));
-
 }
-
-
-/* =====================================================
-   CARGA SEGURA
-===================================================== */
 
 function safeParse(value,fallback){
 
@@ -1239,7 +1160,6 @@ return fallback;
 
 }
 
-
 let routine=safeParse(
 localStorage.getItem(K+'routine'),
 structuredCloneSafe(DEFAULT_ROUTINE)
@@ -1255,11 +1175,6 @@ routine=structuredCloneSafe(DEFAULT_ROUTINE);
 
 if(!Array.isArray(logs))
 logs=[];
-
-
-/* =====================================================
-   NORMALIZAR RUTINA
-===================================================== */
 
 function normalizeRoutine(){
 
@@ -1283,7 +1198,7 @@ exercises:Array.isArray(g.exercises)
 ?g.exercises.map(e=>String(e||'')).filter(Boolean)
 :[],
 images:Array.isArray(g.images)
-?g.images.slice()
+?g.images.map(v=>String(v??'').trim())
 :[]
 };
 
@@ -1299,12 +1214,43 @@ return result;
 
 }
 
+/*
+   CORRECCIÓN:
+   El TRÍCEPS del Día 4 utiliza exactamente las mismas
+   imágenes que el TRÍCEPS del Día 1.
+*/
+
+let day1=routine[1];
+let day4=routine[4];
+
+if(day1&&day4){
+
+let triceps1=(day1.groups||[]).find(
+g=>String(g.name||'').trim().toUpperCase()==='TRÍCEPS'
+);
+
+let triceps4=(day4.groups||[]).find(
+g=>String(g.name||'').trim().toUpperCase()==='TRÍCEPS'
+);
+
+if(triceps1&&triceps4){
+
+triceps4.images=(triceps1.images||[]).slice(
+0,
+triceps4.exercises.length
+);
+
+while(
+triceps4.images.length<triceps4.exercises.length
+){
+triceps4.images.push('');
 }
 
+}
 
-/* =====================================================
-   MIGRACIÓN
-===================================================== */
+}
+
+}
 
 function migrateOldRoutine(){
 
@@ -1354,20 +1300,10 @@ groups:groups
 migrateOldRoutine();
 normalizeRoutine();
 
-
-/* =====================================================
-   VARIABLES
-===================================================== */
-
 let day=null;
 let monthDate=new Date();
 let timerInterval=null;
 let timerSeconds=0;
-
-
-/* =====================================================
-   UTILIDADES
-===================================================== */
 
 const esc=s=>String(s??'').replace(
 /[&<>"']/g,
@@ -1381,11 +1317,6 @@ m=>({
 );
 
 const num=v=>parseFloat(v)||0;
-
-
-/* =====================================================
-   GUARDAR DATOS NORMALES
-===================================================== */
 
 function save(){
 
@@ -1409,19 +1340,9 @@ console.error('Error guardando datos',e);
 
 }
 
-
-/* =====================================================
-   COPIA AUTOMÁTICA
-===================================================== */
-
 function createAutoBackup(){
 
 try{
-
-/*
-   Antes de sustituir la copia actual,
-   la guardamos como copia anterior.
-*/
 
 let current=
 localStorage.getItem(AUTO_BACKUP);
@@ -1434,10 +1355,6 @@ current
 );
 
 }
-
-/*
-   Guardamos primero los datos actuales.
-*/
 
 save();
 
@@ -1475,11 +1392,6 @@ return false;
 
 }
 
-
-/* =====================================================
-   RECUPERACIÓN AUTOMÁTICA
-===================================================== */
-
 function restoreAutoBackupIfNeeded(){
 
 try{
@@ -1511,14 +1423,6 @@ return false;
 
 }
 
-/*
-   Normalmente los datos principales existen.
-   No los sustituimos innecesariamente.
-
-   Si faltan o están vacíos,
-   usamos la copia automática.
-*/
-
 let mainRoutine=
 localStorage.getItem(K+'routine');
 
@@ -1527,17 +1431,11 @@ localStorage.getItem(K+'logs');
 
 let needRestore=false;
 
-if(!mainRoutine){
-
+if(!mainRoutine)
 needRestore=true;
 
-}
-
-if(!mainLogs){
-
+if(!mainLogs)
 needRestore=true;
-
-}
 
 if(needRestore){
 
@@ -1573,11 +1471,6 @@ return false;
 }
 
 }
-
-
-/* =====================================================
-   ESTADO DE COPIA
-===================================================== */
 
 function updateBackupStatus(){
 
@@ -1631,21 +1524,11 @@ box.innerHTML=`
 
 }
 
-
-/* =====================================================
-   SALIR Y GUARDAR
-===================================================== */
-
 function exitApp(){
 
 if(isExiting)return;
 
 isExiting=true;
-
-/*
-   Si estamos en medio de un entrenamiento,
-   guardamos primero los datos principales.
-*/
 
 save();
 
@@ -1689,11 +1572,6 @@ screen.style.display='flex';
 
 }
 
-
-/* =====================================================
-   VOLVER A LA APLICACIÓN
-===================================================== */
-
 function reopenApp(){
 
 isExiting=false;
@@ -1708,19 +1586,9 @@ screen.style.display='none';
 
 }
 
-
-/* =====================================================
-   COPIA AL ABANDONAR LA PÁGINA
-===================================================== */
-
 window.addEventListener(
 'pagehide',
 function(){
-
-/*
-   No mostramos ventanas ni alertas.
-   Solo guardamos silenciosamente.
-*/
 
 try{
 
@@ -1738,11 +1606,6 @@ e
 }
 );
 
-
-/* =====================================================
-   VOLUMEN
-===================================================== */
-
 function volume(s){
 
 return(s||[]).reduce(
@@ -1752,11 +1615,6 @@ return(s||[]).reduce(
 
 }
 
-
-/* =====================================================
-   1RM
-===================================================== */
-
 function rm(w,r){
 
 return w&&r
@@ -1764,7 +1622,6 @@ return w&&r
 :0;
 
 }
-
 
 function maxSetRM(s){
 
@@ -1783,11 +1640,6 @@ num(x.reps)
 
 }
 
-
-/* =====================================================
-   FECHAS
-===================================================== */
-
 function dateKey(value){
 
 if(!value)return '';
@@ -1801,11 +1653,6 @@ String(d.getMonth()+1).padStart(2,'0')+'-'+
 String(d.getDate()).padStart(2,'0');
 
 }
-
-
-/* =====================================================
-   SESIONES ÚNICAS
-===================================================== */
 
 function uniqueSessions(source){
 
@@ -1825,11 +1672,6 @@ return [...map.values()];
 
 }
 
-
-/* =====================================================
-   BUSCAR SESIÓN
-===================================================== */
-
 function findSession(d,date){
 
 let key=dateKey(date);
@@ -1840,11 +1682,6 @@ dateKey(l.date)===key
 );
 
 }
-
-
-/* =====================================================
-   PESTAÑAS
-===================================================== */
 
 function tab(x){
 
@@ -1873,19 +1710,12 @@ stats();
 
 }
 
-
-/* =====================================================
-   HISTORIAL
-===================================================== */
-
 function history(ex){
 
 let a=[];
 
 uniqueSessions(logs).forEach(l=>
-
 (l.groups||[]).forEach(g=>
-
 (g.exercises||[]).forEach(e=>{
 
 if(e.name===ex){
@@ -1898,9 +1728,7 @@ sets:e.sets||[]
 }
 
 })
-
 )
-
 );
 
 return a.sort(
@@ -1908,11 +1736,6 @@ return a.sort(
 );
 
 }
-
-
-/* =====================================================
-   ÚLTIMO ENTRENAMIENTO
-===================================================== */
 
 function previousDayLog(d){
 
@@ -1930,7 +1753,6 @@ return a[a.length-1];
 
 }
 
-
 function getPreviousExercise(log,name){
 
 if(!log)return null;
@@ -1943,11 +1765,6 @@ return e;
 return null;
 
 }
-
-
-/* =====================================================
-   SELECCIONAR DÍA
-===================================================== */
 
 function selectDay(d){
 
@@ -1985,11 +1802,6 @@ previous
 renderWorkout(previous);
 
 }
-
-
-/* =====================================================
-   RENDER ENTRENAMIENTO
-===================================================== */
 
 function renderWorkout(previous){
 
@@ -2242,11 +2054,6 @@ pr(prefix,ex);
 
 }
 
-
-/* =====================================================
-   SELECCIONAR CELDA
-===================================================== */
-
 function selectCell(el){
 
 setTimeout(
@@ -2255,11 +2062,6 @@ setTimeout(
 );
 
 }
-
-
-/* =====================================================
-   DATOS ACTUALES
-===================================================== */
 
 function getCurrentExerciseData(prefix,ex){
 
@@ -2308,11 +2110,6 @@ rm:maxSetRM(realSets)
 };
 
 }
-
-
-/* =====================================================
-   CÁLCULOS
-===================================================== */
 
 function calc(prefix){
 
@@ -2375,11 +2172,6 @@ volEl.innerText=
 
 }
 
-
-/* =====================================================
-   PROPUESTA
-===================================================== */
-
 function suggest(prefix,w){
 
 let e=document.getElementById(
@@ -2401,32 +2193,22 @@ new Event(
 
 }
 
-
-/* =====================================================
-   PR
-===================================================== */
-
 function maxWeight(ex){
 
 let m=0;
 
 history(ex).forEach(x=>
-
 (x.sets||[]).forEach(s=>
-
 m=Math.max(
 m,
 num(s.weight)
 )
-
 )
-
 );
 
 return m;
 
 }
-
 
 function pr(prefix,ex){
 
@@ -2458,11 +2240,6 @@ v>old&&old>0
 }
 
 }
-
-
-/* =====================================================
-   GUARDAR EJERCICIO
-===================================================== */
 
 function saveExercise(prefix,gi,i,ex){
 
@@ -2575,11 +2352,6 @@ showSavedButton(
 
 }
 
-
-/* =====================================================
-   LIMPIAR SESIÓN
-===================================================== */
-
 function cleanSession(log){
 
 (log.groups||[]).forEach(g=>{
@@ -2599,11 +2371,6 @@ g=>(g.exercises||[]).length>0
 );
 
 }
-
-
-/* =====================================================
-   BOTÓN GUARDADO
-===================================================== */
 
 function showSavedButton(id){
 
@@ -2626,11 +2393,6 @@ btn.innerText=
 },1500);
 
 }
-
-
-/* =====================================================
-   HISTORIAL
-===================================================== */
 
 function showHistory(ex){
 
@@ -2660,11 +2422,6 @@ s=>`${num(s.reps)}×${num(s.weight)}kg`
 );
 
 }
-
-
-/* =====================================================
-   GUARDAR ENTRENAMIENTO
-===================================================== */
 
 function saveWorkout(){
 
@@ -2830,11 +2587,6 @@ Continuar
 
 }
 
-
-/* =====================================================
-   LIMPIAR PANTALLA
-===================================================== */
-
 function clearWorkoutInputs(){
 
 let form=document.getElementById('form');
@@ -2865,11 +2617,6 @@ el.innerText=
 
 }
 
-
-/* =====================================================
-   FINALIZAR
-===================================================== */
-
 function finishSummary(){
 
 document.getElementById(
@@ -2881,11 +2628,6 @@ document.getElementById(
 ).style.display='none';
 
 }
-
-
-/* =====================================================
-   CONFIGURACIÓN
-===================================================== */
 
 function loadConfig(){
 
@@ -2979,11 +2721,6 @@ document.getElementById(
 
 }
 
-
-/* =====================================================
-   CAMPO EJERCICIO
-===================================================== */
-
 function field(gi,n,img){
 
 return`
@@ -3022,11 +2759,6 @@ onclick="removeExercise(this)">
 
 }
 
-
-/* =====================================================
-   AÑADIR GRUPO
-===================================================== */
-
 function addGroup(){
 
 let d=
@@ -3043,11 +2775,6 @@ images:[]
 loadConfig();
 
 }
-
-
-/* =====================================================
-   ELIMINAR GRUPO
-===================================================== */
 
 function removeGroup(gi){
 
@@ -3077,11 +2804,6 @@ loadConfig();
 
 }
 
-
-/* =====================================================
-   AÑADIR EJERCICIO
-===================================================== */
-
 function addExercise(gi){
 
 document
@@ -3092,11 +2814,6 @@ field(gi,'','')
 );
 
 }
-
-
-/* =====================================================
-   ELIMINAR EJERCICIO
-===================================================== */
 
 function removeExercise(btn){
 
@@ -3112,11 +2829,6 @@ return;
 box.remove();
 
 }
-
-
-/* =====================================================
-   GUARDAR CONFIGURACIÓN
-===================================================== */
 
 function saveConfig(){
 
@@ -3213,11 +2925,6 @@ alert(
 
 }
 
-
-/* =====================================================
-   EXPORTAR JSON
-===================================================== */
-
 function exportData(){
 
 let data={
@@ -3275,8 +2982,7 @@ setTimeout(
 
 document.getElementById(
 'backupStatus'
-).innerHTML=
-`
+).innerHTML=`
 
 <span class="backupOk">
 
@@ -3291,11 +2997,6 @@ Guárdala en un lugar seguro.
 `;
 
 }
-
-
-/* =====================================================
-   IMPORTAR JSON
-===================================================== */
 
 function importData(e){
 
@@ -3386,11 +3087,6 @@ reader.readAsText(file);
 
 }
 
-
-/* =====================================================
-   CALENDARIO
-===================================================== */
-
 function month(n){
 
 monthDate.setMonth(
@@ -3400,7 +3096,6 @@ monthDate.getMonth()+n
 renderCalendar();
 
 }
-
 
 function renderCalendar(){
 
@@ -3475,11 +3170,6 @@ document.getElementById(
 ).innerHTML='';
 
 }
-
-
-/* =====================================================
-   DETALLE CALENDARIO
-===================================================== */
 
 function detail(y,m,d){
 
@@ -3599,11 +3289,6 @@ document.getElementById(
 
 }
 
-
-/* =====================================================
-   ELIMINAR SESIÓN
-===================================================== */
-
 function deleteSession(id){
 
 if(!confirm(
@@ -3625,11 +3310,6 @@ alert(
 );
 
 }
-
-
-/* =====================================================
-   EDITAR SESIÓN
-===================================================== */
 
 function editSession(id){
 
@@ -3857,11 +3537,6 @@ tab('entrenar');
 
 }
 
-
-/* =====================================================
-   IMÁGENES
-===================================================== */
-
 function toggleImage(id){
 
 let e=document.getElementById(id);
@@ -3874,11 +3549,6 @@ e.style.display==='block'
 :'block';
 
 }
-
-
-/* =====================================================
-   ESTADÍSTICAS
-===================================================== */
 
 function stats(){
 
@@ -3974,11 +3644,6 @@ Volumen realizado
 
 }
 
-
-/* =====================================================
-   INFORMES
-===================================================== */
-
 function isAbsGroup(name){
 
 let n=
@@ -3993,7 +3658,6 @@ String(name||'')
 return /abdominal|abdomen|\babs\b/.test(n);
 
 }
-
 
 function report(days){
 
@@ -4341,11 +4005,6 @@ document.getElementById(
 
 }
 
-
-/* =====================================================
-   CRONÓMETRO
-===================================================== */
-
 function startTimer(){
 
 closeTimer();
@@ -4383,7 +4042,6 @@ closeTimer,
 },1000);
 
 }
-
 
 function updateTimerDisplay(){
 
@@ -4427,7 +4085,6 @@ beep();
 
 }
 
-
 function closeTimer(){
 
 if(timerInterval){
@@ -4449,7 +4106,6 @@ if(o)
 o.style.display='none';
 
 }
-
 
 function beep(){
 
@@ -4483,33 +4139,11 @@ c.currentTime+.18
 
 }
 
-
-/* =====================================================
-   INICIO v6.1
-===================================================== */
-
-/*
-   Primero intentamos recuperar una copia automática
-   si faltan los datos principales.
-*/
-
 restoreAutoBackupIfNeeded();
-
-/*
-   Guardado normal inicial.
-*/
 
 save();
 
-/*
-   Mostramos estado de la copia.
-*/
-
 updateBackupStatus();
-
-/*
-   Dibujamos la aplicación.
-*/
 
 renderCalendar();
 
