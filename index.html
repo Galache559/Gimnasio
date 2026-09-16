@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Mi Gimnasio Pro v6.2</title>
+<title>MI GIMNASIO PRO v9.6</title>
 <meta name="theme-color" content="#121212">
 
 <style>
@@ -827,6 +827,185 @@ color:#000;
   .dbgif{width:46px;height:46px}
 }
 
+
+.libraryControls{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.libraryGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:9px}
+.exerciseCard{background:var(--item);border:1px solid var(--bor);border-radius:9px;overflow:hidden}
+.exerciseCard img{width:100%;height:130px;object-fit:contain;background:#111;display:block}
+.exerciseCardBody{padding:7px}.exerciseCardName{font-size:.7rem;font-weight:bold;min-height:34px}
+.exerciseCardMeta{font-size:.6rem;color:var(--sub);margin:3px 0 6px}
+.exerciseCard .btn{padding:7px;font-size:.67rem}
+.targetBox{background:#062d3c;border:1px solid #17607c;border-radius:8px;padding:8px;margin:8px 0;font-size:.7rem}
+.routineExercise{display:flex;align-items:center;justify-content:space-between;gap:6px;background:#191919;border:1px solid var(--bor);border-radius:7px;padding:7px;margin:5px 0}
+.routineExercise span{font-size:.72rem}.count5{font-size:.65rem;color:var(--sub)}
+@media(max-width:380px){.libraryGrid{grid-template-columns:1fr}.libraryControls{grid-template-columns:1fr}}
+
+/* ===== v8.0 · MODO ENTRENAMIENTO ===== */
+.trainingHero{
+  background:linear-gradient(135deg,#1e1e1e,#202b25);
+  border:1px solid #245b3d;
+  border-radius:14px;
+  padding:13px;
+  margin-bottom:10px;
+  box-shadow:0 4px 16px rgba(0,0,0,.18);
+}
+.trainingHeroTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+}
+.trainingHeroTitle{
+  font-size:1.05rem;
+  font-weight:800;
+  letter-spacing:.4px;
+}
+.trainingHeroSub{
+  color:var(--sub);
+  font-size:.7rem;
+  margin-top:4px;
+}
+.trainingPill{
+  background:#07351f;
+  color:var(--a);
+  border:1px solid #176b43;
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:.68rem;
+  font-weight:800;
+  white-space:nowrap;
+}
+.trainingProgress{
+  height:5px;
+  background:#292929;
+  border-radius:99px;
+  overflow:hidden;
+  margin-top:10px;
+}
+.trainingProgress>span{
+  display:block;
+  height:100%;
+  background:var(--a);
+  border-radius:99px;
+}
+.phase{
+  border-left:4px solid var(--a);
+  padding-left:8px;
+}
+.ex{
+  border:1px solid #303030;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+.exhead{
+  position:sticky;
+  top:57px;
+  z-index:5;
+  background:var(--item);
+  padding:4px 0 7px;
+}
+.exerciseNo{
+  color:var(--sub);
+  font-size:.65rem;
+  font-weight:600;
+  margin-right:auto;
+  padding-right:8px;
+}
+.gifPreview{
+  width:100%;
+  max-height:190px;
+  object-fit:contain;
+  background:#111;
+  border-radius:9px;
+  border:1px solid #333;
+  display:block;
+  margin:7px 0 9px;
+}
+.gifLabel{
+  font-size:.62rem;
+  color:var(--sub);
+  text-align:center;
+  margin-top:-5px;
+  margin-bottom:6px;
+}
+.restbtn{
+  margin-top:8px;
+  box-shadow:0 2px 7px rgba(0,0,0,.18);
+}
+.save-ex{
+  margin-top:7px;
+}
+.nextExercise{
+  width:100%;
+  margin-top:7px;
+  padding:9px;
+  border-radius:7px;
+  border:1px solid #17607c;
+  background:#062d3c;
+  color:var(--blue);
+  font-weight:800;
+}
+.todayCell input:focus{
+  border-color:var(--a);
+  box-shadow:0 0 0 2px rgba(0,230,118,.12);
+}
+.lastCell input{
+  pointer-events:none;
+}
+@media (min-width:700px){
+  .container{max-width:760px}
+  .gifPreview{max-height:210px}
+}
+
+
+/* Papelera de ejercicios: botón siempre clicable */
+.routineTrash{position:relative;z-index:20;pointer-events:auto;cursor:pointer;min-width:34px;min-height:32px;touch-action:manipulation}
+.routineTrash:active{transform:scale(.94)}
+
+/* ===== v9.3 · Biblioteca 15 ejercicios ===== */
+.libraryGridV9{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.exerciseCard{
+  overflow:hidden;
+  border:1px solid #343434;
+  border-radius:11px;
+  background:#151515;
+}
+.exerciseCard img{
+  width:100%;
+  height:220px;
+  object-fit:contain;
+  display:block;
+  background:#0d0d0d;
+}
+.exerciseCardBody{
+  padding:9px;
+}
+.exerciseCardName{
+  min-height:34px;
+  font-size:.78rem;
+  font-weight:800;
+  line-height:1.25;
+}
+.exerciseCardMeta{
+  color:var(--sub);
+  font-size:.62rem;
+  margin:4px 0 8px;
+}
+.exerciseCard .btn{
+  width:100%;
+}
+@media(max-width:900px){
+  .libraryGridV9{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .exerciseCard img{height:210px;}
+}
+@media(max-width:560px){
+  .libraryGridV9{grid-template-columns:1fr;}
+  .exerciseCard img{height:240px;}
+}
+
 </style>
 
 </head>
@@ -834,7 +1013,7 @@ color:#000;
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v6.4</h1>
+<h1>MI GIMNASIO PRO v9.6</h1>
 </header>
 
 <div class="container">
@@ -887,145 +1066,63 @@ color:#000;
 <section id="tab-rutina" class="tab">
 
 <div class="card">
-
-<h2>📚 Base de ejercicios + GIF</h2>
-
-<div class="libraryBox">
-
-<div class="libraryControls">
-
-<div>
-<label>Grupo muscular</label>
-<select id="libraryMuscle">
-<option value="PECHO">PECHO</option>
-<option value="HOMBROS">HOMBROS</option>
-<option value="TRÍCEPS">TRÍCEPS</option>
-<option value="ABDOMINALES">ABDOMINALES</option>
-<option value="ESPALDA">ESPALDA</option>
-<option value="BÍCEPS">BÍCEPS</option>
-<option value="PIERNAS">PIERNAS</option>
-</select>
-</div>
-
-<div>
-<label>Buscar ejercicio</label>
-<input id="librarySearch" type="text" placeholder="Nombre...">
-</div>
-
-<button class="btn blue loadLib" onclick="loadExerciseLibrary()">
-🔄 Cargar base
-</button>
-
-</div>
-
-<div id="libraryStatus" class="libraryStatus">
-La base usa ExerciseGymGifsDB y carga los GIF directamente desde jsDelivr.
-</div>
-
-<div id="libraryList" class="libraryList"></div>
-
-</div>
-
-</div>
-
-<div class="card">
-
 <h2>⚙️ Configurar rutina</h2>
 
 <label>Día</label>
-
 <select id="cfgday" onchange="loadConfig()">
-
 <option value="1">Día 1</option>
 <option value="2">Día 2</option>
 <option value="3">Día 3</option>
 <option value="4">Día 4</option>
 <option value="5">Día 5</option>
-
 </select>
 
 <div id="editor"></div>
 
-<button class="btn" onclick="saveConfig()">
-💾 Guardar configuración
-</button>
-
+<button class="btn" onclick="saveConfig()">💾 Guardar configuración</button>
 </div>
-
 
 <div class="card">
-<h2>🏋️ Base de ejercicios + GIF</h2>
-<div style="font-size:.72rem;color:var(--sub);line-height:1.45">
-La base contiene 10–15 ejercicios por grupo. Desde aquí eliges los 5 que aparecerán en el entrenamiento.
+<h2>📚 Biblioteca de ejercicios + GIF</h2>
+<div style="font-size:.72rem;color:var(--sub);line-height:1.45;margin-bottom:10px">
+Selecciona el <b>grupo muscular</b>. Los ejercicios se añadirán exclusivamente a ese grupo del día seleccionado.
+Máximo 5 ejercicios por grupo.
 </div>
+
 <div class="dbbox">
-<div class="dbfilters">
-<select id="dbgroup" onchange="renderExerciseDB()">
+<div class="libraryControls">
+
+<div>
+<label>Grupo muscular</label>
+<select id="libraryMuscleV9" onchange="syncV9Target();renderLibraryV9()">
 <option value="PECHO">PECHO</option>
 <option value="HOMBROS">HOMBROS</option>
 <option value="TRÍCEPS">TRÍCEPS</option>
-<option value="ABDOMINALES">ABDOMINALES</option>
 <option value="ESPALDA">ESPALDA</option>
 <option value="BÍCEPS">BÍCEPS</option>
 <option value="PIERNAS">PIERNAS</option>
+<option value="ABDOMINALES">ABDOMINALES</option>
 </select>
-<input id="dbsearch" placeholder="🔎 Buscar ejercicio" oninput="renderExerciseDB()">
 </div>
-<div id="dbcount" class="routineCount"></div>
-<div id="dblist" class="dblist"></div>
+
+<div>
+<label>Buscar ejercicio</label>
+<input id="librarySearchV9" type="text" placeholder="🔎 Nombre..." oninput="renderLibraryV9()">
+</div>
+
+</div>
+
+<div id="v9TargetLabel" class="targetBox">Destino: selecciona un grupo</div>
+<div id="libraryStatusV9" class="libraryStatus">Selecciona un grupo y añade los ejercicios que quieras.</div>
+<div id="libraryGridV9" class="libraryGrid"></div>
 </div>
 </div>
+
 <div class="card">
-
 <h2>💾 Seguridad de datos</h2>
-
 <div style="font-size:.72rem;color:var(--sub);line-height:1.5;margin-bottom:10px">
-
-La aplicación guarda automáticamente los datos.
-Al utilizar "Salir y guardar" se crea una copia interna
-adicional de seguridad.
-
-<br><br>
-
-La copia JSON manual se mantiene como respaldo externo.
-
+La aplicación guarda automáticamente los datos. Al utilizar "Salir y guardar" se crea una copia interna adicional de seguridad.
 </div>
-
-<button class="btn out" onclick="exportData()">
-📦 Crear copia de seguridad JSON
-</button>
-
-<br><br>
-
-<button class="btn out" onclick="document.getElementById('file').click()">
-📥 Recuperar copia JSON
-</button>
-
-<input
-id="file"
-type="file"
-accept=".json"
-style="display:none"
-onchange="importData(event)"
-
->
-
-<div id="backupStatus" class="backupBox">
-
-<span class="backupWarn">
-⚠️ Comprobando copia automática...
-</span>
-
-</div>
-
-</div>
-
-<div class="card exitBox">
-
-<button class="exitBtn" onclick="exitApp()">
-🚪 SALIR Y GUARDAR
-</button>
-
 </div>
 
 </section>
@@ -1177,7 +1274,7 @@ Puedes cerrar esta pestaña o utilizar el botón
 <script>
 "use strict";
 
-const K='gym_v6_4_';
+const K='gym_v7_';
 
 const AUTO_BACKUP=K+'auto_backup';
 const PREV_BACKUP=K+'auto_backup_previous';
@@ -1186,60 +1283,39 @@ const BACKUP_DATE=K+'auto_backup_date';
 let isExiting=false;
 
 const DEFAULT_ROUTINE={
-1:{groups:[
-{name:'PECHO',exercises:[],images:[]},
-{name:'HOMBROS',exercises:[],images:[]},
-{name:'TRÍCEPS',exercises:[],images:[]},
-{name:'ABDOMINALES',exercises:[],images:[]}
-]},
-2:{groups:[
-{name:'ESPALDA',exercises:[],images:[]},
-{name:'BÍCEPS',exercises:[],images:[]},
-{name:'ABDOMINALES',exercises:[],images:[]}
-]},
-3:{groups:[
-{name:'PIERNAS',exercises:[],images:[]},
-{name:'PIERNAS',exercises:[],images:[]}
-]},
-4:{groups:[
-{name:'PECHO',exercises:[],images:[]},
-{name:'HOMBROS',exercises:[],images:[]},
-{name:'TRÍCEPS',exercises:[],images:[]},
-{name:'ABDOMINALES',exercises:[],images:[]}
-]},
-5:{groups:[
-{name:'ESPALDA',exercises:[],images:[]},
-{name:'BÍCEPS',exercises:[],images:[]},
-{name:'ABDOMINALES',exercises:[],images:[]}
-]}
-};
+1:{groups:[{name:'PECHO',exercises:[],images:[]},{name:'HOMBROS',exercises:[],images:[]},{name:'TRÍCEPS',exercises:[],images:[]},{name:'ABDOMINALES',exercises:[],images:[]}]},
+2:{groups:[{name:'ESPALDA',exercises:[],images:[]},{name:'BÍCEPS',exercises:[],images:[]},{name:'ABDOMINALES',exercises:[],images:[]}]},
+3:{groups:[{name:'PIERNAS',exercises:[],images:[]},{name:'PIERNAS',exercises:[],images:[]}]},
+4:{groups:[{name:'PECHO',exercises:[],images:[]},{name:'HOMBROS',exercises:[],images:[]},{name:'TRÍCEPS',exercises:[],images:[]},{name:'ABDOMINALES',exercises:[],images:[]}]},
+5:{groups:[{name:'ESPALDA',exercises:[],images:[]},{name:'BÍCEPS',exercises:[],images:[]},{name:'ABDOMINALES',exercises:[],images:[]}]}
+}
 
 
 /* ===== v6.3 BASE MAESTRA: 10–15 EJERCICIOS POR GRUPO ===== */
 const EXERCISE_DB = {
   PECHO:[
-    ['Press de banca plano','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/barbell-bench-press.gif'],
-    ['Press inclinado con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/incline-dumbbell-press.gif'],
-    ['Press inclinado con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/incline-bench-press.gif'],
-    ['Aperturas con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/dumbbell-fly.gif'],
-    ['Cruce de poleas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/cable-crossover.gif'],
-    ['Press de pecho en máquina','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/chest-press-machine.gif'],
-    ['Fondos para pecho','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/chest-dips.gif'],
-    ['Press con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/dumbbell-bench-press.gif'],
-    ['Pullover con mancuerna','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/dumbbell-pullover.gif'],
-    ['Press declinado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/decline-bench-press.gif']
+    ['Press de banca plano','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/barbell-bench-press.gif'],
+    ['Press inclinado con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/incline-dumbbell-press.gif'],
+    ['Press inclinado con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/incline-bench-press.gif'],
+    ['Aperturas con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/dumbbell-fly.gif'],
+    ['Cruce de poleas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/cable-crossover.gif'],
+    ['Press de pecho en máquina','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/chest-press-machine.gif'],
+    ['Fondos para pecho','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/chest-dips.gif'],
+    ['Press con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/dumbbell-bench-press.gif'],
+    ['Pullover con mancuerna','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/dumbbell-pullover.gif'],
+    ['Press declinado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/decline-bench-press.gif']
   ],
   HOMBROS:[
-    ['Press militar','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/barbell-shoulder-press.gif'],
-    ['Press de hombros con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/dumbbell-shoulder-press.gif'],
-    ['Elevaciones laterales','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/dumbbell-lateral-raise.gif'],
-    ['Elevaciones frontales','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/dumbbell-front-raise.gif'],
-    ['Pájaros con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/dumbbell-rear-delt-fly.gif'],
-    ['Face pull con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/cable-face-pull.gif'],
-    ['Remo al mentón','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/barbell-upright-row.gif'],
-    ['Elevación lateral en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/cable-lateral-raise.gif'],
-    ['Press Arnold','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/arnold-press.gif'],
-    ['Press en máquina de hombros','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/machine-shoulder-press.gif']
+    ['Press militar','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/barbell-shoulder-press.gif'],
+    ['Press de hombros con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/dumbbell-shoulder-press.gif'],
+    ['Elevaciones laterales','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/dumbbell-lateral-raise.gif'],
+    ['Elevaciones frontales','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/dumbbell-front-raise.gif'],
+    ['Pájaros con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/dumbbell-rear-delt-fly.gif'],
+    ['Face pull con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/cable-face-pull.gif'],
+    ['Remo al mentón','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/barbell-upright-row.gif'],
+    ['Elevación lateral en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/cable-lateral-raise.gif'],
+    ['Press Arnold','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/arnold-press.gif'],
+    ['Press en máquina de hombros','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/machine-shoulder-press.gif']
   ],
   TRÍCEPS:[
     ['Extensión en polea alta con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/cable-pushdown.gif'],
@@ -1257,12 +1333,12 @@ const EXERCISE_DB = {
     ['Jalón al pecho con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/lat-pulldown.gif'],
     ['Remo con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/barbell-bent-over-row.gif'],
     ['Remo con mancuerna a una mano','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/dumbbell-row.gif'],
-    ['Peso muerto','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lower-back/barbell-deadlift.gif'],
-    ['Remo unilateral con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/back/cable-one-arm-row.gif'],
-    ['Remo sentado con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/middle-back/cable-seated-row.gif'],
+    ['Peso muerto','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/spine/barbell-deadlift.gif'],
+    ['Remo unilateral con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/cable-one-arm-row.gif'],
+    ['Remo sentado con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/cable-seated-row.gif'],
     ['Jalón con agarre estrecho','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/close-grip-lat-pulldown.gif'],
     ['Dominadas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/pull-up.gif'],
-    ['Remo en máquina','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/middle-back/machine-row.gif'],
+    ['Remo en máquina','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/machine-row.gif'],
     ['Pullover en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/cable-pullover.gif']
   ],
   BÍCEPS:[
@@ -1278,28 +1354,28 @@ const EXERCISE_DB = {
     ['Curl bayesiano en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/cable-bayesian-curl.gif']
   ],
   PIERNAS:[
-    ['Sentadilla con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quadriceps/barbell-squat.gif'],
-    ['Prensa de piernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quadriceps/leg-press.gif'],
-    ['Extensión de piernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quadriceps/leg-extension.gif'],
+    ['Sentadilla con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/barbell-squat.gif'],
+    ['Prensa de piernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/leg-press.gif'],
+    ['Extensión de piernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/leg-extension.gif'],
     ['Curl femoral tumbado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/hamstrings/lying-leg-curl.gif'],
     ['Curl femoral sentado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/hamstrings/seated-leg-curl.gif'],
     ['Peso muerto rumano','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/hamstrings/romanian-deadlift.gif'],
-    ['Zancadas con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quadriceps/dumbbell-lunge.gif'],
+    ['Zancadas con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/dumbbell-lunge.gif'],
     ['Hip thrust','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/glutes/barbell-hip-thrust.gif'],
     ['Elevación de talones de pie','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/calves/standing-calf-raise.gif'],
     ['Elevación de talones sentado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/calves/seated-calf-raise.gif']
   ],
   ABDOMINALES:[
-    ['Crunch en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/cable-crunch.gif'],
-    ['Crunch abdominal','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/crunch.gif'],
-    ['Elevación de piernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/leg-raise.gif'],
-    ['Elevación de rodillas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/knee-raise.gif'],
-    ['Plancha','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/plank.gif'],
-    ['Plancha lateral','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/side-plank.gif'],
-    ['Abdominales en máquina','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/machine-crunch.gif'],
-    ['Crunch inverso','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/reverse-crunch.gif'],
-    ['Bicicleta abdominal','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/bicycle-crunch.gif'],
-    ['Dead bug','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/dead-bug.gif']
+    ['Crunch en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/cable-crunch.gif'],
+    ['Crunch abdominal','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/crunch.gif'],
+    ['Elevación de piernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/leg-raise.gif'],
+    ['Elevación de rodillas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/knee-raise.gif'],
+    ['Plancha','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/plank.gif'],
+    ['Plancha lateral','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/side-plank.gif'],
+    ['Abdominales en máquina','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/machine-crunch.gif'],
+    ['Crunch inverso','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/reverse-crunch.gif'],
+    ['Bicicleta abdominal','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/bicycle-crunch.gif'],
+    ['Dead bug','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/dead-bug.gif']
   ]
 };
 
@@ -1334,7 +1410,7 @@ function addDBExercise(groupName,index){
   const item=filtered[index];
   if(!item)return;
 
-  const select=document.getElementById('cfgGroup');
+  const select=document.getElementById('routineGroup');
   if(!select){
     alert('Selecciona primero el grupo muscular de destino.');
     return;
@@ -1387,6 +1463,79 @@ function enforceFiveExercisesPerGroup(){
   });
 }
 
+
+function setLibraryGroupAndTarget(){
+  const lib=document.getElementById('libraryGroup');
+  const target=document.getElementById('routineGroup');
+  if(!lib || !target)return;
+  const wanted=String(lib.value||'').trim().toUpperCase();
+  const option=[...target.options].find(o=>{
+    return String(o.textContent||'').split('·')[0].trim().toUpperCase()===wanted;
+  });
+  if(option){
+    target.value=option.value;
+  }
+  updateTargetLabel();
+}
+
+function updateTargetLabel(){
+  const d=Number(document.getElementById('cfgday')?.value)||1;
+  const sel=document.getElementById('routineGroup');
+  const gi=sel?Number(sel.value):0;
+  const g=routine[d]?.groups?.[gi];
+  const el=document.getElementById('targetLabel');
+  if(el)el.innerText=`Destino: Día ${d} · ${g?.name||'Grupo'}`;
+  const lib=document.getElementById('libraryGroup');
+  if(lib&&g){
+    const wanted=String(g.name||'').trim().toUpperCase();
+    [...lib.options].forEach(o=>{
+      if(String(o.value||o.textContent).trim().toUpperCase()===wanted)lib.value=o.value;
+    });
+  }
+}
+function renderLibrary(){
+  const group=document.getElementById('libraryGroup')?.value||'PECHO';
+  const q=(document.getElementById('librarySearch')?.value||'').toLowerCase().trim();
+  const list=(EXERCISE_DB[group]||[]).filter(x=>!q||x[0].toLowerCase().includes(q));
+  const box=document.getElementById('libraryGrid');
+  if(!box)return;
+  box.innerHTML=list.map((x,i)=>`
+    <div class="exerciseCard">
+      <img src="${esc(x[1])}" alt="${esc(x[0])}" onerror="this.style.opacity='.3'">
+      <div class="exerciseCardBody">
+        <div class="exerciseCardName">${esc(x[0])}</div>
+        <div class="exerciseCardMeta">${esc(group)}</div>
+        <button type="button" class="btn blue" onclick="addLibraryExercise('${esc(group)}',${i})">➕ Añadir</button>
+      </div>
+    </div>`).join('')||'<div class="empty">No hay ejercicios.</div>';
+  updateTargetLabel();
+}
+function addLibraryExercise(groupName,index){
+  const q=(document.getElementById('librarySearch')?.value||'').toLowerCase().trim();
+  const list=(EXERCISE_DB[groupName]||[]).filter(x=>!q||x[0].toLowerCase().includes(q));
+  const item=list[index];
+  if(!item)return;
+  const d=Number(document.getElementById('cfgday')?.value)||1;
+  const gi=Number(document.getElementById('routineGroup')?.value)||0;
+  const g=routine[d]?.groups?.[gi];
+  if(!g){alert('Selecciona un grupo de destino.');return;}
+  if(String(g.name).trim().toUpperCase()!==groupName.toUpperCase()){
+    alert(`El destino es ${g.name}. Selecciona ${groupName} como grupo de destino.`);
+    return;
+  }
+  if((g.exercises||[]).length>=5){alert(`El grupo ${g.name} ya tiene 5 ejercicios.`);return;}
+  if((g.exercises||[]).some(e=>String(e).toLowerCase()===item[0].toLowerCase())){
+    alert('Ese ejercicio ya está añadido.');return;
+  }
+  g.exercises.push(item[0]);
+  g.images.push(item[1]||'');
+  enforceFiveExercisesPerGroup();
+  normalizeRoutine();
+  save();
+  loadConfig();
+  const s=document.getElementById('libraryStatusV9');
+  if(s)s.innerText=`✓ ${item[0]} añadido a Día ${d} · ${g.name}. GIF incluido.`;
+}
 function structuredCloneSafe(obj){
 return JSON.parse(JSON.stringify(obj));
 }
@@ -1460,6 +1609,8 @@ result.images=result.images.slice(0,result.exercises.length);
 return result;
 
 });
+
+}
 
 }
 
@@ -1584,7 +1735,7 @@ save();
 
 let data={
 app:'Mi Gimnasio Pro',
-version:'6.4',
+version:'8.0',
 backupType:'automatic',
 created:new Date().toISOString(),
 routine:structuredCloneSafe(routine),
@@ -2034,6 +2185,30 @@ function renderWorkout(previous){
 
 let x=routine[day];
 let html='';
+let totalExercises=(x.groups||[]).reduce((n,g)=>n+(g.exercises||[]).length,0);
+let completedExercises=0;
+
+(x.groups||[]).forEach(g=>{
+  (g.exercises||[]).forEach(ex=>{
+    let old=getPreviousExercise(previous,ex);
+    if(old && (old.sets||[]).some(s=>num(s.reps)>0)) completedExercises++;
+  });
+});
+
+let pct=totalExercises?Math.round((completedExercises/totalExercises)*100):0;
+
+html+=`<div class="trainingHero">
+  <div class="trainingHeroTop">
+    <div>
+      <div class="trainingHeroTitle">🏋️ DÍA ${Number(day)}</div>
+      <div class="trainingHeroSub">${totalExercises} ejercicios · 3 series por ejercicio</div>
+    </div>
+    <div class="trainingPill">${completedExercises}/${totalExercises} hechos</div>
+  </div>
+  <div class="trainingProgress"><span style="width:${pct}%"></span></div>
+</div>`;
+
+let exerciseCounter=0;
 
 (x.groups||[]).forEach((group,gi)=>{
 
@@ -2041,6 +2216,8 @@ html+=
 `<div class="group phase phase-${gi%7}">${esc(group.name)}</div>`;
 
 (group.exercises||[]).forEach((ex,i)=>{
+
+exerciseCounter++;
 
 let old=getPreviousExercise(
 previous,
@@ -2075,6 +2252,7 @@ html+=`
 
 <div class="exhead">
 
+<span class="exerciseNo">EJERCICIO ${exerciseCounter}</span>
 <span>${esc(ex)}</span>
 
 <span
@@ -2088,37 +2266,17 @@ style="display:none">
 
 ${img?`
 
-<button
-class="imgbtn"
-onclick="toggleImage('${iid}')">
-🎞️ Ver GIF
-</button>
-
-<div
-id="${iid}"
-class="imgbox">
-
 <img
+class="gifPreview"
 src="${esc(img)}"
 alt="${esc(ex)}"
-onerror="
-this.style.display='none';
-this.nextElementSibling.style.display='block';
-">
+loading="lazy"
+onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src=this.src.replace('https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0','https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/v1.1.0')}else{this.style.display='none';this.nextElementSibling.style.display='block';}">
 
 <div
-style="display:none;color:var(--red);font-size:.7rem;padding:5px">
+class="gifLabel"
+style="display:none;color:var(--red)">
 ⚠️ No se puede cargar el GIF.
-</div>
-
-<br>
-
-<button
-class="imgbtn"
-onclick="toggleImage('${iid}')">
-✕ Cerrar GIF
-</button>
-
 </div>
 
 `:''}
@@ -2238,6 +2396,12 @@ onclick="saveExercise('${prefix}',${gi},${i},'${esc(ex)}')">
 💾 GUARDAR EJERCICIO
 </button>
 
+${exerciseCounter<totalExercises?`
+<button type="button" class="nextExercise"
+onclick="goNextExercise(this)">
+➡️ SIGUIENTE EJERCICIO
+</button>`:''}
+
 <div class="row">
 
 <button
@@ -2267,6 +2431,16 @@ pr(prefix,ex);
 )
 );
 
+}
+
+function goNextExercise(btn){
+  const current=btn.closest('.ex');
+  if(!current)return;
+  let next=current.nextElementSibling;
+  while(next && !next.classList.contains('ex')) next=next.nextElementSibling;
+  if(next){
+    next.scrollIntoView({behavior:'smooth',block:'start'});
+  }
 }
 
 function selectCell(el){
@@ -2844,7 +3018,27 @@ document.getElementById(
 
 }
 
+function syncRoutineTargetFromLibrary(){
+  const muscle=document.getElementById('libraryMuscle');
+  const target=document.getElementById('routineGroup');
+  const d=Number(document.getElementById('cfgday')?.value)||1;
+  if(!muscle || !target)return false;
+
+  const wanted=String(muscle.value||'').trim().toUpperCase();
+  const groups=routine[d]?.groups||[];
+  const idx=groups.findIndex(g=>String(g.name||'').trim().toUpperCase()===wanted);
+
+  if(idx>=0){
+    target.value=String(idx);
+    updateTargetLabel();
+    return true;
+  }
+  return false;
+}
+
 async function loadExerciseLibrary(){
+
+syncRoutineTargetFromLibrary();
 
 let groupName=
 document.getElementById('libraryMuscle')?.value||'PECHO';
@@ -2956,7 +3150,7 @@ ${esc(ex.equipment||'')}${ex.equipment?' · ':''}${esc(ex.muscle||libraryLoadedG
 
 <button
 class="btn addLib"
-onclick="addLibraryExercise(${i})">
+onclick="addRemoteLibraryExercise(${i})">
 ➕ Añadir
 </button>
 
@@ -2967,176 +3161,310 @@ onclick="addLibraryExercise(${i})">
 
 }
 
-function addLibraryExercise(index){
+function addRemoteLibraryExercise(index){
   const q=String(document.getElementById('librarySearch')?.value||'').toLowerCase().trim();
   const filtered=exerciseLibrary.filter(ex=>String(ex.name||'').toLowerCase().includes(q));
   const ex=filtered[index];
   if(!ex)return;
 
   const d=Number(document.getElementById('cfgday')?.value)||1;
-  const groupSelect=document.getElementById('cfgGroup');
+  const muscle=String(document.getElementById('libraryMuscle')?.value||libraryLoadedGroup||'PECHO').trim();
+  const wanted=muscle.toUpperCase();
 
-  if(!groupSelect){
-    alert('Selecciona primero un grupo muscular de destino.');
+  // The visible "Grupo muscular" selector is the real destination.
+  // Find the matching group by name, so it can never silently fall back to PECHO.
+  const groups=routine[d]?.groups||[];
+  const gi=groups.findIndex(g=>String(g.name||'').trim().toUpperCase()===wanted);
+  if(gi<0){
+    alert(`El día ${d} no tiene el grupo ${muscle}.`);
     return;
   }
 
-  const gi=Number(groupSelect.value);
-  const group=routine[d]?.groups?.[gi];
-  if(!group)return;
+  const group=groups[gi];
+  if(!Array.isArray(group.exercises)) group.exercises=[];
+  if(!Array.isArray(group.images)) group.images=[];
 
-  if((group.exercises||[]).length>=5){
+  if(group.exercises.length>=5){
     alert(`El grupo ${group.name} ya tiene 5 ejercicios. El entrenamiento está limitado a 5.`);
     return;
   }
 
-  if((group.exercises||[]).some(name=>String(name).toLowerCase()===String(ex.name).toLowerCase())){
+  if(group.exercises.some(name=>String(name).trim().toLowerCase()===String(ex.name).trim().toLowerCase())){
     alert('Ese ejercicio ya está en el grupo seleccionado.');
     return;
   }
 
-  group.exercises.push(ex.name);
-  group.images.push(ex.gifUrl||'');
+  group.exercises.push(String(ex.name));
+  group.images.push(String(ex.gifUrl||''));
+
+  // Keep the two selectors synchronized for the next operation.
+  const target=document.getElementById('routineGroup');
+  if(target)target.value=String(gi);
+
+  normalizeRoutine();
+  enforceFiveExercisesPerGroup();
+  save();
+
+  const addedName=String(ex.name);
+  const groupName=String(group.name);
+  loadConfig();
+
+  // loadConfig recreates routineGroup; restore the selected muscle visually.
+  const newTarget=document.getElementById('routineGroup');
+  if(newTarget)newTarget.value=String(gi);
+  updateTargetLabel();
+
+  const status=document.getElementById('libraryStatus');
+  if(status)status.innerText=`✓ ${addedName} añadido a ${groupName} · Día ${d} · GIF incluido.`;
+}
+function loadConfig(){
+  enforceFiveExercisesPerGroup();
+
+  const dayEl=document.getElementById('cfgday');
+  const d=Number(dayEl?.value)||1;
+  const x=routine[d]||{groups:[]};
+
+  let h='';
+  h+='<div class="targetBox" style="margin:10px 0">Día '+d+' · selecciona el grupo muscular en la biblioteca para añadir ejercicios.</div>';
+
+  (x.groups||[]).forEach((g,gi)=>{
+    const exercises=Array.isArray(g.exercises)?g.exercises:[];
+    h+=`<div class="groupEditor">
+      <div class="groupEditorTitle">
+        <strong>${esc(g.name)}</strong>
+        <span class="count5">${exercises.length}/5</span>
+      </div>`;
+
+    if(exercises.length){
+      h+=exercises.map((e,i)=>`
+        <div class="routineExercise">
+          <span>${i+1}. ${esc(e)}</span>
+          <button type="button"
+            class="btn danger sm routineTrash"
+            onclick="window.gymDeleteRoutineExercise(${gi},${i})"
+            title="Borrar ejercicio"
+            aria-label="Borrar ejercicio">🗑️</button>
+        </div>`).join('');
+    }else{
+      h+='<div class="empty">Sin ejercicios seleccionados.</div>';
+    }
+    h+='</div>';
+  });
+
+  const editor=document.getElementById('editor');
+  if(editor)editor.innerHTML=h;
+
+  syncV9Target();
+  renderLibraryV9();
+}
+
+
+window.gymDeleteRoutineExercise=function(gi,idx){
+  const d=Number(document.getElementById('cfgday')?.value)||1;
+  gi=Number(gi);
+  idx=Number(idx);
+
+  const groups=routine && routine[d] && Array.isArray(routine[d].groups)
+    ? routine[d].groups : [];
+  const g=groups[gi];
+
+  if(!g || !Array.isArray(g.exercises) || idx<0 || idx>=g.exercises.length){
+    alert('No se ha encontrado el ejercicio.');
+    return false;
+  }
+
+  const name=String(g.exercises[idx]);
+  const groupName=String(g.name||'grupo');
+
+  // Do not depend on confirm() to perform the deletion.
+  // The user has explicitly pressed the trash button.
+  g.exercises.splice(idx,1);
+
+  if(Array.isArray(g.images)){
+    g.images.splice(idx,1);
+  }
 
   normalizeRoutine();
   save();
+
+  // Re-render from the actual routine object.
   loadConfig();
 
-  const status=document.getElementById('libraryStatus');
-  if(status)status.innerText=`✓ ${ex.name} añadido a ${group.name} · Día ${d} · GIF incluido.`;
+  const status=document.getElementById('libraryStatusV9');
+  if(status){
+    status.innerText=`✓ ${name} eliminado de ${groupName} · Día ${d}.`;
+  }
+
+  return false;
+};
+
+
+const EXERCISE_DB_REMOTE_CACHE={};
+
+const EXERCISE_API_GROUPS={
+  PECHO:['pectorals'],
+  HOMBROS:['delts'],
+  TRÍCEPS:['triceps'],
+  ESPALDA:['lats','upper-back'],
+  BÍCEPS:['biceps'],
+  PIERNAS:['quads','hamstrings','glutes','calves'],
+  ABDOMINALES:['abs']
+};
+
+const EXERCISE_PREFERRED_EQUIPMENT=[
+  'cable','dumbbell','machine','barbell','band','bodyweight',
+  'smith','ez-bar','kettlebell','lever','other'
+];
+
+async function loadVerifiedLibrary15(group){
+  group=String(group||'').trim().toUpperCase();
+
+  if(Array.isArray(EXERCISE_DB_REMOTE_CACHE[group]) &&
+     EXERCISE_DB_REMOTE_CACHE[group].length>=15){
+    EXERCISE_DB[group]=EXERCISE_DB_REMOTE_CACHE[group];
+    return EXERCISE_DB[group];
+  }
+
+  const muscles=EXERCISE_API_GROUPS[group]||[];
+  const base='https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0';
+  const all=[];
+  const seen=new Set();
+
+  try{
+    const responses=await Promise.all(muscles.map(m=>
+      fetch(`${base}/api/es/muscles/${m}.json`).then(r=>{
+        if(!r.ok)throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+    ));
+
+    responses.forEach(data=>{
+      (data.exercises||[]).forEach(ex=>{
+        const name=String(ex.name||'').trim();
+        const gif=String(ex.gifUrl||'').trim();
+        const equipment=String(ex.equipment||'').toLowerCase();
+        const category=String(ex.category||'').toLowerCase();
+        if(!name||!gif)return;
+        if(category && category!=='strength')return;
+
+        const key=name.toLowerCase();
+        if(seen.has(key))return;
+        seen.add(key);
+        all.push({name,gif,equipment});
+      });
+    });
+
+    all.sort((a,b)=>{
+      const ai=EXERCISE_PREFERRED_EQUIPMENT.indexOf(a.equipment);
+      const bi=EXERCISE_PREFERRED_EQUIPMENT.indexOf(b.equipment);
+      return (ai<0?99:ai)-(bi<0?99:bi);
+    });
+
+    const selected=all.slice(0,15).map(x=>[x.name,x.gif]);
+    EXERCISE_DB_REMOTE_CACHE[group]=selected;
+    EXERCISE_DB[group]=selected;
+    return selected;
+
+  }catch(err){
+    // Fallback only if the remote API is temporarily unavailable.
+    const local=(EXERCISE_DB[group]||[]).slice(0,15);
+    EXERCISE_DB_REMOTE_CACHE[group]=local;
+    return local;
+  }
 }
 
-function loadConfig(){
+function syncV9Target(){
+  const day=Number(document.getElementById('cfgday')?.value)||1;
+  const muscle=String(document.getElementById('libraryMuscleV9')?.value||'').trim().toUpperCase();
+  const groups=routine[day]?.groups||[];
+  const gi=groups.findIndex(g=>String(g.name||'').trim().toUpperCase()===muscle);
 
-enforceFiveExercisesPerGroup();
-
-let cfgday=
-Number(document.getElementById('cfgday').value);
-
-let x=routine[cfgday];
-
-let html=`
-
-<div style="margin-bottom:8px">
-
-<label>Grupo de destino para añadir desde la base</label>
-
-<select id="cfgGroup">
-
-${(x.groups||[]).map((g,i)=>
-`<option value="${i}">${esc(g.name)}</option>`
-).join('')}
-
-</select>
-
-</div>
-
-`;
-
-(x.groups||[]).forEach(
-(group,gi)=>{
-
-html+=`
-
-<div class="groupEditor">
-
-<div class="groupEditorTitle">
-
-<strong>
-GRUPO ${gi+1}
-</strong>
-
-<button
-class="btn danger sm"
-onclick="removeGroup(${gi})">
-🗑️ Eliminar grupo
-</button>
-
-</div>
-
-<label>Nombre del grupo</label>
-
-<input
-class="groupName"
-data-group="${gi}"
-value="${esc(group.name)}"
->
-
-<div class="editorTitle">
-
-<span class="group">
-Ejercicios
-</span>
-
-<button
-class="btn out sm"
-onclick="addExercise(${gi})">
-+ Añadir
-</button>
-
-</div>
-
-<div id="groupExercises-${gi}">
-`;
-
-(group.exercises||[]).forEach(
-(e,i)=>{
-
-html+=field(
-gi,
-e,
-(group.images||[])[i]||''
-);
-
-});
-
-html+=`
-
-</div>
-
-</div>
-
-`;
-
-});
-
-html+=`
-
-<button
-class="btn blue"
-onclick="addGroup()">
-➕ AÑADIR GRUPO MUSCULAR
-</button>
-
-`;
-
-document.getElementById(
-'editor'
-).innerHTML=html;
-
-renderExerciseDB();
-
-const cg=document.getElementById('cfgGroup');
-const dg=document.getElementById('dbgroup');
-if(cg&&dg){
-  const selected=cg.options[cg.selectedIndex];
-  if(selected)dg.value=String(selected.textContent||'').trim().toUpperCase();
+  const label=document.getElementById('v9TargetLabel');
+  if(gi>=0){
+    if(label)label.innerText=`Destino: Día ${day} · ${groups[gi].name} · ${(groups[gi].exercises||[]).length}/5`;
+    return gi;
+  }
+  if(label)label.innerText=`⚠️ ${muscle} no está en el Día ${day}`;
+  return -1;
 }
 
+async function renderLibraryV9(){
+  const group=String(document.getElementById('libraryMuscleV9')?.value||'PECHO').trim().toUpperCase();
+  const q=String(document.getElementById('librarySearchV9')?.value||'').trim().toLowerCase();
+  const box=document.getElementById('libraryGridV9');
+  const status=document.getElementById('libraryStatusV9');
+  if(!box)return;
+
+  const gi=syncV9Target();
+  if(gi<0){
+    box.innerHTML='<div class="empty">Este grupo no forma parte de este día. Cambia de día o de grupo muscular.</div>';
+    if(status)status.innerText=`No se pueden añadir ejercicios de ${group} al Día ${Number(document.getElementById('cfgday')?.value)||1}.`;
+    return;
+  }
+
+  box.innerHTML='<div class="empty">⏳ Comprobando 15 ejercicios y sus GIF...</div>';
+  if(status)status.innerText=`Cargando biblioteca de ${group}...`;
+
+  const verified=await loadVerifiedLibrary15(group);
+
+  if(String(document.getElementById('libraryMuscleV9')?.value||'').trim().toUpperCase()!==group)return;
+
+  const data=verified.filter(x=>!q||String(x[0]).toLowerCase().includes(q)).slice(0,15);
+  const day=Number(document.getElementById('cfgday')?.value)||1;
+  const current=routine[day].groups[gi];
+
+  if(status)status.innerText=`${group}: ${current.exercises?.length||0}/5 seleccionados · ${data.length} ejercicios disponibles`;
+
+  box.innerHTML=data.map((x,i)=>`
+    <div class="exerciseCard">
+      <img src="${esc(x[1])}" alt="${esc(x[0])}" loading="lazy"
+        onerror="this.style.opacity='.25'">
+      <div class="exerciseCardBody">
+        <div class="exerciseCardName">${i+1}. ${esc(x[0])}</div>
+        <div class="exerciseCardMeta">${esc(group)} · GIF verificado</div>
+        <button type="button" class="btn blue" onclick="addLibraryExerciseV9(${i})">➕ Añadir</button>
+      </div>
+    </div>
+  `).join('') || '<div class="empty">No hay ejercicios que coincidan con la búsqueda.</div>';
 }
 
-function field(gi,n,img){
-return`
-<div class="ex">
-<label>Nombre del ejercicio</label>
-<input class="g${gi}e" value="${esc(n)}" placeholder="Ejercicio">
-<label>Imagen / GIF</label>
-<input class="g${gi}i" value="${esc(img||'')}" placeholder="URL de imagen o GIF">
-<div style="display:flex;gap:5px">
-<button class="btn danger sm" onclick="removeExercise(this)">🗑️ Eliminar</button>
-</div>
-</div>
-`;
+function addLibraryExerciseV9(index){
+  const group=String(document.getElementById('libraryMuscleV9')?.value||'').trim().toUpperCase();
+  const q=String(document.getElementById('librarySearchV9')?.value||'').trim().toLowerCase();
+  const data=(EXERCISE_DB[group]||[]).filter(x=>!q||String(x[0]).toLowerCase().includes(q)).slice(0,15);
+  const item=data[index];
+  if(!item)return;
+
+  const day=Number(document.getElementById('cfgday')?.value)||1;
+  const groups=routine[day]?.groups||[];
+  const gi=groups.findIndex(g=>String(g.name||'').trim().toUpperCase()===group);
+
+  if(gi<0){ alert(`El grupo ${group} no existe en el Día ${day}.`); return; }
+
+  const g=groups[gi];
+  if(!Array.isArray(g.exercises))g.exercises=[];
+  if(!Array.isArray(g.images))g.images=[];
+
+  if(g.exercises.length>=5){
+    alert(`El grupo ${g.name} ya tiene 5 ejercicios.`);
+    return;
+  }
+
+  if(g.exercises.some(e=>String(e).trim().toLowerCase()===String(item[0]).trim().toLowerCase())){
+    alert(`"${item[0]}" ya está en ${g.name}.`);
+    return;
+  }
+
+  g.exercises.push(item[0]);
+  g.images.push(item[1]);
+
+  normalizeRoutine();
+  enforceFiveExercisesPerGroup();
+  save();
+  loadConfig();
+
+  const status=document.getElementById('libraryStatusV9');
+  if(status)status.innerText=`✓ ${item[0]} añadido a ${g.name} · Día ${day} · GIF verificado.`;
 }
 
 function addGroup(){
@@ -3211,100 +3539,12 @@ box.remove();
 }
 
 function saveConfig(){
-
-let d=
-Number(document.getElementById('cfgday').value);
-
-let x={
-groups:[]
-};
-
-let groupEditors=
-document.querySelectorAll('.groupEditor');
-
-groupEditors.forEach(
-(editor,gi)=>{
-
-let nameInput=
-editor.querySelector('.groupName');
-
-let name=
-nameInput
-?nameInput.value.trim()
-:'Grupo '+(gi+1);
-
-if(!name)
-name='Grupo '+(gi+1);
-
-let exercises=[];
-let images=[];
-
-// Máximo 5 ejercicios por grupo en la rutina de entrenamiento.
-
-editor
-.querySelectorAll('.g'+gi+'e')
-.forEach(
-(e,i)=>{
-
-let name=e.value.trim();
-
-if(!name)return;
-
-exercises.push(name);
-
-let img=
-editor.querySelectorAll('.g'+gi+'i')[i];
-
-images.push(
-img
-?img.value.trim()
-:''
-);
-
-});
-
-x.groups.push({
-
-name:name,
-exercises:exercises,
-images:images
-
-});
-
-});
-
-if(!x.groups.length){
-
-alert(
-'La rutina debe tener al menos un grupo.'
-);
-
-return;
-
-}
-
-routine[d]=x;
-
-normalizeRoutine();
-
-localStorage.setItem(
-K+'routine',
-JSON.stringify(routine)
-);
-
-if(day===d){
-
-let previous=
-previousDayLog(d);
-
-renderWorkout(previous);
-
-}
-
-alert(
-'Rutina guardada correctamente.'
-);
-
+  enforceFiveExercisesPerGroup();
+  normalizeRoutine();
+  save();
+  loadConfig();
+  const s=document.getElementById('libraryStatusV9');
+  if(s)s.innerText='✓ Rutina guardada correctamente.';
 }
 
 function exportData(){
@@ -3313,7 +3553,7 @@ let data={
 
 app:'Mi Gimnasio Pro',
 
-version:'6.4',
+version:'8.0',
 
 exported:new Date().toISOString(),
 
@@ -4554,7 +4794,10 @@ renderExerciseLibrary
 
 document.getElementById('libraryMuscle')?.addEventListener(
 'change',
-loadExerciseLibrary
+function(){
+  syncRoutineTargetFromLibrary();
+  loadExerciseLibrary();
+}
 );
 
 updateBackupStatus();
