@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Mi Gimnasio Pro v6.1</title>
+<title>Mi Gimnasio Pro v6.2</title>
 <meta name="theme-color" content="#121212">
 
 <style>
@@ -201,13 +201,15 @@ cursor:pointer;
 
 table{
 width:100%;
-border-collapse:collapse;
+border-collapse:separate;
+border-spacing:4px;
 }
 
 th{
 color:var(--sub);
 font-size:.63rem;
-font-weight:normal;
+font-weight:bold;
+padding:4px 2px;
 }
 
 td{
@@ -218,7 +220,137 @@ padding:1px;
 td input{
 margin:0;
 text-align:center;
-padding:6px 1px;
+padding:8px 2px;
+}
+
+.workTable th.todayHead{
+color:#00e676;
+background:#07351f;
+border:1px solid #176b43;
+border-radius:6px;
+}
+
+.workTable th.lastHead{
+color:#29b6f6;
+background:#062d3c;
+border:1px solid #17607c;
+border-radius:6px;
+}
+
+.workTable th.subHead{
+font-size:.58rem;
+color:var(--sub);
+}
+
+.workTable .todayCell input{
+border-color:#176b43;
+}
+
+.workTable .lastCell input{
+border-color:#17607c;
+color:var(--blue);
+background:#092632;
+font-weight:bold;
+}
+
+.workTable .lastCell input[readonly]{
+opacity:.95;
+}
+
+.phase{
+border-left:4px solid var(--a);
+padding-left:8px;
+}
+
+.phase-0{border-left-color:#ff7043}
+.phase-1{border-left-color:#29b6f6}
+.phase-2{border-left-color:#ab47bc}
+.phase-3{border-left-color:#66bb6a}
+.phase-4{border-left-color:#ffa726}
+.phase-5{border-left-color:#ef5350}
+.phase-6{border-left-color:#26c6da}
+
+.libraryBox{
+background:#171717;
+border:1px solid var(--bor);
+border-radius:10px;
+padding:10px;
+margin-bottom:10px;
+}
+
+.libraryControls{
+display:grid;
+grid-template-columns:1fr 1fr auto;
+gap:6px;
+align-items:end;
+}
+
+.libraryList{
+display:grid;
+grid-template-columns:1fr;
+gap:7px;
+margin-top:9px;
+max-height:520px;
+overflow:auto;
+}
+
+.libraryItem{
+display:grid;
+grid-template-columns:72px 1fr auto;
+gap:8px;
+align-items:center;
+background:var(--item);
+border:1px solid var(--bor);
+border-radius:8px;
+padding:7px;
+}
+
+.libraryItem img{
+width:72px;
+height:58px;
+object-fit:contain;
+background:#111;
+border-radius:6px;
+}
+
+.libraryItem strong{
+display:block;
+font-size:.76rem;
+}
+
+.libraryItem span{
+display:block;
+font-size:.62rem;
+color:var(--sub);
+margin-top:3px;
+}
+
+.libraryItem .addLib{
+width:auto;
+padding:7px 9px;
+font-size:.66rem;
+}
+
+.libraryStatus{
+font-size:.68rem;
+color:var(--sub);
+margin-top:7px;
+}
+
+@media(max-width:500px){
+.libraryControls{
+grid-template-columns:1fr 1fr;
+}
+.libraryControls .loadLib{
+grid-column:1/-1;
+}
+.libraryItem{
+grid-template-columns:62px 1fr;
+}
+.libraryItem .addLib{
+grid-column:1/-1;
+width:100%;
+}
 }
 
 input,select{
@@ -640,6 +772,61 @@ color:#000;
 
 }
 
+
+/* ===== v6.3 BASE DE EJERCICIOS ===== */
+.dbbox{
+  background:#191919;
+  border:1px solid var(--bor);
+  border-radius:9px;
+  padding:10px;
+  margin-top:10px;
+}
+.dbfilters{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+}
+.dblist{
+  max-height:430px;
+  overflow:auto;
+  margin-top:8px;
+}
+.dbitem{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:7px;
+  align-items:center;
+  background:var(--item);
+  border:1px solid var(--bor);
+  border-radius:7px;
+  padding:7px;
+  margin-bottom:6px;
+}
+.dbname{font-size:.76rem;font-weight:bold}
+.dbmeta{font-size:.62rem;color:var(--sub);margin-top:2px}
+.dbgif{
+  width:54px;height:54px;object-fit:cover;border-radius:5px;
+  border:1px solid var(--bor);background:#111;
+}
+.dbadd{
+  width:auto!important;
+  padding:6px 8px!important;
+  font-size:.68rem!important;
+}
+.routineCount{
+  font-size:.68rem;color:var(--sub);margin:5px 0 8px;
+}
+.limitWarn{
+  color:var(--gold);font-size:.68rem;margin:5px 0;
+}
+.phase1{border-left:4px solid var(--a)}
+.phase2{border-left:4px solid var(--blue)}
+.phase3{border-left:4px solid var(--gold)}
+@media(max-width:380px){
+  .dbfilters{grid-template-columns:1fr}
+  .dbgif{width:46px;height:46px}
+}
+
 </style>
 
 </head>
@@ -647,7 +834,7 @@ color:#000;
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v6.1</h1>
+<h1>MI GIMNASIO PRO v6.3</h1>
 </header>
 
 <div class="container">
@@ -701,6 +888,48 @@ color:#000;
 
 <div class="card">
 
+<h2>📚 Base de ejercicios + GIF</h2>
+
+<div class="libraryBox">
+
+<div class="libraryControls">
+
+<div>
+<label>Grupo muscular</label>
+<select id="libraryMuscle">
+<option value="PECHO">PECHO</option>
+<option value="HOMBROS">HOMBROS</option>
+<option value="TRÍCEPS">TRÍCEPS</option>
+<option value="ABDOMINALES">ABDOMINALES</option>
+<option value="ESPALDA">ESPALDA</option>
+<option value="BÍCEPS">BÍCEPS</option>
+<option value="PIERNAS">PIERNAS</option>
+</select>
+</div>
+
+<div>
+<label>Buscar ejercicio</label>
+<input id="librarySearch" type="text" placeholder="Nombre...">
+</div>
+
+<button class="btn blue loadLib" onclick="loadExerciseLibrary()">
+🔄 Cargar base
+</button>
+
+</div>
+
+<div id="libraryStatus" class="libraryStatus">
+La base usa ExerciseGymGifsDB y carga los GIF directamente desde jsDelivr.
+</div>
+
+<div id="libraryList" class="libraryList"></div>
+
+</div>
+
+</div>
+
+<div class="card">
+
 <h2>⚙️ Configurar rutina</h2>
 
 <label>Día</label>
@@ -723,6 +952,29 @@ color:#000;
 
 </div>
 
+
+<div class="card">
+<h2>🏋️ Base de ejercicios + GIF</h2>
+<div style="font-size:.72rem;color:var(--sub);line-height:1.45">
+La base contiene 10–15 ejercicios por grupo. Desde aquí eliges los 5 que aparecerán en el entrenamiento.
+</div>
+<div class="dbbox">
+<div class="dbfilters">
+<select id="dbgroup" onchange="renderExerciseDB()">
+<option value="PECHO">PECHO</option>
+<option value="HOMBROS">HOMBROS</option>
+<option value="TRÍCEPS">TRÍCEPS</option>
+<option value="ABDOMINALES">ABDOMINALES</option>
+<option value="ESPALDA">ESPALDA</option>
+<option value="BÍCEPS">BÍCEPS</option>
+<option value="PIERNAS">PIERNAS</option>
+</select>
+<input id="dbsearch" placeholder="🔎 Buscar ejercicio" oninput="renderExerciseDB()">
+</div>
+<div id="dbcount" class="routineCount"></div>
+<div id="dblist" class="dblist"></div>
+</div>
+</div>
 <div class="card">
 
 <h2>💾 Seguridad de datos</h2>
@@ -1138,6 +1390,162 @@ images:['','','','','']
 
 };
 
+
+/* ===== v6.3 BASE MAESTRA: 10–15 EJERCICIOS POR GRUPO ===== */
+const EXERCISE_DB = {
+  PECHO:[
+    ['Press de banca plano','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/barbell-bench-press.gif'],
+    ['Press inclinado con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/incline-dumbbell-press.gif'],
+    ['Press inclinado con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/incline-bench-press.gif'],
+    ['Aperturas con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/dumbbell-fly.gif'],
+    ['Cruce de poleas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/cable-crossover.gif'],
+    ['Press de pecho en máquina','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/chest-press-machine.gif'],
+    ['Fondos para pecho','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/chest-dips.gif'],
+    ['Press con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/dumbbell-bench-press.gif'],
+    ['Pullover con mancuerna','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/dumbbell-pullover.gif'],
+    ['Press declinado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/chest/decline-bench-press.gif']
+  ],
+  HOMBROS:[
+    ['Press militar','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/barbell-shoulder-press.gif'],
+    ['Press de hombros con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/dumbbell-shoulder-press.gif'],
+    ['Elevaciones laterales','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/dumbbell-lateral-raise.gif'],
+    ['Elevaciones frontales','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/dumbbell-front-raise.gif'],
+    ['Pájaros con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/dumbbell-rear-delt-fly.gif'],
+    ['Face pull con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/cable-face-pull.gif'],
+    ['Remo al mentón','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/barbell-upright-row.gif'],
+    ['Elevación lateral en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/cable-lateral-raise.gif'],
+    ['Press Arnold','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/arnold-press.gif'],
+    ['Press en máquina de hombros','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/shoulders/machine-shoulder-press.gif']
+  ],
+  TRÍCEPS:[
+    ['Extensión en polea alta con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/cable-pushdown.gif'],
+    ['Extensión en polea con cuerda','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/rope-pushdown.gif'],
+    ['Extensión a una mano en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/single-arm-cable-pushdown.gif'],
+    ['Press francés con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/dumbbell-skull-crusher.gif'],
+    ['Press francés con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/barbell-skull-crusher.gif'],
+    ['Extensión por encima de la cabeza con cuerda','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/cable-overhead-triceps-extension.gif'],
+    ['Fondos de tríceps en banco','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/bench-dips.gif'],
+    ['Press cerrado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/close-grip-bench-press.gif'],
+    ['Extensión de tríceps con mancuerna','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/dumbbell-overhead-triceps-extension.gif'],
+    ['Patada de tríceps con mancuerna','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/dumbbell-kickback.gif']
+  ],
+  ESPALDA:[
+    ['Jalón al pecho con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/lat-pulldown.gif'],
+    ['Remo con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/barbell-bent-over-row.gif'],
+    ['Remo con mancuerna a una mano','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/dumbbell-row.gif'],
+    ['Peso muerto','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lower-back/barbell-deadlift.gif'],
+    ['Remo unilateral con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/back/cable-one-arm-row.gif'],
+    ['Remo sentado con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/middle-back/cable-seated-row.gif'],
+    ['Jalón con agarre estrecho','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/close-grip-lat-pulldown.gif'],
+    ['Dominadas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/pull-up.gif'],
+    ['Remo en máquina','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/middle-back/machine-row.gif'],
+    ['Pullover en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/cable-pullover.gif']
+  ],
+  BÍCEPS:[
+    ['Curl con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/barbell-curl.gif'],
+    ['Curl martillo','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/hammer-curl.gif'],
+    ['Curl alterno con mancuernas en rotación','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/dumbbell-alternating-biceps-curl.gif'],
+    ['Curl predicador en banco Scott','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/preacher-curl.gif'],
+    ['Curl en plano inclinado con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/incline-dumbbell-curl.gif'],
+    ['Curl en polea baja','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/cable-curl.gif'],
+    ['Curl concentrado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/concentration-curl.gif'],
+    ['Curl con barra EZ','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/ez-bar-curl.gif'],
+    ['Curl araña','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/spider-curl.gif'],
+    ['Curl bayesiano en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/cable-bayesian-curl.gif']
+  ],
+  PIERNAS:[
+    ['Sentadilla con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quadriceps/barbell-squat.gif'],
+    ['Prensa de piernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quadriceps/leg-press.gif'],
+    ['Extensión de piernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quadriceps/leg-extension.gif'],
+    ['Curl femoral tumbado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/hamstrings/lying-leg-curl.gif'],
+    ['Curl femoral sentado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/hamstrings/seated-leg-curl.gif'],
+    ['Peso muerto rumano','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/hamstrings/romanian-deadlift.gif'],
+    ['Zancadas con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quadriceps/dumbbell-lunge.gif'],
+    ['Hip thrust','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/glutes/barbell-hip-thrust.gif'],
+    ['Elevación de talones de pie','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/calves/standing-calf-raise.gif'],
+    ['Elevación de talones sentado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/calves/seated-calf-raise.gif']
+  ],
+  ABDOMINALES:[
+    ['Crunch en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/cable-crunch.gif'],
+    ['Crunch abdominal','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/crunch.gif'],
+    ['Elevación de piernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/leg-raise.gif'],
+    ['Elevación de rodillas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/knee-raise.gif'],
+    ['Plancha','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/plank.gif'],
+    ['Plancha lateral','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/side-plank.gif'],
+    ['Abdominales en máquina','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/machine-crunch.gif'],
+    ['Crunch inverso','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/reverse-crunch.gif'],
+    ['Bicicleta abdominal','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/bicycle-crunch.gif'],
+    ['Dead bug','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abdominals/dead-bug.gif']
+  ]
+};
+
+function renderExerciseDB(){
+  const group=(document.getElementById('dbgroup')||{}).value||'PECHO';
+  const q=((document.getElementById('dbsearch')||{}).value||'').trim().toLowerCase();
+  const list=document.getElementById('dblist');
+  const count=document.getElementById('dbcount');
+  if(!list)return;
+  const data=(EXERCISE_DB[group]||[]).filter(x=>!q||x[0].toLowerCase().includes(q));
+  if(count)count.innerText=`${data.length} ejercicios en la base · Selecciona para añadir al grupo del Día ${Number((document.getElementById('cfgday')||{}).value)||1}`;
+  list.innerHTML=data.map((x,i)=>`
+    <div class="dbitem">
+      <div>
+        <div class="dbname">${esc(x[0])}</div>
+        <div class="dbmeta">${esc(group)}</div>
+        <img class="dbgif" src="${esc(x[1])}" alt="${esc(x[0])}"
+          onerror="this.style.opacity='.25'">
+        <div style="margin-top:5px">
+          <button class="btn blue dbadd" onclick="addDBExercise('${esc(group)}',${i})">➕ Añadir a rutina</button>
+        </div>
+      </div>
+    </div>
+  `).join('') || '<div class="empty">No hay coincidencias.</div>';
+}
+
+function addDBExercise(groupName,index){
+  const d=Number((document.getElementById('cfgday')||{}).value)||1;
+  const db=EXERCISE_DB[groupName]||[];
+  const item=db[index];
+  if(!item)return;
+
+  let target=-1;
+  (routine[d].groups||[]).forEach((g,i)=>{
+    if(String(g.name||'').trim().toUpperCase()===groupName.toUpperCase() && target<0) target=i;
+  });
+
+  if(target<0){
+    alert(`El Día ${d} no tiene el grupo ${groupName}. Añade primero ese grupo.`);
+    return;
+  }
+
+  const g=routine[d].groups[target];
+  if((g.exercises||[]).length>=5){
+    alert(`El grupo ${groupName} ya tiene 5 ejercicios en el Día ${d}. El entrenamiento queda limitado a 5.`);
+    return;
+  }
+
+  if((g.exercises||[]).some(e=>String(e).trim()===item[0])){
+    alert('Ese ejercicio ya está en la rutina.');
+    return;
+  }
+
+  g.exercises.push(item[0]);
+  g.images.push(item[1]);
+  loadConfig();
+  renderExerciseDB();
+}
+
+function enforceFiveExercisesPerGroup(){
+  (Object.keys(routine)||[]).forEach(d=>{
+    (routine[d].groups||[]).forEach(g=>{
+      if((g.exercises||[]).length>5){
+        g.exercises=g.exercises.slice(0,5);
+        g.images=(g.images||[]).slice(0,5);
+      }
+    });
+  });
+}
+
 function structuredCloneSafe(obj){
 return JSON.parse(JSON.stringify(obj));
 }
@@ -1305,6 +1713,19 @@ let monthDate=new Date();
 let timerInterval=null;
 let timerSeconds=0;
 
+const EXERCISE_DB_BASE='https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0';
+const LIBRARY_MAP={
+'PECHO':['pectorals'],
+'HOMBROS':['delts'],
+'TRÍCEPS':['triceps'],
+'ABDOMINALES':['abs'],
+'ESPALDA':['upper-back','lats'],
+'BÍCEPS':['biceps'],
+'PIERNAS':['quads','hamstrings','glutes','calves']
+};
+let exerciseLibrary=[];
+let libraryLoadedGroup='';
+
 const esc=s=>String(s??'').replace(
 /[&<>"']/g,
 m=>({
@@ -1360,7 +1781,7 @@ save();
 
 let data={
 app:'Mi Gimnasio Pro',
-version:'6.1',
+version:'6.2',
 backupType:'automatic',
 created:new Date().toISOString(),
 routine:structuredCloneSafe(routine),
@@ -1699,8 +2120,11 @@ let n=document.getElementById('n-'+x);
 
 if(n)n.classList.add('active');
 
-if(x==='rutina')
+if(x==='rutina'){
 loadConfig();
+if(!exerciseLibrary.length)
+loadExerciseLibrary();
+}
 
 if(x==='calendario')
 renderCalendar();
@@ -1806,13 +2230,12 @@ renderWorkout(previous);
 function renderWorkout(previous){
 
 let x=routine[day];
-
 let html='';
 
 (x.groups||[]).forEach((group,gi)=>{
 
 html+=
-`<div class="group">${esc(group.name)}</div>`;
+`<div class="group phase phase-${gi%7}">${esc(group.name)}</div>`;
 
 (group.exercises||[]).forEach((ex,i)=>{
 
@@ -1835,18 +2258,6 @@ weight:''
 
 }
 
-let lw=Math.max(
-0,
-...previousSets.map(
-s=>num(s.weight)
-)
-);
-
-let suggestion=
-lw
-?Math.round(lw*1.025*10)/10
-:0;
-
 let img=
 (group.images||[])[i]||'';
 
@@ -1857,7 +2268,7 @@ let prefix=`g${gi}-e${i}`;
 
 html+=`
 
-<div class="ex">
+<div class="ex phase phase-${gi%7}">
 
 <div class="exhead">
 
@@ -1877,7 +2288,7 @@ ${img?`
 <button
 class="imgbtn"
 onclick="toggleImage('${iid}')">
-🖼️ Ver imagen
+🖼️ Ver GIF
 </button>
 
 <div
@@ -1894,7 +2305,7 @@ this.nextElementSibling.style.display='block';
 
 <div
 style="display:none;color:var(--red);font-size:.7rem;padding:5px">
-⚠️ No se puede cargar la imagen.
+⚠️ No se puede cargar el GIF.
 </div>
 
 <br>
@@ -1902,54 +2313,29 @@ style="display:none;color:var(--red);font-size:.7rem;padding:5px">
 <button
 class="imgbtn"
 onclick="toggleImage('${iid}')">
-✕ Cerrar imagen
+✕ Cerrar GIF
 </button>
 
 </div>
 
 `:''}
 
-${old?`
-
-<div class="last">
-
-Último
-${new Date(previous.date)
-.toLocaleDateString('es-ES')}:
-
-${previousSets.map(
-(s,j)=>
-`S${j+1} ${num(s.reps)||''}×${s.weight!==''&&s.weight!=null?s.weight:''}kg`
-).join(' · ')}
-
-</div>
-
-`
-:
-'<div class="last">Sin registro previo</div>'
-}
-
-${suggestion?`
-
-<div
-class="suggest"
-onclick="suggest('${prefix}',${suggestion})">
-
-💡 Propuesta: ${suggestion} kg (+2,5%)
-
-</div>
-
-`:''}
-
-<table>
+<table class="workTable">
 
 <thead>
+
 <tr>
-<th>S</th>
-<th>Reps</th>
-<th>Kg</th>
-<th></th>
+<th colspan="2" class="todayHead">HOY</th>
+<th colspan="2" class="lastHead">ÚLTIMO</th>
 </tr>
+
+<tr>
+<th class="subHead">REPS</th>
+<th class="subHead">KG</th>
+<th class="subHead">REPS</th>
+<th class="subHead">KG</th>
+</tr>
+
 </thead>
 
 <tbody>
@@ -1957,36 +2343,62 @@ onclick="suggest('${prefix}',${suggestion})">
 
 for(let j=0;j<3;j++){
 
+let ps=previousSets[j]||{reps:'',weight:''};
+
 html+=`
 
 <tr>
 
-<td>${j+1}</td>
+<td class="todayCell">
 
-<td>
 <input
 type="number"
 min="0"
 id="${prefix}-r${j}"
 value=""
+placeholder="—"
 onfocus="selectCell(this)"
 oninput="calc('${prefix}');pr('${prefix}','${esc(ex)}')"
 >
+
 </td>
 
-<td>
+<td class="todayCell">
+
 <input
 type="number"
 min="0"
 step=".5"
 id="${prefix}-w${j}"
 value=""
+placeholder="—"
 onfocus="selectCell(this)"
 oninput="calc('${prefix}');pr('${prefix}','${esc(ex)}')"
 >
+
 </td>
 
-<td></td>
+<td class="lastCell">
+
+<input
+type="number"
+value="${ps.reps??''}"
+readonly
+tabindex="-1"
+>
+
+</td>
+
+<td class="lastCell">
+
+<input
+type="number"
+value="${ps.weight??''}"
+readonly
+tabindex="-1"
+>
+
+</td>
 
 </tr>
 `;
@@ -2629,14 +3041,216 @@ document.getElementById(
 
 }
 
+async function loadExerciseLibrary(){
+
+let groupName=
+document.getElementById('libraryMuscle')?.value||'PECHO';
+
+let status=document.getElementById('libraryStatus');
+let list=document.getElementById('libraryList');
+
+if(status)
+status.innerText='⏳ Cargando ejercicios y GIF...';
+
+if(list)
+list.innerHTML='';
+
+try{
+
+let muscles=LIBRARY_MAP[groupName]||[];
+
+let responses=await Promise.all(
+muscles.map(async muscle=>{
+let r=await fetch(
+`${EXERCISE_DB_BASE}/api/es/muscles/${muscle}.json`
+);
+if(!r.ok)throw new Error('HTTP '+r.status);
+return r.json();
+})
+);
+
+let all=[];
+
+responses.forEach(data=>{
+(data.exercises||[]).forEach(ex=>{
+if(!all.some(x=>x.id===ex.id))
+all.push(ex);
+});
+});
+
+exerciseLibrary=all.slice(0,40);
+libraryLoadedGroup=groupName;
+
+renderExerciseLibrary();
+
+if(status)
+status.innerText=
+`✓ ${exerciseLibrary.length} ejercicios disponibles para ${groupName}. Pulsa “Añadir” para llevarlos a la rutina del día seleccionado.`;
+
+}catch(err){
+
+console.error(err);
+
+if(status)
+status.innerText=
+'⚠️ No se pudo cargar la base. Comprueba la conexión a Internet.';
+
+}
+
+}
+
+function renderExerciseLibrary(){
+
+let list=document.getElementById('libraryList');
+
+if(!list)return;
+
+let q=
+String(document.getElementById('librarySearch')?.value||'')
+.toLowerCase()
+.trim();
+
+let filtered=
+exerciseLibrary.filter(ex=>
+String(ex.name||'')
+.toLowerCase()
+.includes(q)
+);
+
+if(!filtered.length){
+
+list.innerHTML=
+'<div class="empty">No hay ejercicios que coincidan.</div>';
+
+return;
+
+}
+
+list.innerHTML=
+filtered.map((ex,i)=>{
+
+let safeName=esc(ex.name||'Ejercicio');
+let gif=esc(ex.gifUrl||'');
+
+return`
+
+<div class="libraryItem">
+
+<img
+src="${gif}"
+alt="${safeName}"
+onerror="this.style.visibility='hidden'">
+
+<div>
+
+<strong>${safeName}</strong>
+
+<span>
+${esc(ex.equipment||'')}${ex.equipment?' · ':''}${esc(ex.muscle||libraryLoadedGroup)}
+</span>
+
+</div>
+
+<button
+class="btn addLib"
+onclick="addLibraryExercise(${i})">
+➕ Añadir
+</button>
+
+</div>
+`;
+
+}).join('');
+
+}
+
+function addLibraryExercise(index){
+
+let q=
+String(document.getElementById('librarySearch')?.value||'')
+.toLowerCase()
+.trim();
+
+let filtered=
+exerciseLibrary.filter(ex=>
+String(ex.name||'')
+.toLowerCase()
+.includes(q)
+);
+
+let ex=filtered[index];
+
+if(!ex)return;
+
+let d=
+Number(document.getElementById('cfgday').value);
+
+let groupSelect=
+document.getElementById('cfgGroup');
+
+if(!groupSelect){
+
+alert('Primero selecciona o crea un grupo muscular en la rutina.');
+
+return;
+
+}
+
+let gi=Number(groupSelect.value);
+
+let group=routine[d]?.groups?.[gi];
+
+if(!group)return;
+
+if((group.exercises||[]).some(
+name=>String(name).toLowerCase()===String(ex.name).toLowerCase()
+)){
+
+alert('Ese ejercicio ya está en el grupo seleccionado.');
+
+return;
+
+}
+
+group.exercises.push(ex.name);
+group.images.push(ex.gifUrl||'');
+
+loadConfig();
+
+let status=document.getElementById('libraryStatus');
+
+if(status)
+status.innerText=
+`✓ ${ex.name} añadido a ${group.name} · Día ${d}.`;
+
+}
+
 function loadConfig(){
+
+enforceFiveExercisesPerGroup();
 
 let cfgday=
 Number(document.getElementById('cfgday').value);
 
 let x=routine[cfgday];
 
-let html='';
+let html=`
+
+<div style="margin-bottom:8px">
+
+<label>Grupo de destino para añadir desde la base</label>
+
+<select id="cfgGroup">
+
+${(x.groups||[]).map((g,i)=>
+`<option value="${i}">${esc(g.name)}</option>`
+).join('')}
+
+</select>
+
+</div>
+
+`;
 
 (x.groups||[]).forEach(
 (group,gi)=>{
@@ -2719,44 +3333,22 @@ document.getElementById(
 'editor'
 ).innerHTML=html;
 
+renderExerciseDB();
+
 }
 
 function field(gi,n,img){
-
 return`
-
 <div class="ex">
-
 <label>Nombre del ejercicio</label>
-
-<input
-class="g${gi}e"
-value="${esc(n)}"
-placeholder="Ejercicio"
->
-
+<input class="g${gi}e" value="${esc(n)}" placeholder="Ejercicio">
 <label>Imagen / GIF</label>
-
-<input
-class="g${gi}i"
-value="${esc(img||'')}"
-placeholder="URL de imagen o GIF"
->
-
+<input class="g${gi}i" value="${esc(img||'')}" placeholder="URL de imagen o GIF">
 <div style="display:flex;gap:5px">
-
-<button
-class="btn danger sm"
-onclick="removeExercise(this)">
-🗑️ Eliminar
-</button>
-
+<button class="btn danger sm" onclick="removeExercise(this)">🗑️ Eliminar</button>
 </div>
-
 </div>
-
 `;
-
 }
 
 function addGroup(){
@@ -2859,6 +3451,8 @@ name='Grupo '+(gi+1);
 let exercises=[];
 let images=[];
 
+// Máximo 5 ejercicios por grupo en la rutina de entrenamiento.
+
 editor
 .querySelectorAll('.g'+gi+'e')
 .forEach(
@@ -2931,7 +3525,7 @@ let data={
 
 app:'Mi Gimnasio Pro',
 
-version:'6.1',
+version:'6.2',
 
 exported:new Date().toISOString(),
 
@@ -2963,7 +3557,7 @@ document.createElement('a');
 a.href=url;
 
 a.download=
-'gym_v6_backup_'+
+'gym_v6_2_backup_'+
 new Date()
 .toISOString()
 .slice(0,10)+
@@ -3322,36 +3916,34 @@ if(!log)return;
 
 day=Number(log.day);
 
-document.getElementById(
-'work'
-).style.display='block';
+document.getElementById('work').style.display='block';
 
-document.getElementById(
-'daytitle'
-).innerText=
+document.getElementById('daytitle').innerText=
 'Editar entrenamiento - Día '+day;
 
-document.getElementById(
-'date'
-).value=
+document.getElementById('date').value=
 dateKey(log.date);
 
-document.getElementById(
-'summary'
-).innerHTML='';
+document.getElementById('summary').innerHTML='';
+
+let previous=
+logs
+.filter(l=>
+Number(l.day)===day &&
+dateKey(l.date)<dateKey(log.date)
+)
+.sort((a,b)=>new Date(a.date)-new Date(b.date))
+.pop()||null;
 
 let x=routine[day];
-
 let html='';
 
-(x.groups||[]).forEach(
-(group,gi)=>{
+(x.groups||[]).forEach((group,gi)=>{
 
 html+=
-`<div class="group">${esc(group.name)}</div>`;
+`<div class="group phase phase-${gi%7}">${esc(group.name)}</div>`;
 
-(group.exercises||[]).forEach(
-(ex,i)=>{
+(group.exercises||[]).forEach((ex,i)=>{
 
 let old=null;
 
@@ -3359,8 +3951,7 @@ let old=null;
 g=>
 (g.exercises||[]).forEach(
 e=>{
-if(e.name===ex)
-old=e;
+if(e.name===ex)old=e;
 }
 )
 );
@@ -3379,17 +3970,32 @@ weight:''
 
 }
 
+let previousExercise=
+getPreviousExercise(previous,ex);
+
+let previousSets=
+previousExercise
+?(previousExercise.sets||[]).slice(0,3)
+:[];
+
+while(previousSets.length<3){
+
+previousSets.push({
+reps:'',
+weight:''
+});
+
+}
+
 let img=
 (group.images||[])[i]||'';
 
-let iid=
-`edit-img-${gi}-${i}`;
-
+let iid=`edit-img-${gi}-${i}`;
 let prefix=`g${gi}-e${i}`;
 
 html+=`
 
-<div class="ex">
+<div class="ex phase phase-${gi%7}">
 
 <div class="exhead">
 <span>${esc(ex)}</span>
@@ -3400,7 +4006,7 @@ ${img?`
 <button
 class="imgbtn"
 onclick="toggleImage('${iid}')">
-🖼️ Ver imagen
+🖼️ Ver GIF
 </button>
 
 <div
@@ -3417,7 +4023,7 @@ this.nextElementSibling.style.display='block';
 
 <div
 style="display:none;color:var(--red);font-size:.7rem;padding:5px">
-⚠️ No se puede cargar la imagen.
+⚠️ No se puede cargar el GIF.
 </div>
 
 <br>
@@ -3425,40 +4031,41 @@ style="display:none;color:var(--red);font-size:.7rem;padding:5px">
 <button
 class="imgbtn"
 onclick="toggleImage('${iid}')">
-✕ Cerrar imagen
+✕ Cerrar GIF
 </button>
 
 </div>
 
 `:''}
 
-<table>
+<table class="workTable">
 
 <thead>
-
 <tr>
-<th>S</th>
-<th>Reps</th>
-<th>Kg</th>
-<th></th>
+<th colspan="2" class="todayHead">HOY</th>
+<th colspan="2" class="lastHead">ÚLTIMO</th>
 </tr>
 
+<tr>
+<th class="subHead">REPS</th>
+<th class="subHead">KG</th>
+<th class="subHead">REPS</th>
+<th class="subHead">KG</th>
+</tr>
 </thead>
 
 <tbody>
 `;
 
-sets.forEach(
-(s,j)=>{
+sets.forEach((s,j)=>{
+
+let ps=previousSets[j]||{reps:'',weight:''};
 
 html+=`
 
 <tr>
 
-<td>${j+1}</td>
-
-<td>
-
+<td class="todayCell">
 <input
 type="number"
 min="0"
@@ -3467,11 +4074,9 @@ value="${s.reps??''}"
 onfocus="selectCell(this)"
 oninput="calc('${prefix}')"
 >
-
 </td>
 
-<td>
-
+<td class="todayCell">
 <input
 type="number"
 min="0"
@@ -3481,10 +4086,25 @@ value="${s.weight??''}"
 onfocus="selectCell(this)"
 oninput="calc('${prefix}')"
 >
-
 </td>
 
-<td></td>
+<td class="lastCell">
+<input
+type="number"
+value="${ps.reps??''}"
+readonly
+tabindex="-1"
+>
+</td>
+
+<td class="lastCell">
+<input
+type="number"
+value="${ps.weight??''}"
+readonly
+tabindex="-1"
+>
+</td>
 
 </tr>
 
@@ -3516,13 +4136,9 @@ id="vol-${prefix}">
 
 });
 
-document.getElementById(
-'form'
-).innerHTML=html;
+document.getElementById('form').innerHTML=html;
 
-document.getElementById(
-'loadedmsg'
-).innerHTML=
+document.getElementById('loadedmsg').innerHTML=
 '<div class="loaded">✏️ Editando una sesión guardada. Modifica los datos y pulsa Guardar entrenamiento.</div>';
 
 (x.groups||[]).forEach(
@@ -4142,6 +4758,16 @@ c.currentTime+.18
 restoreAutoBackupIfNeeded();
 
 save();
+
+document.getElementById('librarySearch')?.addEventListener(
+'input',
+renderExerciseLibrary
+);
+
+document.getElementById('libraryMuscle')?.addEventListener(
+'change',
+loadExerciseLibrary
+);
 
 updateBackupStatus();
 
