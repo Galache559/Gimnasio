@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MI GIMNASIO PRO v9.6</title>
+<title>MI GIMNASIO PRO v10.0</title>
 <meta name="theme-color" content="#121212">
 
 <style>
@@ -1013,7 +1013,7 @@ color:#000;
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v9.6</h1>
+<h1>MI GIMNASIO PRO v10.0</h1>
 </header>
 
 <div class="container">
@@ -1667,18 +1667,6 @@ let monthDate=new Date();
 let timerInterval=null;
 let timerSeconds=0;
 
-const EXERCISE_DB_BASE='https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0';
-const LIBRARY_MAP={
-'PECHO':['pectorals'],
-'HOMBROS':['delts'],
-'TRÍCEPS':['triceps'],
-'ABDOMINALES':['abs'],
-'ESPALDA':['upper-back','lats'],
-'BÍCEPS':['biceps'],
-'PIERNAS':['quads','hamstrings','glutes','calves']
-};
-let exerciseLibrary=[];
-let libraryLoadedGroup='';
 
 const esc=s=>String(s??'').replace(
 /[&<>"']/g,
@@ -2076,8 +2064,6 @@ if(n)n.classList.add('active');
 
 if(x==='rutina'){
 loadConfig();
-if(!exerciseLibrary.length)
-loadExerciseLibrary();
 }
 
 if(x==='calendario')
@@ -3018,205 +3004,6 @@ document.getElementById(
 
 }
 
-function syncRoutineTargetFromLibrary(){
-  const muscle=document.getElementById('libraryMuscle');
-  const target=document.getElementById('routineGroup');
-  const d=Number(document.getElementById('cfgday')?.value)||1;
-  if(!muscle || !target)return false;
-
-  const wanted=String(muscle.value||'').trim().toUpperCase();
-  const groups=routine[d]?.groups||[];
-  const idx=groups.findIndex(g=>String(g.name||'').trim().toUpperCase()===wanted);
-
-  if(idx>=0){
-    target.value=String(idx);
-    updateTargetLabel();
-    return true;
-  }
-  return false;
-}
-
-async function loadExerciseLibrary(){
-
-syncRoutineTargetFromLibrary();
-
-let groupName=
-document.getElementById('libraryMuscle')?.value||'PECHO';
-
-let status=document.getElementById('libraryStatus');
-let list=document.getElementById('libraryList');
-
-if(status)
-status.innerText='⏳ Cargando ejercicios y GIF...';
-
-if(list)
-list.innerHTML='';
-
-try{
-
-let muscles=LIBRARY_MAP[groupName]||[];
-
-let responses=await Promise.all(
-muscles.map(async muscle=>{
-let r=await fetch(
-`${EXERCISE_DB_BASE}/api/es/muscles/${muscle}.json`
-);
-if(!r.ok)throw new Error('HTTP '+r.status);
-return r.json();
-})
-);
-
-let all=[];
-
-responses.forEach(data=>{
-(data.exercises||[]).forEach(ex=>{
-if(!all.some(x=>x.id===ex.id))
-all.push(ex);
-});
-});
-
-exerciseLibrary=all.slice(0,40);
-libraryLoadedGroup=groupName;
-
-renderExerciseLibrary();
-
-if(status)
-status.innerText=
-`✓ ${exerciseLibrary.length} ejercicios disponibles para ${groupName}. Pulsa “Añadir” para llevarlos a la rutina del día seleccionado.`;
-
-}catch(err){
-
-console.error(err);
-
-if(status)
-status.innerText=
-'⚠️ No se pudo cargar la base. Comprueba la conexión a Internet.';
-
-}
-
-}
-
-function renderExerciseLibrary(){
-
-let list=document.getElementById('libraryList');
-
-if(!list)return;
-
-let q=
-String(document.getElementById('librarySearch')?.value||'')
-.toLowerCase()
-.trim();
-
-let filtered=
-exerciseLibrary.filter(ex=>
-String(ex.name||'')
-.toLowerCase()
-.includes(q)
-);
-
-if(!filtered.length){
-
-list.innerHTML=
-'<div class="empty">No hay ejercicios que coincidan.</div>';
-
-return;
-
-}
-
-list.innerHTML=
-filtered.map((ex,i)=>{
-
-let safeName=esc(ex.name||'Ejercicio');
-let gif=esc(ex.gifUrl||'');
-
-return`
-
-<div class="libraryItem">
-
-<img
-src="${gif}"
-alt="${safeName}"
-onerror="this.style.visibility='hidden'">
-
-<div>
-
-<strong>${safeName}</strong>
-
-<span>
-${esc(ex.equipment||'')}${ex.equipment?' · ':''}${esc(ex.muscle||libraryLoadedGroup)}
-</span>
-
-</div>
-
-<button
-class="btn addLib"
-onclick="addRemoteLibraryExercise(${i})">
-➕ Añadir
-</button>
-
-</div>
-`;
-
-}).join('');
-
-}
-
-function addRemoteLibraryExercise(index){
-  const q=String(document.getElementById('librarySearch')?.value||'').toLowerCase().trim();
-  const filtered=exerciseLibrary.filter(ex=>String(ex.name||'').toLowerCase().includes(q));
-  const ex=filtered[index];
-  if(!ex)return;
-
-  const d=Number(document.getElementById('cfgday')?.value)||1;
-  const muscle=String(document.getElementById('libraryMuscle')?.value||libraryLoadedGroup||'PECHO').trim();
-  const wanted=muscle.toUpperCase();
-
-  // The visible "Grupo muscular" selector is the real destination.
-  // Find the matching group by name, so it can never silently fall back to PECHO.
-  const groups=routine[d]?.groups||[];
-  const gi=groups.findIndex(g=>String(g.name||'').trim().toUpperCase()===wanted);
-  if(gi<0){
-    alert(`El día ${d} no tiene el grupo ${muscle}.`);
-    return;
-  }
-
-  const group=groups[gi];
-  if(!Array.isArray(group.exercises)) group.exercises=[];
-  if(!Array.isArray(group.images)) group.images=[];
-
-  if(group.exercises.length>=5){
-    alert(`El grupo ${group.name} ya tiene 5 ejercicios. El entrenamiento está limitado a 5.`);
-    return;
-  }
-
-  if(group.exercises.some(name=>String(name).trim().toLowerCase()===String(ex.name).trim().toLowerCase())){
-    alert('Ese ejercicio ya está en el grupo seleccionado.');
-    return;
-  }
-
-  group.exercises.push(String(ex.name));
-  group.images.push(String(ex.gifUrl||''));
-
-  // Keep the two selectors synchronized for the next operation.
-  const target=document.getElementById('routineGroup');
-  if(target)target.value=String(gi);
-
-  normalizeRoutine();
-  enforceFiveExercisesPerGroup();
-  save();
-
-  const addedName=String(ex.name);
-  const groupName=String(group.name);
-  loadConfig();
-
-  // loadConfig recreates routineGroup; restore the selected muscle visually.
-  const newTarget=document.getElementById('routineGroup');
-  if(newTarget)newTarget.value=String(gi);
-  updateTargetLabel();
-
-  const status=document.getElementById('libraryStatus');
-  if(status)status.innerText=`✓ ${addedName} añadido a ${groupName} · Día ${d} · GIF incluido.`;
-}
 function loadConfig(){
   enforceFiveExercisesPerGroup();
 
@@ -4786,19 +4573,6 @@ c.currentTime+.18
 restoreAutoBackupIfNeeded();
 
 save();
-
-document.getElementById('librarySearch')?.addEventListener(
-'input',
-renderExerciseLibrary
-);
-
-document.getElementById('libraryMuscle')?.addEventListener(
-'change',
-function(){
-  syncRoutineTargetFromLibrary();
-  loadExerciseLibrary();
-}
-);
 
 updateBackupStatus();
 
