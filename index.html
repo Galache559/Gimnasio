@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MI GIMNASIO PRO v10.3</title>
+<title>MI GIMNASIO PRO v10.4</title>
 <meta name="theme-color" content="#121212">
 
 <style>
@@ -335,6 +335,16 @@ font-size:.66rem;
 font-size:.68rem;
 color:var(--sub);
 margin-top:7px;
+}
+.remoteSearchBox label{
+display:block;
+color:var(--a);
+font-weight:800;
+font-size:.75rem;
+margin-bottom:5px;
+}
+.remoteSearchBox select{
+margin-bottom:0;
 }
 
 @media(max-width:500px){
@@ -1013,7 +1023,7 @@ color:#000;
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v10.3</h1>
+<h1>MI GIMNASIO PRO v10.4</h1>
 </header>
 
 <div class="container">
@@ -1083,38 +1093,32 @@ color:#000;
 </div>
 
 <div class="card">
-<h2>📚 Biblioteca de ejercicios + GIF</h2>
+<h2>📚 MI BASE DE EJERCICIOS + GIF</h2>
 <div style="font-size:.72rem;color:var(--sub);line-height:1.45;margin-bottom:10px">
-Selecciona el <b>grupo muscular</b>. Los ejercicios se añadirán exclusivamente a ese grupo del día seleccionado.
-Máximo 5 ejercicios por grupo.
+Aquí tienes los <b>15 ejercicios base</b> de cada grupo. Los ejercicios nuevos que añadas desde la biblioteca externa se incorporarán a esta base y quedarán disponibles para <b>Añadir a Entreno</b>.
 </div>
 
 <div class="dbbox">
-<div class="libraryControls">
-
-<div>
-<label>Grupo muscular</label>
-<select id="libraryMuscleV9" onchange="syncV9Target();renderLibraryV9()">
-<option value="PECHO">PECHO</option>
-<option value="HOMBROS">HOMBROS</option>
-<option value="TRÍCEPS">TRÍCEPS</option>
-<option value="ESPALDA">ESPALDA</option>
-<option value="BÍCEPS">BÍCEPS</option>
-<option value="PIERNAS">PIERNAS</option>
-<option value="ABDOMINALES">ABDOMINALES</option>
-</select>
-</div>
-
-<div>
-<label>Buscar ejercicio</label>
-<input id="librarySearchV9" type="text" placeholder="🔎 Nombre..." oninput="renderLibraryV9()">
-</div>
-
-</div>
-
 <div id="v9TargetLabel" class="targetBox">Destino: selecciona un grupo</div>
-<div id="libraryStatusV9" class="libraryStatus">Selecciona un grupo y añade los ejercicios que quieras.</div>
+<div id="libraryStatusV9" class="libraryStatus">Cargando tu base de ejercicios...</div>
 <div id="libraryGridV9" class="libraryGrid"></div>
+
+<div class="remoteSearchBox" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--bor)">
+  <label>GRUPO MUSCULAR</label>
+  <select id="libraryMuscleV9">
+    <option value="PECHO">PECHO</option>
+    <option value="HOMBROS">HOMBROS</option>
+    <option value="TRÍCEPS">TRÍCEPS</option>
+    <option value="ESPALDA">ESPALDA</option>
+    <option value="BÍCEPS">BÍCEPS</option>
+    <option value="PIERNAS">PIERNAS</option>
+    <option value="ABDOMINALES">ABDOMINALES</option>
+  </select>
+  <button type="button" class="btn blue" style="margin-top:2px" onclick="searchRemoteExerciseGroup()">🔎 BUSCAR</button>
+</div>
+
+<div id="remoteLibraryStatus" class="libraryStatus"></div>
+<div id="remoteLibraryGrid" class="libraryGrid"></div>
 </div>
 </div>
 
@@ -1603,6 +1607,24 @@ localStorage.getItem(K+'logs'),
 []
 );
 
+let personalExerciseBase=safeParse(
+localStorage.getItem(K+'personal_exercise_base'),
+[]
+);
+
+if(!Array.isArray(personalExerciseBase))
+personalExerciseBase=[];
+
+personalExerciseBase=personalExerciseBase
+  .filter(x=>x && typeof x==='object')
+  .map(x=>({
+    name:String(x.name||'').trim(),
+    image:String(x.image||'').trim(),
+    equipment:String(x.equipment||'').trim(),
+    group:String(x.group||'').trim().toUpperCase()
+  }))
+  .filter(x=>x.name && x.image && x.group);
+
 if(!routine || typeof routine!=='object')
 routine=structuredCloneSafe(DEFAULT_ROUTINE);
 
@@ -1730,6 +1752,11 @@ K+'logs',
 JSON.stringify(logs)
 );
 
+localStorage.setItem(
+K+'personal_exercise_base',
+JSON.stringify(personalExerciseBase)
+);
+
 }catch(e){
 
 console.error('Error guardando datos',e);
@@ -1762,7 +1789,8 @@ version:'8.0',
 backupType:'automatic',
 created:new Date().toISOString(),
 routine:structuredCloneSafe(routine),
-logs:structuredCloneSafe(logs)
+logs:structuredCloneSafe(logs),
+personalExerciseBase:structuredCloneSafe(personalExerciseBase)
 };
 
 localStorage.setItem(
@@ -1842,6 +1870,10 @@ structuredCloneSafe(data.routine);
 
 logs=
 structuredCloneSafe(data.logs);
+
+if(Array.isArray(data.personalExerciseBase)){
+  personalExerciseBase=structuredCloneSafe(data.personalExerciseBase);
+}
 
 normalizeRoutine();
 
@@ -3047,7 +3079,7 @@ function loadConfig(){
   const x=routine[d]||{groups:[]};
 
   let h='';
-  h+='<div class="targetBox" style="margin:10px 0">Día '+d+' · selecciona el grupo muscular en la biblioteca para añadir ejercicios.</div>';
+  h+='<div class="targetBox" style="margin:10px 0">Día '+d+' · elige cualquier ejercicio de MI BASE para añadirlo a Entreno. Máximo 5 por grupo.</div>';
 
   (x.groups||[]).forEach((g,gi)=>{
     const exercises=Array.isArray(g.exercises)?g.exercises:[];
@@ -3188,30 +3220,58 @@ function syncV9Target(){
   return -1;
 }
 
-async function renderLibraryV9(){
+function getPersonalExercisesForGroup(group){
+  group=String(group||'').trim().toUpperCase();
+  return personalExerciseBase.filter(x=>String(x.group||'').toUpperCase()===group);
+}
+
+function getLibraryBaseForGroup(group){
+  group=String(group||'').trim().toUpperCase();
+
+  const base=(EXERCISE_DB[group]||[]).slice(0,15).map(x=>[
+    String(x[0]||''),
+    String(x[1]||''),
+    String(x[2]||'')
+  ]);
+
+  getPersonalExercisesForGroup(group).forEach(x=>{
+    if(!base.some(b=>
+      String(b[0]).trim().toLowerCase()===String(x.name).trim().toLowerCase()
+    )){
+      base.push([
+        x.name,
+        x.image,
+        x.equipment||getEquipmentLabel(x.name)
+      ]);
+    }
+  });
+
+  return base;
+}
+
+function renderLibraryV9(){
   const group=String(document.getElementById('libraryMuscleV9')?.value||'PECHO').trim().toUpperCase();
-  const q=String(document.getElementById('librarySearchV9')?.value||'').trim().toLowerCase();
   const box=document.getElementById('libraryGridV9');
   const status=document.getElementById('libraryStatusV9');
   if(!box)return;
 
   const gi=syncV9Target();
+
   if(gi<0){
-    box.innerHTML='<div class="empty">Este grupo no forma parte de este día. Cambia de día o de grupo muscular.</div>';
-    if(status)status.innerText=`No se pueden añadir ejercicios de ${group} al Día ${Number(document.getElementById('cfgday')?.value)||1}.`;
+    box.innerHTML='<div class="empty">Este grupo no forma parte de este día. Puedes cambiar de día o elegir otro grupo muscular en la búsqueda.</div>';
+    if(status)status.innerText=`${group}: base disponible para consultar.`;
     return;
   }
 
-  box.innerHTML='<div class="empty">⏳ Comprobando 15 ejercicios y sus GIF...</div>';
-  if(status)status.innerText=`Cargando biblioteca de ${group}...`;
-
-  const verified=(EXERCISE_DB[group]||[]).slice(0,15);
-
-  const data=verified.filter(x=>!q||String(x[0]).toLowerCase().includes(q)).slice(0,15);
+  const data=getLibraryBaseForGroup(group);
   const day=Number(document.getElementById('cfgday')?.value)||1;
   const current=routine[day].groups[gi];
+  const personalCount=getPersonalExercisesForGroup(group).length;
 
-  if(status)status.innerText=`${group}: ${current.exercises?.length||0}/5 seleccionados · ${data.length} ejercicios disponibles`;
+  if(status){
+    status.innerText=`${group}: ${data.length} ejercicios en MI BASE · ${current.exercises?.length||0}/5 en Entreno`+
+      (personalCount?` · ${personalCount} añadido${personalCount===1?'':'s'} por ti`:'');
+  }
 
   box.innerHTML=data.map((x,i)=>`
     <div class="exerciseCard">
@@ -3219,17 +3279,18 @@ async function renderLibraryV9(){
         onerror="this.style.opacity='.25'">
       <div class="exerciseCardBody">
         <div class="exerciseCardName">${i+1}. ${esc(x[0])}</div>
-        <div class="exerciseCardMeta">${getEquipmentIcon(getItemEquipment(x))} <b>${getItemEquipment(x)}</b> · GIF verificado</div>
-        <button type="button" class="btn blue" onclick="addLibraryExerciseV9(${i})">➕ Añadir</button>
+        <div class="exerciseCardMeta">
+          ${getEquipmentIcon(getItemEquipment(x))} <b>${getItemEquipment(x)}</b>${i>=15?' · MI BASE':''}
+        </div>
+        <button type="button" class="btn blue" onclick="addLibraryExerciseV9(${i})">➕ Añadir a Entreno</button>
       </div>
     </div>
-  `).join('') || '<div class="empty">No hay ejercicios que coincidan con la búsqueda.</div>';
+  `).join('') || '<div class="empty">No hay ejercicios en esta base.</div>';
 }
 
 function addLibraryExerciseV9(index){
   const group=String(document.getElementById('libraryMuscleV9')?.value||'').trim().toUpperCase();
-  const q=String(document.getElementById('librarySearchV9')?.value||'').trim().toLowerCase();
-  const data=(EXERCISE_DB[group]||[]).filter(x=>!q||String(x[0]).toLowerCase().includes(q)).slice(0,15);
+  const data=getLibraryBaseForGroup(group);
   const item=data[index];
   if(!item)return;
 
@@ -3237,7 +3298,10 @@ function addLibraryExerciseV9(index){
   const groups=routine[day]?.groups||[];
   const gi=groups.findIndex(g=>String(g.name||'').trim().toUpperCase()===group);
 
-  if(gi<0){ alert(`El grupo ${group} no existe en el Día ${day}.`); return; }
+  if(gi<0){
+    alert(`El grupo ${group} no existe en el Día ${day}.`);
+    return;
+  }
 
   const g=groups[gi];
   if(!Array.isArray(g.exercises))g.exercises=[];
@@ -3248,13 +3312,15 @@ function addLibraryExerciseV9(index){
     return;
   }
 
-  if(g.exercises.some(e=>String(e).trim().toLowerCase()===String(item[0]).trim().toLowerCase())){
+  if(g.exercises.some(e=>
+    String(e).trim().toLowerCase()===String(item[0]).trim().toLowerCase()
+  )){
     alert(`"${item[0]}" ya está en ${g.name}.`);
     return;
   }
 
   g.exercises.push(item[0]);
-  g.images.push(item[1]);
+  g.images.push(item[1]||'');
 
   normalizeRoutine();
   enforceFiveExercisesPerGroup();
@@ -3262,7 +3328,177 @@ function addLibraryExerciseV9(index){
   loadConfig();
 
   const status=document.getElementById('libraryStatusV9');
-  if(status)status.innerText=`✓ ${item[0]} añadido a ${g.name} · Día ${day} · GIF verificado.`;
+  if(status)status.innerText=`✓ ${item[0]} añadido a ${g.name} · Día ${day} · GIF incluido.`;
+}
+
+const REMOTE_API_BASE='https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0';
+
+const REMOTE_GROUPS={
+  PECHO:['pectorals'],
+  HOMBROS:['delts'],
+  TRÍCEPS:['triceps'],
+  ESPALDA:['lats','upper-back'],
+  BÍCEPS:['biceps'],
+  PIERNAS:['quads','hamstrings','glutes','calves'],
+  ABDOMINALES:['abs']
+};
+
+const remoteExerciseCache={};
+
+async function fetchRemoteMuscleExercises(muscle){
+  muscle=String(muscle||'').trim().toLowerCase();
+
+  if(remoteExerciseCache[muscle])
+    return remoteExerciseCache[muscle];
+
+  const url=`${REMOTE_API_BASE}/api/es/muscles/${encodeURIComponent(muscle)}.json`;
+  const response=await fetch(url,{cache:'no-store'});
+
+  if(!response.ok)
+    throw new Error(`HTTP ${response.status}`);
+
+  const data=await response.json();
+  const exercises=Array.isArray(data?.exercises)?data.exercises:[];
+
+  remoteExerciseCache[muscle]=exercises;
+  return exercises;
+}
+
+async function searchRemoteExerciseGroup(){
+  const group=String(document.getElementById('libraryMuscleV9')?.value||'').trim().toUpperCase();
+  const box=document.getElementById('remoteLibraryGrid');
+  const status=document.getElementById('remoteLibraryStatus');
+
+  if(!box)return;
+
+  box.innerHTML='<div class="empty">⏳ BUSCANDO todos los ejercicios del grupo y sus GIF...</div>';
+  if(status)status.innerText=`Consultando la biblioteca externa de ${group}...`;
+
+  const muscles=REMOTE_GROUPS[group]||[];
+
+  if(!muscles.length){
+    box.innerHTML='<div class="empty">No hay correspondencia para este grupo.</div>';
+    return;
+  }
+
+  try{
+    const results=await Promise.allSettled(
+      muscles.map(fetchRemoteMuscleExercises)
+    );
+
+    const merged=[];
+    const seen=new Set();
+
+    results.forEach(result=>{
+      if(result.status!=='fulfilled')return;
+
+      result.value.forEach(x=>{
+        const name=String(x?.name||'').trim();
+        const gif=String(x?.gifUrl||'').trim();
+
+        if(!name || !gif)return;
+
+        const key=String(x?.id||gif).toLowerCase();
+
+        if(seen.has(key))return;
+        seen.add(key);
+
+        merged.push({
+          name:name,
+          image:gif,
+          equipment:String(x?.equipment||'').trim(),
+          id:String(x?.id||'')
+        });
+      });
+    });
+
+    merged.sort((a,b)=>a.name.localeCompare(b.name,'es'));
+
+    if(!merged.length){
+      box.innerHTML='<div class="empty">No se han encontrado ejercicios para este grupo.</div>';
+      if(status)status.innerText='La biblioteca externa no ha devuelto ejercicios.';
+      return;
+    }
+
+    if(status){
+      status.innerText=
+        `${group}: ${merged.length} ejercicios encontrados. Pulsa "Añadir a MI BASE" en el que quieras.`;
+    }
+
+    window.remoteSearchResults=merged;
+
+    box.innerHTML=merged.map((x,i)=>`
+      <div class="exerciseCard">
+        <img src="${esc(x.image)}" alt="${esc(x.name)}" loading="lazy"
+          onerror="this.style.opacity='.25'">
+        <div class="exerciseCardBody">
+          <div class="exerciseCardName">${esc(x.name)}</div>
+          <div class="exerciseCardMeta">
+            ${getEquipmentIcon(x.equipment)} <b>${esc(x.equipment||'EQUIPO')}</b> · Biblioteca externa
+          </div>
+          <button type="button" class="btn" onclick="addRemoteExerciseToBase(${i})">
+            ⭐ Añadir a MI BASE
+          </button>
+        </div>
+      </div>
+    `).join('');
+
+  }catch(err){
+    console.error('Error consultando ExerciseGymGifsDB',err);
+
+    box.innerHTML=
+      '<div class="empty">⚠️ No se ha podido consultar la biblioteca externa. Comprueba la conexión a Internet.</div>';
+
+    if(status)
+      status.innerText='Error de conexión con la biblioteca de GIFs.';
+  }
+}
+
+function addRemoteExerciseToBase(index){
+  const results=Array.isArray(window.remoteSearchResults)
+    ?window.remoteSearchResults
+    :[];
+
+  const item=results[Number(index)];
+  const group=String(document.getElementById('libraryMuscleV9')?.value||'').trim().toUpperCase();
+
+  if(!item)return;
+
+  const duplicate=personalExerciseBase.some(x=>
+    String(x.group||'').toUpperCase()===group &&
+    String(x.name||'').trim().toLowerCase()===item.name.trim().toLowerCase()
+  );
+
+  const existsInMaster=(EXERCISE_DB[group]||[]).some(x=>
+    String(x[0]||'').trim().toLowerCase()===item.name.trim().toLowerCase()
+  );
+
+  if(duplicate || existsInMaster){
+    alert(`"${item.name}" ya existe en la base de ${group}.`);
+    return;
+  }
+
+  personalExerciseBase.push({
+    name:item.name,
+    image:item.image,
+    equipment:item.equipment||getEquipmentLabel(item.name),
+    group:group
+  });
+
+  save();
+  renderLibraryV9();
+
+  const status=document.getElementById('remoteLibraryStatus');
+
+  if(status){
+    status.innerText=
+      `✓ "${item.name}" añadido a MI BASE de ${group}. Ahora tienes ${getLibraryBaseForGroup(group).length} ejercicios.`;
+  }
+
+  alert(
+    `✓ ${item.name} añadido a MI BASE.\n\n`+
+    `Ya está disponible arriba para añadirlo a Entreno.`
+  );
 }
 
 function addGroup(){
@@ -3357,7 +3593,9 @@ exported:new Date().toISOString(),
 
 routine:routine,
 
-logs:logs
+logs:logs,
+
+personalExerciseBase:personalExerciseBase
 
 };
 
@@ -3457,6 +3695,9 @@ structuredCloneSafe(routine);
 let oldLogs=
 structuredCloneSafe(logs);
 
+let oldPersonalExerciseBase=
+structuredCloneSafe(personalExerciseBase);
+
 try{
 
 routine=
@@ -3469,6 +3710,11 @@ structuredCloneSafe(
 data.logs
 );
 
+if(Array.isArray(data.personalExerciseBase)){
+  personalExerciseBase=
+  structuredCloneSafe(data.personalExerciseBase);
+}
+
 normalizeRoutine();
 
 save();
@@ -3477,6 +3723,7 @@ save();
 
 routine=oldRoutine;
 logs=oldLogs;
+personalExerciseBase=oldPersonalExerciseBase;
 
 save();
 
