@@ -834,7 +834,7 @@ color:#000;
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v6.3</h1>
+<h1>MI GIMNASIO PRO v6.4</h1>
 </header>
 
 <div class="container">
@@ -1177,7 +1177,7 @@ Puedes cerrar esta pestaña o utilizar el botón
 <script>
 "use strict";
 
-const K='gym_v6_';
+const K='gym_v6_4_';
 
 const AUTO_BACKUP=K+'auto_backup';
 const PREV_BACKUP=K+'auto_backup_previous';
@@ -1186,208 +1186,32 @@ const BACKUP_DATE=K+'auto_backup_date';
 let isExiting=false;
 
 const DEFAULT_ROUTINE={
-
-1:{
-groups:[
-{
-name:'PECHO',
-exercises:[
-'Press de banca plano',
-'Press inclinado con mancuernas',
-'Aperturas con mancuernas',
-'Cruce de poleas a la altura del pecho',
-'Cruce de poleas de arriba hacia abajo'
-],
-images:['','','','','']
-},
-{
-name:'HOMBROS',
-exercises:[
-'Press militar',
-'Elevaciones laterales',
-'Elevaciones frontales',
-'Pájaros',
-'Remo al mentón'
-],
-images:['','','','','']
-},
-{
-name:'TRÍCEPS',
-exercises:[
-'Extensión en polea alta con barra',
-'Extensión en polea con cuerda',
-'Extensión a una mano en polea',
-'Press francés con mancuernas',
-'Press francés con barra Scott'
-],
-images:['','','','','']
-},
-{
-name:'ABDOMINALES',
-exercises:[
-'Abdominales 1',
-'Abdominales 2',
-'Abdominales 3',
-'Abdominales 4',
-'Abdominales 5'
-],
-images:['','','','','']
-}
-]
-},
-
-2:{
-groups:[
-{
-name:'ESPALDA',
-exercises:[
-'Jalón al pecho con polea',
-'Remo con barra',
-'Remo con mancuerna a una mano',
-'Peso muerto',
-'Remo unilateral con polea'
-],
-images:['','','','','']
-},
-{
-name:'BÍCEPS',
-exercises:[
-'Curl con barra',
-'Curl martillo',
-'Curl alterno con mancuernas en rotación',
-'Curl predicador en banco Scott',
-'Curl en plano inclinado con mancuernas'
-],
-images:['','','','','']
-},
-{
-name:'ABDOMINALES',
-exercises:[
-'Abdominales 1',
-'Abdominales 2',
-'Abdominales 3',
-'Abdominales 4',
-'Abdominales 5'
-],
-images:['','','','','']
-}
-]
-},
-
-3:{
-groups:[
-{
-name:'PIERNAS',
-exercises:[
-'Ejercicio 1',
-'Ejercicio 2',
-'Ejercicio 3',
-'Ejercicio 4',
-'Ejercicio 5'
-],
-images:['','','','','']
-},
-{
-name:'PIERNAS',
-exercises:[
-'Ejercicio 6',
-'Ejercicio 7',
-'Ejercicio 8',
-'Ejercicio 9',
-'Ejercicio 10'
-],
-images:['','','','','']
-}
-]
-},
-
-4:{
-groups:[
-{
-name:'PECHO',
-exercises:[
-'Press de banca plano',
-'Press inclinado con mancuernas',
-'Aperturas con mancuernas',
-'Cruce de poleas a la altura del pecho',
-'Cruce de poleas de arriba hacia abajo'
-],
-images:['','','','','']
-},
-{
-name:'HOMBROS',
-exercises:[
-'Press militar',
-'Elevaciones laterales',
-'Elevaciones frontales',
-'Pájaros',
-'Remo al mentón'
-],
-images:['','','','','']
-},
-{
-name:'TRÍCEPS',
-exercises:[
-'Extensión en polea alta con barra',
-'Extensión en polea con cuerda',
-'Extensión a una mano en polea',
-'Press francés con mancuernas',
-'Press francés con barra Scott'
-],
-images:['','','','','']
-},
-{
-name:'ABDOMINALES',
-exercises:[
-'Abdominales 1',
-'Abdominales 2',
-'Abdominales 3',
-'Abdominales 4',
-'Abdominales 5'
-],
-images:['','','','','']
-}
-]
-},
-
-5:{
-groups:[
-{
-name:'ESPALDA',
-exercises:[
-'Jalón al pecho con polea',
-'Remo con barra',
-'Remo con mancuerna a una mano',
-'Peso muerto',
-'Remo unilateral con polea'
-],
-images:['','','','','']
-},
-{
-name:'BÍCEPS',
-exercises:[
-'Curl con barra',
-'Curl martillo',
-'Curl alterno con mancuernas en rotación',
-'Curl predicador en banco Scott',
-'Curl en plano inclinado con mancuernas'
-],
-images:['','','','','']
-},
-{
-name:'ABDOMINALES',
-exercises:[
-'Abdominales 1',
-'Abdominales 2',
-'Abdominales 3',
-'Abdominales 4',
-'Abdominales 5'
-],
-images:['','','','','']
-}
-]
-}
-
+1:{groups:[
+{name:'PECHO',exercises:[],images:[]},
+{name:'HOMBROS',exercises:[],images:[]},
+{name:'TRÍCEPS',exercises:[],images:[]},
+{name:'ABDOMINALES',exercises:[],images:[]}
+]},
+2:{groups:[
+{name:'ESPALDA',exercises:[],images:[]},
+{name:'BÍCEPS',exercises:[],images:[]},
+{name:'ABDOMINALES',exercises:[],images:[]}
+]},
+3:{groups:[
+{name:'PIERNAS',exercises:[],images:[]},
+{name:'PIERNAS',exercises:[],images:[]}
+]},
+4:{groups:[
+{name:'PECHO',exercises:[],images:[]},
+{name:'HOMBROS',exercises:[],images:[]},
+{name:'TRÍCEPS',exercises:[],images:[]},
+{name:'ABDOMINALES',exercises:[],images:[]}
+]},
+5:{groups:[
+{name:'ESPALDA',exercises:[],images:[]},
+{name:'BÍCEPS',exercises:[],images:[]},
+{name:'ABDOMINALES',exercises:[],images:[]}
+]}
 };
 
 
@@ -1503,36 +1327,53 @@ function renderExerciseDB(){
 }
 
 function addDBExercise(groupName,index){
-  const d=Number((document.getElementById('cfgday')||{}).value)||1;
+  const d=Number(document.getElementById('cfgday')?.value)||1;
   const db=EXERCISE_DB[groupName]||[];
-  const item=db[index];
+  const q=String(document.getElementById('dbsearch')?.value||'').trim().toLowerCase();
+  const filtered=db.filter(x=>!q||x[0].toLowerCase().includes(q));
+  const item=filtered[index];
   if(!item)return;
 
-  let target=-1;
-  (routine[d].groups||[]).forEach((g,i)=>{
-    if(String(g.name||'').trim().toUpperCase()===groupName.toUpperCase() && target<0) target=i;
-  });
-
-  if(target<0){
-    alert(`El Día ${d} no tiene el grupo ${groupName}. Añade primero ese grupo.`);
+  const select=document.getElementById('cfgGroup');
+  if(!select){
+    alert('Selecciona primero el grupo muscular de destino.');
     return;
   }
 
-  const g=routine[d].groups[target];
+  const gi=Number(select.value);
+  const g=routine[d]?.groups?.[gi];
+
+  if(!g){
+    alert('No se ha encontrado el grupo de destino.');
+    return;
+  }
+
+  if(String(g.name||'').trim().toUpperCase()!==groupName.toUpperCase()){
+    alert(`El grupo de destino es ${g.name}. Para añadir ${groupName}, selecciona primero ese grupo.`);
+    return;
+  }
+
   if((g.exercises||[]).length>=5){
-    alert(`El grupo ${groupName} ya tiene 5 ejercicios en el Día ${d}. El entrenamiento queda limitado a 5.`);
+    alert(`El grupo ${g.name} ya tiene 5 ejercicios. El entrenamiento está limitado a 5.`);
     return;
   }
 
-  if((g.exercises||[]).some(e=>String(e).trim()===item[0])){
-    alert('Ese ejercicio ya está en la rutina.');
+  if((g.exercises||[]).some(e=>String(e).trim().toLowerCase()===item[0].trim().toLowerCase())){
+    alert('Ese ejercicio ya está en el grupo seleccionado.');
     return;
   }
 
+  if(!Array.isArray(g.exercises))g.exercises=[];
+  if(!Array.isArray(g.images))g.images=[];
   g.exercises.push(item[0]);
-  g.images.push(item[1]);
+  g.images.push(item[1]||'');
+
+  normalizeRoutine();
+  save();
   loadConfig();
-  renderExerciseDB();
+
+  const status=document.getElementById('libraryStatus')||document.getElementById('dbcount');
+  if(status)status.innerText=`✓ ${item[0]} añadido a ${g.name} · Día ${d} · GIF incluido.`;
 }
 
 function enforceFiveExercisesPerGroup(){
@@ -1619,44 +1460,6 @@ result.images=result.images.slice(0,result.exercises.length);
 return result;
 
 });
-
-}
-
-/*
-   CORRECCIÓN:
-   El TRÍCEPS del Día 4 utiliza exactamente las mismas
-   imágenes que el TRÍCEPS del Día 1.
-*/
-
-let day1=routine[1];
-let day4=routine[4];
-
-if(day1&&day4){
-
-let triceps1=(day1.groups||[]).find(
-g=>String(g.name||'').trim().toUpperCase()==='TRÍCEPS'
-);
-
-let triceps4=(day4.groups||[]).find(
-g=>String(g.name||'').trim().toUpperCase()==='TRÍCEPS'
-);
-
-if(triceps1&&triceps4){
-
-triceps4.images=(triceps1.images||[]).slice(
-0,
-triceps4.exercises.length
-);
-
-while(
-triceps4.images.length<triceps4.exercises.length
-){
-triceps4.images.push('');
-}
-
-}
-
-}
 
 }
 
@@ -1781,7 +1584,7 @@ save();
 
 let data={
 app:'Mi Gimnasio Pro',
-version:'6.2',
+version:'6.4',
 backupType:'automatic',
 created:new Date().toISOString(),
 routine:structuredCloneSafe(routine),
@@ -2288,7 +2091,7 @@ ${img?`
 <button
 class="imgbtn"
 onclick="toggleImage('${iid}')">
-🖼️ Ver GIF
+🎞️ Ver GIF
 </button>
 
 <div
@@ -3165,64 +2968,42 @@ onclick="addLibraryExercise(${i})">
 }
 
 function addLibraryExercise(index){
+  const q=String(document.getElementById('librarySearch')?.value||'').toLowerCase().trim();
+  const filtered=exerciseLibrary.filter(ex=>String(ex.name||'').toLowerCase().includes(q));
+  const ex=filtered[index];
+  if(!ex)return;
 
-let q=
-String(document.getElementById('librarySearch')?.value||'')
-.toLowerCase()
-.trim();
+  const d=Number(document.getElementById('cfgday')?.value)||1;
+  const groupSelect=document.getElementById('cfgGroup');
 
-let filtered=
-exerciseLibrary.filter(ex=>
-String(ex.name||'')
-.toLowerCase()
-.includes(q)
-);
+  if(!groupSelect){
+    alert('Selecciona primero un grupo muscular de destino.');
+    return;
+  }
 
-let ex=filtered[index];
+  const gi=Number(groupSelect.value);
+  const group=routine[d]?.groups?.[gi];
+  if(!group)return;
 
-if(!ex)return;
+  if((group.exercises||[]).length>=5){
+    alert(`El grupo ${group.name} ya tiene 5 ejercicios. El entrenamiento está limitado a 5.`);
+    return;
+  }
 
-let d=
-Number(document.getElementById('cfgday').value);
+  if((group.exercises||[]).some(name=>String(name).toLowerCase()===String(ex.name).toLowerCase())){
+    alert('Ese ejercicio ya está en el grupo seleccionado.');
+    return;
+  }
 
-let groupSelect=
-document.getElementById('cfgGroup');
+  group.exercises.push(ex.name);
+  group.images.push(ex.gifUrl||'');
 
-if(!groupSelect){
+  normalizeRoutine();
+  save();
+  loadConfig();
 
-alert('Primero selecciona o crea un grupo muscular en la rutina.');
-
-return;
-
-}
-
-let gi=Number(groupSelect.value);
-
-let group=routine[d]?.groups?.[gi];
-
-if(!group)return;
-
-if((group.exercises||[]).some(
-name=>String(name).toLowerCase()===String(ex.name).toLowerCase()
-)){
-
-alert('Ese ejercicio ya está en el grupo seleccionado.');
-
-return;
-
-}
-
-group.exercises.push(ex.name);
-group.images.push(ex.gifUrl||'');
-
-loadConfig();
-
-let status=document.getElementById('libraryStatus');
-
-if(status)
-status.innerText=
-`✓ ${ex.name} añadido a ${group.name} · Día ${d}.`;
-
+  const status=document.getElementById('libraryStatus');
+  if(status)status.innerText=`✓ ${ex.name} añadido a ${group.name} · Día ${d} · GIF incluido.`;
 }
 
 function loadConfig(){
@@ -3334,6 +3115,13 @@ document.getElementById(
 ).innerHTML=html;
 
 renderExerciseDB();
+
+const cg=document.getElementById('cfgGroup');
+const dg=document.getElementById('dbgroup');
+if(cg&&dg){
+  const selected=cg.options[cg.selectedIndex];
+  if(selected)dg.value=String(selected.textContent||'').trim().toUpperCase();
+}
 
 }
 
@@ -3525,7 +3313,7 @@ let data={
 
 app:'Mi Gimnasio Pro',
 
-version:'6.2',
+version:'6.4',
 
 exported:new Date().toISOString(),
 
