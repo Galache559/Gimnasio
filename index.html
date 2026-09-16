@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MI GIMNASIO PRO v10.0</title>
+<title>MI GIMNASIO PRO v10.3</title>
 <meta name="theme-color" content="#121212">
 
 <style>
@@ -1013,7 +1013,7 @@ color:#000;
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v10.0</h1>
+<h1>MI GIMNASIO PRO v10.3</h1>
 </header>
 
 <div class="container">
@@ -1292,90 +1292,125 @@ const DEFAULT_ROUTINE={
 
 
 /* ===== v6.3 BASE MAESTRA: 10–15 EJERCICIOS POR GRUPO ===== */
-const EXERCISE_DB = {
+const EXERCISE_DB={
   PECHO:[
-    ['Press de banca plano','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/barbell-bench-press.gif'],
-    ['Press inclinado con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/incline-dumbbell-press.gif'],
-    ['Press inclinado con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/incline-bench-press.gif'],
-    ['Aperturas con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/dumbbell-fly.gif'],
-    ['Cruce de poleas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/cable-crossover.gif'],
-    ['Press de pecho en máquina','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/chest-press-machine.gif'],
-    ['Fondos para pecho','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/chest-dips.gif'],
-    ['Press con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/dumbbell-bench-press.gif'],
-    ['Pullover con mancuerna','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/dumbbell-pullover.gif'],
-    ['Press declinado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/decline-bench-press.gif']
+    ['Press de banca plano','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/barbell-bench-press.gif','BANCO / BARRA'],
+    ['Press declinado con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/barbell-decline-bench-press.gif','BANCO / BARRA'],
+    ['Press inclinado con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/barbell-incline-bench-press.gif','BANCO / BARRA'],
+    ['Press con barra agarre ancho','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/barbell-wide-bench-press.gif','BANCO / BARRA'],
+    ['Press con banda en banco','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/band-bench-press.gif','BANDA'],
+    ['Press en banco con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/cable-bench-press.gif','POLEA'],
+    ['Cruce de poleas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/cable-cross-over-variation.gif','POLEA'],
+    ['Aperturas declinadas en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/cable-decline-fly.gif','POLEA'],
+    ['Press inclinado con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/cable-incline-bench-press.gif','POLEA'],
+    ['Press con mancuernas en banco','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/dumbbell-bench-press.gif','MANCUERNAS'],
+    ['Press declinado con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/dumbbell-decline-bench-press.gif','MANCUERNAS'],
+    ['Aperturas con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/dumbbell-fly.gif','MANCUERNAS'],
+    ['Press inclinado con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/dumbbell-incline-bench-press.gif','MANCUERNAS'],
+    ['Fondos para pecho','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/chest-dip.gif','PESO CORPORAL'],
+    ['Flexiones declinadas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/decline-push-up.gif','PESO CORPORAL']
   ],
   HOMBROS:[
-    ['Press militar','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/barbell-shoulder-press.gif'],
-    ['Press de hombros con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/dumbbell-shoulder-press.gif'],
-    ['Elevaciones laterales','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/dumbbell-lateral-raise.gif'],
-    ['Elevaciones frontales','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/dumbbell-front-raise.gif'],
-    ['Pájaros con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/dumbbell-rear-delt-fly.gif'],
-    ['Face pull con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/cable-face-pull.gif'],
-    ['Remo al mentón','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/barbell-upright-row.gif'],
-    ['Elevación lateral en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/cable-lateral-raise.gif'],
-    ['Press Arnold','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/arnold-press.gif'],
-    ['Press en máquina de hombros','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/machine-shoulder-press.gif']
+    ['Press de hombros con banda','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/band-shoulder-press.gif','BANDA'],
+    ['Elevaciones frontales con banda','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/band-front-raise.gif','BANDA'],
+    ['Press militar con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/barbell-standing-wide-military-press.gif','BANCO / BARRA'],
+    ['Remo al mentón con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/barbell-upright-row.gif','BANCO / BARRA'],
+    ['Pájaros con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/barbell-rear-delt-raise.gif','BANCO / BARRA'],
+    ['Press sentado con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/barbell-seated-overhead-press.gif','BANCO / BARRA'],
+    ['Press Arnold','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/dumbbell-arnold-press.gif','MANCUERNAS'],
+    ['Press sentado con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/dumbbell-bench-seated-press.gif','MANCUERNAS'],
+    ['Elevaciones frontales','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/dumbbell-front-raise.gif','MANCUERNAS'],
+    ['Elevaciones laterales','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/dumbbell-lateral-raise.gif','MANCUERNAS'],
+    ['Pájaros inclinados con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/dumbbell-incline-rear-lateral-raise.gif','MANCUERNAS'],
+    ['Press de hombros en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/cable-shoulder-press.gif','POLEA'],
+    ['Elevación lateral en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/cable-lateral-raise.gif','POLEA'],
+    ['Elevación frontal en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/cable-front-raise.gif','POLEA'],
+    ['Remo posterior en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/cable-rear-delt-row-with-rope.gif','POLEA']
   ],
   TRÍCEPS:[
-    ['Extensión en polea alta con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/cable-pushdown.gif'],
-    ['Extensión en polea con cuerda','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/rope-pushdown.gif'],
-    ['Extensión a una mano en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/single-arm-cable-pushdown.gif'],
-    ['Press francés con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/dumbbell-skull-crusher.gif'],
-    ['Press francés con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/barbell-skull-crusher.gif'],
-    ['Extensión por encima de la cabeza con cuerda','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/cable-overhead-triceps-extension.gif'],
-    ['Fondos de tríceps en banco','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/bench-dips.gif'],
-    ['Press cerrado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/close-grip-bench-press.gif'],
-    ['Extensión de tríceps con mancuerna','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/dumbbell-overhead-triceps-extension.gif'],
-    ['Patada de tríceps con mancuerna','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/dumbbell-kickback.gif']
+    ['Press cerrado con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/barbell-close-grip-bench-press.gif','BANCO / BARRA'],
+    ['Press cerrado inclinado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/barbell-incline-close-grip-bench-press.gif','BANCO / BARRA'],
+    ['Press JM','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/barbell-jm-bench-press.gif','BANCO / BARRA'],
+    ['Extensión francesa tumbado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/barbell-lying-triceps-extension-skull-crusher.gif','BANCO / BARRA'],
+    ['Extensión de tríceps por encima de la cabeza','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/barbell-standing-overhead-triceps-extension.gif','BANCO / BARRA'],
+    ['Fondos de tríceps en banco','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/bench-dip-knees-bent.gif','BANCO'],
+    ['Extensión de tríceps de rodillas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/bodyweight-kneeling-triceps-extension.gif','PESO CORPORAL'],
+    ['Extensión alterna en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/cable-alternate-triceps-extension.gif','POLEA'],
+    ['Extensión por encima de la cabeza en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/cable-high-pulley-overhead-tricep-extension.gif','POLEA'],
+    ['Patada de tríceps en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/cable-kickback.gif','POLEA'],
+    ['Extensión a una mano en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/cable-one-arm-tricep-pushdown.gif','POLEA'],
+    ['Jalón de tríceps con cuerda','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/cable-pushdown-with-rope-attachment.gif','POLEA'],
+    ['Extensión con mancuerna en banco inclinado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/dumbbell-incline-triceps-extension.gif','MANCUERNAS'],
+    ['Patada de tríceps con mancuerna','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/dumbbell-kickback.gif','MANCUERNAS'],
+    ['Press Tate','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/dumbbell-tate-press.gif','MANCUERNAS']
   ],
   ESPALDA:[
-    ['Jalón al pecho con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/lat-pulldown.gif'],
-    ['Remo con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/barbell-bent-over-row.gif'],
-    ['Remo con mancuerna a una mano','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/dumbbell-row.gif'],
-    ['Peso muerto','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/spine/barbell-deadlift.gif'],
-    ['Remo unilateral con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/cable-one-arm-row.gif'],
-    ['Remo sentado con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/cable-seated-row.gif'],
-    ['Jalón con agarre estrecho','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/close-grip-lat-pulldown.gif'],
-    ['Dominadas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/pull-up.gif'],
-    ['Remo en máquina','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/machine-row.gif'],
-    ['Pullover en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/cable-pullover.gif']
+    ['Remo con barra inclinado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/barbell-bent-over-row.gif','BANCO / BARRA'],
+    ['Remo con barra inclinado en banco','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/barbell-incline-row.gif','BANCO / BARRA'],
+    ['Remo Pendlay','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/barbell-pendlay-row.gif','BANCO / BARRA'],
+    ['Remo con barra agarre inverso','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/barbell-reverse-grip-bent-over-row.gif','BANCO / BARRA'],
+    ['Remo invertido','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/bodyweight-squatting-row.gif','PESO CORPORAL'],
+    ['Remo a una mano con peso corporal','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/bodyweight-standing-one-arm-row.gif','PESO CORPORAL'],
+    ['Remo sentado con polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/cable-seated-row.gif','POLEA'],
+    ['Remo sentado agarre ancho','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/cable-seated-wide-grip-row.gif','POLEA'],
+    ['Remo a una mano en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/cable-one-arm-bent-over-row.gif','POLEA'],
+    ['Remo inclinado en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/cable-incline-bench-row.gif','POLEA'],
+    ['Jalón unilateral en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/cable-one-arm-pulldown.gif','POLEA'],
+    ['Jalón con barra en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/cable-bar-lateral-pulldown.gif','POLEA'],
+    ['Dominadas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/pull-up.gif','PESO CORPORAL'],
+    ['Dominadas agarre neutro','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/pull-up-neutral-grip.gif','PESO CORPORAL'],
+    ['Jalón con máquina de palanca','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/lever-front-pulldown.gif','MÁQUINA']
   ],
   BÍCEPS:[
-    ['Curl con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/barbell-curl.gif'],
-    ['Curl martillo','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/hammer-curl.gif'],
-    ['Curl alterno con mancuernas en rotación','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/dumbbell-alternating-biceps-curl.gif'],
-    ['Curl predicador en banco Scott','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/preacher-curl.gif'],
-    ['Curl en plano inclinado con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/incline-dumbbell-curl.gif'],
-    ['Curl en polea baja','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/cable-curl.gif'],
-    ['Curl concentrado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/concentration-curl.gif'],
-    ['Curl con barra EZ','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/ez-bar-curl.gif'],
-    ['Curl araña','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/spider-curl.gif'],
-    ['Curl bayesiano en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/cable-bayesian-curl.gif']
+    ['Curl con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/barbell-curl.gif','BANCO / BARRA'],
+    ['Curl con barra alterno','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/barbell-alternate-biceps-curl.gif','BANCO / BARRA'],
+    ['Curl predicador con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/barbell-preacher-curl.gif','BANCO / BARRA'],
+    ['Curl en banco inclinado con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/barbell-prone-incline-curl.gif','BANCO / BARRA'],
+    ['Curl concentrado con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/barbell-standing-concentration-curl.gif','BANCO / BARRA'],
+    ['Curl en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/cable-curl.gif','POLEA'],
+    ['Curl martillo con cuerda','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/cable-hammer-curl-with-rope.gif','POLEA'],
+    ['Curl predicador en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/cable-preacher-curl.gif','POLEA'],
+    ['Curl a una mano en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/cable-one-arm-curl.gif','POLEA'],
+    ['Curl sentado en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/cable-seated-curl.gif','POLEA'],
+    ['Curl alterno con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/dumbbell-alternate-biceps-curl.gif','MANCUERNAS'],
+    ['Curl martillo con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/dumbbell-hammer-curl.gif','MANCUERNAS'],
+    ['Curl inclinado con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/dumbbell-incline-curl.gif','MANCUERNAS'],
+    ['Curl concentrado con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/dumbbell-concentration-curl.gif','MANCUERNAS'],
+    ['Curl predicador con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/dumbbell-preacher-curl.gif','MANCUERNAS']
   ],
   PIERNAS:[
-    ['Sentadilla con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/barbell-squat.gif'],
-    ['Prensa de piernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/leg-press.gif'],
-    ['Extensión de piernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/leg-extension.gif'],
-    ['Curl femoral tumbado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/hamstrings/lying-leg-curl.gif'],
-    ['Curl femoral sentado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/hamstrings/seated-leg-curl.gif'],
-    ['Peso muerto rumano','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/hamstrings/romanian-deadlift.gif'],
-    ['Zancadas con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/dumbbell-lunge.gif'],
-    ['Hip thrust','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/glutes/barbell-hip-thrust.gif'],
-    ['Elevación de talones de pie','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/calves/standing-calf-raise.gif'],
-    ['Elevación de talones sentado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/calves/seated-calf-raise.gif']
+    ['Sentadilla con barra en banco','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/barbell-bench-squat.gif','BANCO / BARRA'],
+    ['Sentadilla búlgara con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/barbell-single-leg-split-squat.gif','BANCO / BARRA'],
+    ['Sentadilla dividida con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/barbell-split-squat-v-2.gif','BANCO / BARRA'],
+    ['Sentadilla goblet','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/dumbbell-goblet-squat.gif','MANCUERNAS'],
+    ['Step-up con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/dumbbell-step-up-lunge.gif','MANCUERNAS'],
+    ['Sentadilla apoyada con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/dumbbell-supported-squat.gif','MANCUERNAS'],
+    ['Prensa unilateral en máquina','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/lever-alternate-leg-press.gif','MÁQUINA'],
+    ['Extensión de cuádriceps en máquina','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/lever-leg-extension.gif','MÁQUINA'],
+    ['Sentadilla en Smith','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/smith-chair-squat.gif','MÁQUINA'],
+    ['Curl femoral tumbado en máquina','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/hamstrings/lever-lying-leg-curl.gif','MÁQUINA'],
+    ['Curl femoral sentado en máquina','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/hamstrings/lever-seated-leg-curl.gif','MÁQUINA'],
+    ['Curl femoral de pie','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/hamstrings/standing-single-leg-curl.gif','MÁQUINA'],
+    ['Puente de glúteo con barra en banco','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/glutes/barbell-glute-bridge-two-legs-on-bench-male.gif','BANCO / BARRA'],
+    ['Sentadilla frontal con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/glutes/barbell-front-squat.gif','BANCO / BARRA'],
+    ['Elevación de talones con mancuernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/calves/dumbbell-standing-calf-raise.gif','MANCUERNAS']
   ],
   ABDOMINALES:[
-    ['Crunch en polea','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/cable-crunch.gif'],
-    ['Crunch abdominal','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/crunch.gif'],
-    ['Elevación de piernas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/leg-raise.gif'],
-    ['Elevación de rodillas','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/knee-raise.gif'],
-    ['Plancha','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/plank.gif'],
-    ['Plancha lateral','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/side-plank.gif'],
-    ['Abdominales en máquina','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/machine-crunch.gif'],
-    ['Crunch inverso','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/reverse-crunch.gif'],
-    ['Bicicleta abdominal','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/bicycle-crunch.gif'],
-    ['Dead bug','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/dead-bug.gif']
+    ['Sit-up','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/3-4-sit-up.gif','PESO CORPORAL'],
+    ['Flexión lateral 45°','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/45-side-bend.gif','PESO CORPORAL'],
+    ['Toques de talón alternos','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/alternate-heel-touchers.gif','PESO CORPORAL'],
+    ['Elevación de rodillas colgado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/assisted-hanging-knee-raise.gif','PESO CORPORAL'],
+    ['Elevación de piernas tumbado','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/assisted-lying-leg-raise-with-throw-down.gif','BANCO'],
+    ['Russian twist asistido','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/assisted-motion-russian-twist.gif','BANCO'],
+    ['V-up con banda','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/band-alternating-v-up.gif','BANDA'],
+    ['Ab wheel con banda','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/band-assisted-wheel-rollerout.gif','BANDA'],
+    ['Bicicleta abdominal con banda','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/band-bicycle-crunch.gif','BANDA'],
+    ['Pallof press horizontal con banda','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/band-horizontal-pallof-press.gif','BANDA'],
+    ['Sit-up con barra','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/barbell-press-sit-up.gif','BANCO / BARRA'],
+    ['Roll-out con barra en banco','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/barbell-rollerout-from-bench.gif','BANCO / BARRA'],
+    ['Plancha lateral inclinada','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/bodyweight-incline-side-plank.gif','PESO CORPORAL'],
+    ['Crunch de pie con banda','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/band-standing-crunch.gif','BANDA'],
+    ['Pallof press vertical con banda','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/band-vertical-pallof-press.gif','BANDA']
   ]
 };
 
@@ -3105,59 +3140,37 @@ const EXERCISE_PREFERRED_EQUIPMENT=[
 
 async function loadVerifiedLibrary15(group){
   group=String(group||'').trim().toUpperCase();
+  return (EXERCISE_DB[group]||[]).slice(0,15);
+}
 
-  if(Array.isArray(EXERCISE_DB_REMOTE_CACHE[group]) &&
-     EXERCISE_DB_REMOTE_CACHE[group].length>=15){
-    EXERCISE_DB[group]=EXERCISE_DB_REMOTE_CACHE[group];
-    return EXERCISE_DB[group];
+const EQUIPMENT_BY_NAME={
+  "POLEA":["polea","jalón","cruce","face pull","woodchopper","pallof"],
+  "MANCUERNAS":["mancuerna","goblet","arnold"],
+  "MÁQUINA":["máquina","maquina","pec deck","prensa"],
+  "BANCO / BARRA":["banco","barra","sentadilla","peso muerto"],
+};
+
+function getEquipmentIcon(label){
+  const x=String(label||'');
+  if(x.includes('POLEA'))return '🔗';
+  if(x.includes('MANCUERNAS'))return '💪';
+  if(x.includes('MÁQUINA'))return '⚙️';
+  if(x.includes('BANCO'))return '🏋️';
+  return '🤸';
+}
+
+
+function getItemEquipment(item){
+  if(Array.isArray(item) && item[2]) return String(item[2]);
+  return getEquipmentLabel(Array.isArray(item) ? item[0] : item);
+}
+
+function getEquipmentLabel(name){
+  const n=String(name||'').toLowerCase();
+  for(const [label,keys] of Object.entries(EQUIPMENT_BY_NAME)){
+    if(keys.some(k=>n.includes(k)))return label;
   }
-
-  const muscles=EXERCISE_API_GROUPS[group]||[];
-  const base='https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0';
-  const all=[];
-  const seen=new Set();
-
-  try{
-    const responses=await Promise.all(muscles.map(m=>
-      fetch(`${base}/api/es/muscles/${m}.json`).then(r=>{
-        if(!r.ok)throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-    ));
-
-    responses.forEach(data=>{
-      (data.exercises||[]).forEach(ex=>{
-        const name=String(ex.name||'').trim();
-        const gif=String(ex.gifUrl||'').trim();
-        const equipment=String(ex.equipment||'').toLowerCase();
-        const category=String(ex.category||'').toLowerCase();
-        if(!name||!gif)return;
-        if(category && category!=='strength')return;
-
-        const key=name.toLowerCase();
-        if(seen.has(key))return;
-        seen.add(key);
-        all.push({name,gif,equipment});
-      });
-    });
-
-    all.sort((a,b)=>{
-      const ai=EXERCISE_PREFERRED_EQUIPMENT.indexOf(a.equipment);
-      const bi=EXERCISE_PREFERRED_EQUIPMENT.indexOf(b.equipment);
-      return (ai<0?99:ai)-(bi<0?99:bi);
-    });
-
-    const selected=all.slice(0,15).map(x=>[x.name,x.gif]);
-    EXERCISE_DB_REMOTE_CACHE[group]=selected;
-    EXERCISE_DB[group]=selected;
-    return selected;
-
-  }catch(err){
-    // Fallback only if the remote API is temporarily unavailable.
-    const local=(EXERCISE_DB[group]||[]).slice(0,15);
-    EXERCISE_DB_REMOTE_CACHE[group]=local;
-    return local;
-  }
+  return "PESO CORPORAL";
 }
 
 function syncV9Target(){
@@ -3192,9 +3205,7 @@ async function renderLibraryV9(){
   box.innerHTML='<div class="empty">⏳ Comprobando 15 ejercicios y sus GIF...</div>';
   if(status)status.innerText=`Cargando biblioteca de ${group}...`;
 
-  const verified=await loadVerifiedLibrary15(group);
-
-  if(String(document.getElementById('libraryMuscleV9')?.value||'').trim().toUpperCase()!==group)return;
+  const verified=(EXERCISE_DB[group]||[]).slice(0,15);
 
   const data=verified.filter(x=>!q||String(x[0]).toLowerCase().includes(q)).slice(0,15);
   const day=Number(document.getElementById('cfgday')?.value)||1;
@@ -3208,7 +3219,7 @@ async function renderLibraryV9(){
         onerror="this.style.opacity='.25'">
       <div class="exerciseCardBody">
         <div class="exerciseCardName">${i+1}. ${esc(x[0])}</div>
-        <div class="exerciseCardMeta">${esc(group)} · GIF verificado</div>
+        <div class="exerciseCardMeta">${getEquipmentIcon(getItemEquipment(x))} <b>${getItemEquipment(x)}</b> · GIF verificado</div>
         <button type="button" class="btn blue" onclick="addLibraryExerciseV9(${i})">➕ Añadir</button>
       </div>
     </div>
