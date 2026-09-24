@@ -3071,6 +3071,16 @@ document.getElementById(
 
 }
 
+const MUSCLE_GROUPS=[
+  'PECHO',
+  'HOMBROS',
+  'TRÍCEPS',
+  'ESPALDA',
+  'BÍCEPS',
+  'PIERNAS',
+  'ABDOMINALES'
+];
+
 function loadConfig(){
   enforceFiveExercisesPerGroup();
 
@@ -3079,15 +3089,25 @@ function loadConfig(){
   const x=routine[d]||{groups:[]};
 
   let h='';
-  h+='<div class="targetBox" style="margin:10px 0">Día '+d+' · elige cualquier ejercicio de MI BASE para añadirlo a Entreno. Máximo 5 por grupo.</div>';
+  h+='<div class="targetBox" style="margin:10px 0">Día '+d+' · aquí puedes cambiar los grupos musculares. Después elige los ejercicios de MI BASE para añadirlos a Entreno. Máximo 5 por grupo.</div>';
 
   (x.groups||[]).forEach((g,gi)=>{
     const exercises=Array.isArray(g.exercises)?g.exercises:[];
+
+    const options=MUSCLE_GROUPS.map(m=>
+      `<option value="${esc(m)}" ${String(g.name||'').trim().toUpperCase()===m?'selected':''}>${esc(m)}</option>`
+    ).join('');
+
     h+=`<div class="groupEditor">
       <div class="groupEditorTitle">
-        <strong>${esc(g.name)}</strong>
+        <strong>GRUPO ${gi+1}</strong>
         <span class="count5">${exercises.length}/5</span>
-      </div>`;
+      </div>
+
+      <label>Grupo muscular</label>
+      <select class="groupSelector" onchange="changeMuscleGroup(${gi},this.value)">
+        ${options}
+      </select>`;
 
     if(exercises.length){
       h+=exercises.map((e,i)=>`
@@ -3110,6 +3130,60 @@ function loadConfig(){
 
   syncV9Target();
   renderLibraryV9();
+}
+
+function changeMuscleGroup(gi,newGroup){
+  const d=Number(document.getElementById('cfgday')?.value)||1;
+  const groups=routine[d]?.groups||[];
+  const g=groups[Number(gi)];
+
+  if(!g)return;
+
+  newGroup=String(newGroup||'').trim().toUpperCase();
+
+  if(!MUSCLE_GROUPS.includes(newGroup))return;
+
+  const oldGroup=String(g.name||'').trim().toUpperCase();
+
+  if(oldGroup===newGroup)return;
+
+  // Evita dos grupos iguales en el mismo día, salvo los que ya existan de antes.
+  const duplicate=groups.some((item,index)=>
+    index!==Number(gi) &&
+    String(item?.name||'').trim().toUpperCase()===newGroup
+  );
+
+  if(duplicate){
+    alert(`El grupo ${newGroup} ya está configurado en el Día ${d}.`);
+    loadConfig();
+    return;
+  }
+
+  if(Array.isArray(g.exercises) && g.exercises.length){
+    const ok=confirm(
+      `Vas a cambiar ${oldGroup} por ${newGroup}.\n\n`+
+      `Los ${g.exercises.length} ejercicios actuales pertenecen a ${oldGroup} y se eliminarán de este grupo.\n\n`+
+      `¿Quieres continuar?`
+    );
+
+    if(!ok){
+      loadConfig();
+      return;
+    }
+  }
+
+  g.name=newGroup;
+  g.exercises=[];
+  g.images=[];
+
+  normalizeRoutine();
+  save();
+  loadConfig();
+
+  const status=document.getElementById('libraryStatusV9');
+  if(status){
+    status.innerText=`✓ Día ${d}: ${oldGroup} cambiado por ${newGroup}.`;
+  }
 }
 
 
