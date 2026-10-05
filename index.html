@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MI GIMNASIO PRO v10.6</title>
+<title>MI GIMNASIO PRO v10.7</title>
 <meta name="theme-color" content="#121212">
 
 <style>
@@ -1023,7 +1023,7 @@ color:#000;
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v10.6</h1>
+<h1>MI GIMNASIO PRO v10.7</h1>
 </header>
 
 <div class="container">
@@ -1032,11 +1032,11 @@ color:#000;
 
 <div class="card">
 
-<h2>Selecciona el día</h2>
+<h2>Selecciona la rutina</h2>
 
 <div class="days">
 
-<button class="btn out" onclick="selectDay(1)">Día 1</button> <button class="btn out" onclick="selectDay(2)">Día 2</button> <button class="btn out" onclick="selectDay(3)">Día 3</button> <button class="btn out" onclick="selectDay(4)">Día 4</button> <button class="btn out" onclick="selectDay(5)">Día 5</button>
+<button class="btn out" onclick="selectDay(1)">Rutina 1</button> <button class="btn out" onclick="selectDay(2)">Rutina 2</button> <button class="btn out" onclick="selectDay(3)">Rutina 3</button> <button class="btn out" onclick="selectDay(4)">Rutina 4</button> <button class="btn out" onclick="selectDay(5)">Rutina 5</button>
 
 </div>
 
@@ -1046,7 +1046,7 @@ color:#000;
 
 <div class="card">
 
-<h2 id="daytitle">Día</h2>
+<h2 id="daytitle">Rutina</h2>
 
 <div id="loadedmsg"></div>
 
@@ -1078,13 +1078,13 @@ color:#000;
 <div class="card">
 <h2>⚙️ Configurar rutina</h2>
 
-<label>Día</label>
+<label>Rutina</label>
 <select id="cfgday" onchange="loadConfig()">
-<option value="1">Día 1</option>
-<option value="2">Día 2</option>
-<option value="3">Día 3</option>
-<option value="4">Día 4</option>
-<option value="5">Día 5</option>
+<option value="1">Rutina 1</option>
+<option value="2">Rutina 2</option>
+<option value="3">Rutina 3</option>
+<option value="4">Rutina 4</option>
+<option value="5">Rutina 5</option>
 </select>
 
 <div id="editor"></div>
@@ -1431,7 +1431,7 @@ function renderExerciseDB(){
   const count=document.getElementById('dbcount');
   if(!list)return;
   const data=(EXERCISE_DB[group]||[]).filter(x=>!q||x[0].toLowerCase().includes(q));
-  if(count)count.innerText=`${data.length} ejercicios en la base · Selecciona para añadir al grupo del Día ${Number((document.getElementById('cfgday')||{}).value)||1}`;
+  if(count)count.innerText=`${data.length} ejercicios en la base · Selecciona para añadir a la rutina ${Number((document.getElementById('cfgday')||{}).value)||1}`;
   list.innerHTML=data.map((x,i)=>`
     <div class="dbitem">
       <div>
@@ -1494,7 +1494,7 @@ function addDBExercise(groupName,index){
   loadConfig();
 
   const status=document.getElementById('libraryStatus')||document.getElementById('dbcount');
-  if(status)status.innerText=`✓ ${item[0]} añadido a ${g.name} · Día ${d} · GIF incluido.`;
+  if(status)status.innerText=`✓ ${item[0]} añadido a ${g.name} · Rutina ${d} · GIF incluido.`;
 }
 
 function enforceFiveExercisesPerGroup(){
@@ -1529,7 +1529,7 @@ function updateTargetLabel(){
   const gi=sel?Number(sel.value):0;
   const g=routine[d]?.groups?.[gi];
   const el=document.getElementById('targetLabel');
-  if(el)el.innerText=`Destino: Día ${d} · ${g?.name||'Grupo'}`;
+  if(el)el.innerText=`Destino: Rutina ${d} · ${g?.name||'Grupo'}`;
   const lib=document.getElementById('libraryGroup');
   if(lib&&g){
     const wanted=String(g.name||'').trim().toUpperCase();
@@ -1579,7 +1579,7 @@ function addLibraryExercise(groupName,index){
   save();
   loadConfig();
   const s=document.getElementById('libraryStatusV9');
-  if(s)s.innerText=`✓ ${item[0]} añadido a Día ${d} · ${g.name}. GIF incluido.`;
+  if(s)s.innerText=`✓ ${item[0]} añadido a Rutina ${d} · ${g.name}. GIF incluido.`;
 }
 function structuredCloneSafe(obj){
 return JSON.parse(JSON.stringify(obj));
@@ -2302,7 +2302,7 @@ let loadedmsg=document.getElementById('loadedmsg');
 
 work.style.display='block';
 
-title.innerText='Entrenamiento - Día '+d;
+title.innerText='Entrenamiento - Rutina '+d;
 
 date.value=new Date().toISOString().slice(0,10);
 
@@ -2339,7 +2339,7 @@ let pct=totalExercises?Math.round((completedExercises/totalExercises)*100):0;
 html+=`<div class="trainingHero">
   <div class="trainingHeroTop">
     <div>
-      <div class="trainingHeroTitle">🏋️ DÍA ${Number(day)}</div>
+      <div class="trainingHeroTitle">🏋️ RUTINA ${Number(day)}</div>
       <div class="trainingHeroSub">${totalExercises} ejercicios · 3 series por ejercicio</div>
     </div>
     <div class="trainingPill">${completedExercises}/${totalExercises} hechos</div>
@@ -3086,7 +3086,7 @@ document.getElementById(
 <h3>🎉 ENTRENAMIENTO GUARDADO</h3>
 
 <div class="big">
-Día ${day}
+Rutina ${day}
 </div>
 
 <div>
@@ -3175,7 +3175,7 @@ function loadConfig(){
   const x=routine[d]||{groups:[]};
 
   let h='';
-  h+='<div class="targetBox" style="margin:10px 0">Día '+d+' · aquí puedes cambiar los grupos musculares. Después elige los ejercicios de MI BASE para añadirlos a Entreno. Máximo 5 por grupo.</div>';
+  h+='<div class="targetBox" style="margin:10px 0">Rutina '+d+' · aquí puedes cambiar los grupos musculares. Después elige los ejercicios de MI BASE para añadirlos a Entreno. Máximo 5 por grupo.</div>';
 
   (x.groups||[]).forEach((g,gi)=>{
     const exercises=Array.isArray(g.exercises)?g.exercises:[];
@@ -3240,7 +3240,7 @@ function changeMuscleGroup(gi,newGroup){
   );
 
   if(duplicate){
-    alert(`El grupo ${newGroup} ya está configurado en el Día ${d}.`);
+    alert(`El grupo ${newGroup} ya está configurado en la Rutina ${d}.`);
     loadConfig();
     return;
   }
@@ -3268,7 +3268,7 @@ function changeMuscleGroup(gi,newGroup){
 
   const status=document.getElementById('libraryStatusV9');
   if(status){
-    status.innerText=`✓ Día ${d}: ${oldGroup} cambiado por ${newGroup}.`;
+    status.innerText=`✓ Rutina ${d}: ${oldGroup} cambiado por ${newGroup}.`;
   }
 }
 
@@ -3306,7 +3306,7 @@ window.gymDeleteRoutineExercise=function(gi,idx){
 
   const status=document.getElementById('libraryStatusV9');
   if(status){
-    status.innerText=`✓ ${name} eliminado de ${groupName} · Día ${d}.`;
+    status.innerText=`✓ ${name} eliminado de ${groupName} · Rutina ${d}.`;
   }
 
   return false;
@@ -3373,10 +3373,10 @@ function syncV9Target(){
 
   const label=document.getElementById('v9TargetLabel');
   if(gi>=0){
-    if(label)label.innerText=`Destino: Día ${day} · ${groups[gi].name} · ${(groups[gi].exercises||[]).length}/5`;
+    if(label)label.innerText=`Destino: Rutina ${day} · ${groups[gi].name} · ${(groups[gi].exercises||[]).length}/5`;
     return gi;
   }
-  if(label)label.innerText=`⚠️ ${muscle} no está en el Día ${day}`;
+  if(label)label.innerText=`⚠️ ${muscle} no está en la Rutina ${day}`;
   return -1;
 }
 
@@ -3459,7 +3459,7 @@ function addLibraryExerciseV9(index){
   const gi=groups.findIndex(g=>String(g.name||'').trim().toUpperCase()===group);
 
   if(gi<0){
-    alert(`El grupo ${group} no existe en el Día ${day}.`);
+    alert(`El grupo ${group} no existe en la Rutina ${day}.`);
     return;
   }
 
@@ -3488,7 +3488,7 @@ function addLibraryExerciseV9(index){
   loadConfig();
 
   const status=document.getElementById('libraryStatusV9');
-  if(status)status.innerText=`✓ ${item[0]} añadido a ${g.name} · Día ${day} · GIF incluido.`;
+  if(status)status.innerText=`✓ ${item[0]} añadido a ${g.name} · Rutina ${day} · GIF incluido.`;
 }
 
 const REMOTE_API_BASE='https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0';
@@ -4046,7 +4046,7 @@ h+=`
 <div
 style="display:flex;justify-content:space-between;align-items:center">
 
-<b>Día ${l.day}</b>
+<b>Rutina ${l.day}</b>
 
 <div style="display:flex;gap:5px">
 
@@ -4152,7 +4152,7 @@ day=Number(log.day);
 document.getElementById('work').style.display='block';
 
 document.getElementById('daytitle').innerText=
-'Editar entrenamiento - Día '+day;
+'Editar entrenamiento - Rutina '+day;
 
 document.getElementById('date').value=
 dateKey(log.date);
