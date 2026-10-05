@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MI GIMNASIO PRO v10.7</title>
+<title>MI GIMNASIO PRO v10.8</title>
 <meta name="theme-color" content="#121212">
 
 <style>
@@ -847,7 +847,7 @@ color:#000;
 .exerciseCard .btn{padding:7px;font-size:.67rem}
 .targetBox{background:#062d3c;border:1px solid #17607c;border-radius:8px;padding:8px;margin:8px 0;font-size:.7rem}
 .routineExercise{display:flex;align-items:center;justify-content:space-between;gap:6px;background:#191919;border:1px solid var(--bor);border-radius:7px;padding:7px;margin:5px 0}
-.routineExercise span{font-size:.72rem}.count5{font-size:.65rem;color:var(--sub)}
+.routineExercise span{font-size:.72rem}.count10{font-size:.65rem;color:var(--sub)}
 @media(max-width:380px){.libraryGrid{grid-template-columns:1fr}.libraryControls{grid-template-columns:1fr}}
 
 /* ===== v8.0 · MODO ENTRENAMIENTO ===== */
@@ -1023,7 +1023,7 @@ color:#000;
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v10.7</h1>
+<h1>MI GIMNASIO PRO v10.8</h1>
 </header>
 
 <div class="container">
@@ -1474,8 +1474,8 @@ function addDBExercise(groupName,index){
     return;
   }
 
-  if((g.exercises||[]).length>=5){
-    alert(`El grupo ${g.name} ya tiene 5 ejercicios. El entrenamiento está limitado a 5.`);
+  if((g.exercises||[]).length>=10){
+    alert(`El grupo ${g.name} ya tiene 10 ejercicios. El entrenamiento está limitado a 5.`);
     return;
   }
 
@@ -1497,10 +1497,10 @@ function addDBExercise(groupName,index){
   if(status)status.innerText=`✓ ${item[0]} añadido a ${g.name} · Rutina ${d} · GIF incluido.`;
 }
 
-function enforceFiveExercisesPerGroup(){
+function enforceTenExercisesPerGroup(){
   (Object.keys(routine)||[]).forEach(d=>{
     (routine[d].groups||[]).forEach(g=>{
-      if((g.exercises||[]).length>5){
+      if((g.exercises||[]).length>10){
         g.exercises=g.exercises.slice(0,5);
         g.images=(g.images||[]).slice(0,5);
       }
@@ -1568,13 +1568,13 @@ function addLibraryExercise(groupName,index){
     alert(`El destino es ${g.name}. Selecciona ${groupName} como grupo de destino.`);
     return;
   }
-  if((g.exercises||[]).length>=5){alert(`El grupo ${g.name} ya tiene 5 ejercicios.`);return;}
+  if((g.exercises||[]).length>=10){alert(`El grupo ${g.name} ya tiene 10 ejercicios.`);return;}
   if((g.exercises||[]).some(e=>String(e).toLowerCase()===item[0].toLowerCase())){
     alert('Ese ejercicio ya está añadido.');return;
   }
   g.exercises.push(item[0]);
   g.images.push(item[1]||'');
-  enforceFiveExercisesPerGroup();
+  enforceTenExercisesPerGroup();
   normalizeRoutine();
   save();
   loadConfig();
@@ -3168,14 +3168,14 @@ const MUSCLE_GROUPS=[
 ];
 
 function loadConfig(){
-  enforceFiveExercisesPerGroup();
+  enforceTenExercisesPerGroup();
 
   const dayEl=document.getElementById('cfgday');
   const d=Number(dayEl?.value)||1;
   const x=routine[d]||{groups:[]};
 
   let h='';
-  h+='<div class="targetBox" style="margin:10px 0">Rutina '+d+' · aquí puedes cambiar los grupos musculares. Después elige los ejercicios de MI BASE para añadirlos a Entreno. Máximo 5 por grupo.</div>';
+  h+='<div class="targetBox" style="margin:10px 0">Rutina '+d+' · aquí puedes cambiar los grupos musculares. Después elige los ejercicios de MI BASE para añadirlos a Entreno. Máximo 10 por grupo.</div>';
 
   (x.groups||[]).forEach((g,gi)=>{
     const exercises=Array.isArray(g.exercises)?g.exercises:[];
@@ -3187,7 +3187,7 @@ function loadConfig(){
     h+=`<div class="groupEditor">
       <div class="groupEditorTitle">
         <strong>GRUPO ${gi+1}</strong>
-        <span class="count5">${exercises.length}/5</span>
+        <span class="count10">${exercises.length}/10</span>
       </div>
 
       <label>Grupo muscular</label>
@@ -3429,7 +3429,7 @@ function renderLibraryV9(){
   const personalCount=getPersonalExercisesForGroup(group).length;
 
   if(status){
-    status.innerText=`${group}: ${data.length} ejercicios en MI BASE · ${current.exercises?.length||0}/5 en Entreno`+
+    status.innerText=`${group}: ${data.length} ejercicios en MI BASE · ${current.exercises?.length||0}/10 en Entreno`+
       (personalCount?` · ${personalCount} añadido${personalCount===1?'':'s'} por ti`:'');
   }
 
@@ -3467,8 +3467,8 @@ function addLibraryExerciseV9(index){
   if(!Array.isArray(g.exercises))g.exercises=[];
   if(!Array.isArray(g.images))g.images=[];
 
-  if(g.exercises.length>=5){
-    alert(`El grupo ${g.name} ya tiene 5 ejercicios.`);
+  if(g.exercises.length>=10){
+    alert(`El grupo ${g.name} ya tiene 10 ejercicios.`);
     return;
   }
 
@@ -3483,7 +3483,7 @@ function addLibraryExerciseV9(index){
   g.images.push(item[1]||'');
 
   normalizeRoutine();
-  enforceFiveExercisesPerGroup();
+  enforceTenExercisesPerGroup();
   save();
   loadConfig();
 
@@ -3733,7 +3733,7 @@ box.remove();
 }
 
 function saveConfig(){
-  enforceFiveExercisesPerGroup();
+  enforceTenExercisesPerGroup();
   normalizeRoutine();
   save();
   loadConfig();
