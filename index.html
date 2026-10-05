@@ -3187,7 +3187,10 @@ function loadConfig(){
     h+=`<div class="groupEditor">
       <div class="groupEditorTitle">
         <strong>GRUPO ${gi+1}</strong>
-        <span class="count10">${exercises.length}/10</span>
+        <span style="display:flex;align-items:center;gap:6px">
+          <span class="count10">${exercises.length}/10</span>
+          <button type="button" class="btn blue sm addRoutineExerciseBtn" onclick="openAddExerciseForGroup(${gi})" title="Añadir ejercicio">➕</button>
+        </span>
       </div>
 
       <label>Grupo muscular</label>
@@ -3216,6 +3219,25 @@ function loadConfig(){
 
   syncV9Target();
   renderLibraryV9();
+}
+
+function openAddExerciseForGroup(gi){
+  const d=Number(document.getElementById('cfgday')?.value)||1;
+  const g=routine[d]?.groups?.[Number(gi)];
+  if(!g)return;
+  if(Array.isArray(g.exercises) && g.exercises.length>=10){
+    alert(`El ${String(g.name||'grupo')} ya tiene 10 ejercicios.`);
+    return;
+  }
+  const sel=document.getElementById('libraryMuscleV9');
+  if(sel){
+    sel.value=String(g.name||'PECHO').trim().toUpperCase();
+    sel.dispatchEvent(new Event('change'));
+  }
+  syncV9Target();
+  renderLibraryV9();
+  const box=document.getElementById('libraryGridV9');
+  if(box){box.scrollIntoView({behavior:'smooth',block:'start'});}
 }
 
 function changeMuscleGroup(gi,newGroup){
