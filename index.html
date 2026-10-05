@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MI GIMNASIO PRO v10.4</title>
+<title>MI GIMNASIO PRO v10.6</title>
 <meta name="theme-color" content="#121212">
 
 <style>
@@ -1023,7 +1023,7 @@ color:#000;
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v10.4</h1>
+<h1>MI GIMNASIO PRO v10.6</h1>
 </header>
 
 <div class="container">
@@ -1125,8 +1125,13 @@ Aquí tienes los <b>15 ejercicios base</b> de cada grupo. Los ejercicios nuevos 
 <div class="card">
 <h2>💾 Seguridad de datos</h2>
 <div style="font-size:.72rem;color:var(--sub);line-height:1.5;margin-bottom:10px">
-La aplicación guarda automáticamente los datos. Al utilizar "Salir y guardar" se crea una copia interna adicional de seguridad.
+La aplicación guarda automáticamente los datos. Además puedes crear una copia JSON externa para conservarla fuera del navegador y recuperarla cuando quieras.
 </div>
+<button class="btn out" onclick="exportData()">📦 Crear copia de seguridad</button>
+<br><br>
+<button class="btn out" onclick="document.getElementById('file').click()">📥 Cargar copia de seguridad</button>
+<input id="file" type="file" accept=".json" style="display:none" onchange="importData(event)">
+<div id="backupStatus" class="backupBox"><span class="backupWarn">⚠️ Todavía no se ha comprobado una copia externa.</span></div>
 </div>
 
 </section>
@@ -1278,7 +1283,8 @@ Puedes cerrar esta pestaña o utilizar el botón
 <script>
 "use strict";
 
-const K='gym_v7_';
+const K='gym_v10_6_';
+const LEGACY_K='gym_v7_';
 
 const AUTO_BACKUP=K+'auto_backup';
 const PREV_BACKUP=K+'auto_backup_previous';
@@ -1671,6 +1677,83 @@ return result;
 
 }
 
+
+function repairRoutinePlacement(source){
+  const fixed=structuredCloneSafe(DEFAULT_ROUTINE);
+  const pools={};
+
+  for(let d=1;d<=5;d++){
+    const groups=Array.isArray(source?.[d]?.groups)?source[d].groups:[];
+    groups.forEach(g=>{
+      const groupName=String(g?.name||'').trim().toUpperCase();
+      if(!groupName)return;
+      if(!pools[groupName])pools[groupName]=[];
+      const exercises=Array.isArray(g.exercises)?g.exercises:[];
+      const images=Array.isArray(g.images)?g.images:[];
+      exercises.forEach((e,i)=>{
+        const exerciseName=String(e||'').trim();
+        if(!exerciseName)return;
+        if(!pools[groupName].some(x=>x.name.toLowerCase()===exerciseName.toLowerCase())){
+          pools[groupName].push({
+            name:exerciseName,
+            image:String(images[i]||'').trim()
+          });
+        }
+      });
+    });
+  }
+
+  for(let d=1;d<=5;d++){
+    fixed[d].groups.forEach(g=>{
+      const groupName=String(g.name).trim().toUpperCase();
+      const pool=pools[groupName]||[];
+      g.exercises=pool.splice(0,5).map(x=>x.name);
+      g.images=g.exercises.map(ex=>{
+        const found=(source && Object.values(source).flatMap(x=>Array.isArray(x?.groups)?x.groups:[]))
+          .flatMap(pg=>{
+            if(String(pg?.name||'').trim().toUpperCase()!==groupName)return [];
+            const ix=(pg.exercises||[]).findIndex(e=>String(e||'').trim().toLowerCase()===String(ex).trim().toLowerCase());
+            return ix>=0?[String(pg.images?.[ix]||'').trim()]:[];
+          })
+          .find(Boolean);
+        return found||'';
+      });
+    });
+  }
+
+  return fixed;
+}
+
+function loadLegacyData(){
+  try{
+    const legacyRoutine=safeParse(localStorage.getItem(LEGACY_K+'routine'),null);
+    if(legacyRoutine && typeof legacyRoutine==='object'){
+      routine=repairRoutinePlacement(legacyRoutine);
+      localStorage.setItem(K+'routine',JSON.stringify(routine));
+    }
+
+    const legacyLogs=safeParse(localStorage.getItem(LEGACY_K+'logs'),null);
+    if(Array.isArray(legacyLogs) && !localStorage.getItem(K+'logs')){
+      logs=legacyLogs;
+      localStorage.setItem(K+'logs',JSON.stringify(logs));
+    }
+
+    const legacyBase=safeParse(localStorage.getItem(LEGACY_K+'personal_exercise_base'),null);
+    if(Array.isArray(legacyBase) && !localStorage.getItem(K+'personal_exercise_base')){
+      personalExerciseBase=legacyBase;
+      localStorage.setItem(K+'personal_exercise_base',JSON.stringify(personalExerciseBase));
+    }
+
+    const legacyAuto=safeParse(localStorage.getItem(LEGACY_K+'auto_backup'),null);
+    if(legacyAuto && typeof legacyAuto==='object' && legacyAuto.routine){
+      localStorage.setItem(K+'auto_backup',JSON.stringify(legacyAuto));
+      if(legacyAuto.created)localStorage.setItem(K+'auto_backup_date',legacyAuto.created);
+    }
+  }catch(e){
+    console.warn('Migración desde la versión anterior no disponible',e);
+  }
+}
+
 function migrateOldRoutine(){
 
 for(let d=1;d<=5;d++){
@@ -1716,6 +1799,9 @@ groups:groups
 
 }
 
+if(!localStorage.getItem(K+'routine')){
+  loadLegacyData();
+}
 migrateOldRoutine();
 normalizeRoutine();
 
@@ -1785,7 +1871,7 @@ save();
 
 let data={
 app:'Mi Gimnasio Pro',
-version:'8.0',
+version:'10.6',
 backupType:'automatic',
 created:new Date().toISOString(),
 routine:structuredCloneSafe(routine),
@@ -3661,7 +3747,7 @@ let data={
 
 app:'Mi Gimnasio Pro',
 
-version:'8.0',
+version:'10.6',
 
 exported:new Date().toISOString(),
 
@@ -3695,7 +3781,7 @@ document.createElement('a');
 a.href=url;
 
 a.download=
-'gym_v6_2_backup_'+
+'Mi_Gimnasio_Pro_v10_6_backup_'+
 new Date()
 .toISOString()
 .slice(0,10)+
