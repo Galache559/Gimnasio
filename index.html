@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>MI GIMNASIO PRO v10.8</title>
 <meta name="theme-color" content="#121212">
+<link rel="manifest" href="./manifest.webmanifest">
 
 <style>
 :root{
@@ -5020,6 +5021,18 @@ renderCalendar();
 
 loadConfig();
 
+</script>
+
+
+<script>
+/* Mi Gimnasio PRO: habilita el modo sin conexión cuando se sirve por HTTPS/localhost. */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./service-worker.js').catch(function (err) {
+      console.warn('No se pudo activar el modo sin conexión:', err);
+    });
+  });
+}
 </script>
 
 </body>
