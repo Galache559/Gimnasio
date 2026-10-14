@@ -1,4 +1,3 @@
-
 {
   "id": "./",
   "name": "Mi Gimnasio PRO v10.8",
@@ -8,8 +7,8 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#121212",
-  "theme_color": "#121212",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "icons": [
     {
       "src": "./icon-192.png",
