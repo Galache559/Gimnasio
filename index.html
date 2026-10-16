@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>MI GIMNASIO PRO v10.8</title>
 <meta name="theme-color" content="#121212">
-<link rel="manifest" href="./manifest.webmanifest?v=2">
+<link rel="manifest" href="./manifest.webmanifest?v=108-sin-email-2">
 
 <style>
 :root{
@@ -3852,7 +3852,7 @@ let data={
 
 app:'Mi Gimnasio Pro',
 
-version:'10.9',
+version:'10.8',
 
 exported:new Date().toISOString(),
 
@@ -3886,7 +3886,7 @@ document.createElement('a');
 a.href=url;
 
 a.download=
-'Mi_Gimnasio_Pro_v10_9_backup_'+
+'Mi_Gimnasio_Pro_v10_8_backup_'+
 new Date()
 .toISOString()
 .slice(0,10)+
@@ -3981,7 +3981,7 @@ structuredCloneSafe(personalExerciseBase);
 
 // Salvaguarda de los datos actuales justo antes de restaurar otra copia.
 // Si no se puede escribir esta salvaguarda, se cancela la importación.
-const beforeRestore={app:'Mi Gimnasio Pro',version:'10.9',backupType:'pre-restore',created:new Date().toISOString(),routine:oldRoutine,logs:oldLogs,personalExerciseBase:oldPersonalExerciseBase};
+const beforeRestore={app:'Mi Gimnasio Pro',version:'10.8',backupType:'pre-restore',created:new Date().toISOString(),routine:oldRoutine,logs:oldLogs,personalExerciseBase:oldPersonalExerciseBase};
 const beforeRestoreJSON=JSON.stringify(beforeRestore);
 localStorage.setItem(K+'pre_restore_backup',beforeRestoreJSON);
 if(localStorage.getItem(K+'pre_restore_backup')!==beforeRestoreJSON) throw new Error('No se pudo verificar la salvaguarda previa.');
@@ -5140,6 +5140,5 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
-<script>document.addEventListener("DOMContentLoaded",loadBackupEmail);</script>
 </body>
 </html>
