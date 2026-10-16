@@ -3953,8 +3953,16 @@ function sendBackupEmail(){
     logs:logs,
     personalExerciseBase:personalExerciseBase
   };
-  const json=JSON.stringify(data,null,2);
   const filename='Mi_Gimnasio_Pro_backup_'+new Date().toISOString().slice(0,10)+'.json';
+  const subject=encodeURIComponent('Copia de seguridad de Mi Gimnasio Pro');
+  const body=encodeURIComponent('Adjunto la copia de seguridad de Mi Gimnasio Pro.\n\nArchivo: '+filename+'\n\nRecuerda adjuntar el archivo descargado desde la carpeta Descargas antes de enviar este correo.');
+  const gmailUrl='https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(email)+'&su='+subject+'&body='+body;
+
+  // Abrir la pestaña mientras aún estamos dentro del gesto del usuario:
+  // si esperamos a descargar primero, Chrome móvil puede bloquear window.open().
+  const gmailWindow=window.open('about:blank','_blank');
+
+  const json=JSON.stringify(data,null,2);
   const blob=new Blob([json],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
@@ -3963,13 +3971,17 @@ function sendBackupEmail(){
   document.body.appendChild(a);
   a.click();
   a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),5000);
+  setTimeout(()=>URL.revokeObjectURL(url),10000);
 
-  const subject=encodeURIComponent('Copia de seguridad de Mi Gimnasio Pro');
-  const body=encodeURIComponent('Adjunto la copia de seguridad de Mi Gimnasio Pro.\n\nArchivo: '+filename+'\n\nRecuerda adjuntar el archivo descargado desde la carpeta Descargas antes de enviar este correo.');
-  const gmailUrl='https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(email)+'&su='+subject+'&body='+body;
-  const gmailWindow=window.open(gmailUrl,'_blank');
-  status.innerHTML='<span class="backupOk">✓ Copia descargada. Se ha intentado abrir Gmail con el destinatario <b>'+email.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))+'</b> y el asunto preparado. En Gmail, pulsa el clip 📎, selecciona <b>'+filename+'</b> en Descargas y pulsa Enviar.'+(gmailWindow?'':' Si Gmail no se abre, permite las ventanas emergentes o abre Gmail manualmente.')+'</span>';
+  if(gmailWindow){
+    try{gmailWindow.location.href=gmailUrl;}
+    catch(err){gmailWindow.location.replace(gmailUrl);}
+  } else {
+    // Alternativa explícita si el navegador bloquea las ventanas emergentes.
+    status.innerHTML='<span class="backupWarn">La copia se ha descargado, pero el navegador ha bloqueado la pestaña de Gmail. Pulsa <button type="button" class="btn out sm" onclick="window.open(\''+gmailUrl+'\',\'_blank\')">ABRIR GMAIL CON EL MENSAJE</button>.</span>';
+    return;
+  }
+  status.innerHTML='<span class="backupOk">✓ Copia descargada. Gmail se está abriendo con el destinatario <b>'+email.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))+'</b>, el asunto y el mensaje preparados. En Gmail, pulsa el clip 📎, selecciona <b>'+filename+'</b> en Descargas y pulsa Enviar.</span>';
 }
 
 function importData(e){
