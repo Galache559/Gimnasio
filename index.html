@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MI GIMNASIO PRO v10.8</title>
+<title>MI GIMNASIO PRO v10.9 · MONITOR</title>
 <meta name="theme-color" content="#121212">
 <link rel="manifest" href="./manifest.webmanifest?v=108-3">
 
@@ -1100,7 +1100,7 @@ color:#000;
 <div class="card">
 <h2>📚 MI BASE DE EJERCICIOS + GIF</h2>
 <div style="font-size:.72rem;color:var(--sub);line-height:1.45;margin-bottom:10px">
-Aquí tienes los <b>15 ejercicios base</b> de cada grupo. Los ejercicios nuevos que añadas desde la biblioteca externa se incorporarán a esta base y quedarán disponibles para <b>Añadir a Entreno</b>.
+Cada grupo puede tener hasta <b>15 ejercicios en tu base personalizada</b>. Pulsa <b>QUITAR</b> para retirar uno y usa <b>BUSCAR</b> para añadir otro de la biblioteca externa. Esto no borra el historial. Para cada rutina, elige cuántos ejercicios quieres añadir a Entreno.
 </div>
 
 <div class="dbbox">
@@ -1217,6 +1217,18 @@ Selecciona un periodo.
 
 </section>
 
+<section id="tab-monitor" class="tab">
+  <div class="card">
+    <h2>🧠 MI MONITOR PERSONAL</h2>
+    <p style="font-size:.82rem;color:var(--sub)">Evalúa tus entrenamientos guardados y te propone el siguiente paso. Las recomendaciones son orientativas: prima siempre la técnica y la recuperación.</p>
+    <button class="btn" onclick="renderMonitor()">🔄 Evaluar mis entrenamientos</button>
+    <div id="monitorSummary" style="margin-top:12px"></div>
+  </div>
+  <div class="card"><h2>💪 Recomendaciones por ejercicio</h2><div id="monitorExercises">Pulsa «Evaluar mis entrenamientos».</div></div>
+  <div class="card"><h2>📊 Trabajo por grupo muscular</h2><div id="monitorGroups"></div></div>
+  <div class="card"><h2>🗓️ Objetivo para la próxima semana</h2><div id="monitorWeek"></div></div>
+</section>
+
 </div>
 
 <nav>
@@ -1238,6 +1250,7 @@ onclick="tab('calendario')">
 onclick="tab('informes')">
 📊<span>Informes</span> </button>
 
+<button id="n-monitor" onclick="tab('monitor')">🧠<span>Monitor</span></button>
 </nav>
 
 <div id="timerOverlay" class="timerOverlay">
@@ -1479,8 +1492,8 @@ function addDBExercise(groupName,index){
     return;
   }
 
-  if((g.exercises||[]).length>=10){
-    alert(`El grupo ${g.name} ya tiene 10 ejercicios. El entrenamiento está limitado a 5.`);
+  if((g.exercises||[]).length>=15){
+    alert(`El grupo ${g.name} ya tiene 15 ejercicios. El entrenamiento está limitado a 15 ejercicios por grupo.`);
     return;
   }
 
@@ -1505,9 +1518,9 @@ function addDBExercise(groupName,index){
 function enforceTenExercisesPerGroup(){
   (Object.keys(routine)||[]).forEach(d=>{
     (routine[d].groups||[]).forEach(g=>{
-      if((g.exercises||[]).length>10){
-        g.exercises=g.exercises.slice(0,5);
-        g.images=(g.images||[]).slice(0,5);
+      if((g.exercises||[]).length>15){
+        g.exercises=g.exercises.slice(0,15);
+        g.images=(g.images||[]).slice(0,15);
       }
     });
   });
@@ -1573,7 +1586,7 @@ function addLibraryExercise(groupName,index){
     alert(`El destino es ${g.name}. Selecciona ${groupName} como grupo de destino.`);
     return;
   }
-  if((g.exercises||[]).length>=10){alert(`El grupo ${g.name} ya tiene 10 ejercicios.`);return;}
+  if((g.exercises||[]).length>=15){alert(`El grupo ${g.name} ya tiene 15 ejercicios.`);return;}
   if((g.exercises||[]).some(e=>String(e).toLowerCase()===item[0].toLowerCase())){
     alert('Ese ejercicio ya está añadido.');return;
   }
@@ -1622,6 +1635,11 @@ let personalExerciseBase=safeParse(
 localStorage.getItem(K+'personal_exercise_base'),
 []
 );
+
+// Ejercicios originales retirados por el usuario de su base personalizada.
+let removedExerciseBase=safeParse(localStorage.getItem(K+'removed_exercise_base'),[]);
+if(!Array.isArray(removedExerciseBase)) removedExerciseBase=[];
+removedExerciseBase=removedExerciseBase.filter(x=>x && typeof x.group==='string' && typeof x.name==='string');
 
 if(!Array.isArray(personalExerciseBase))
 personalExerciseBase=[];
@@ -1831,8 +1849,8 @@ const num=v=>parseFloat(v)||0;
 
 function save(){
 
-const keys=[K+'routine',K+'logs',K+'personal_exercise_base'];
-const values=[JSON.stringify(routine),JSON.stringify(logs),JSON.stringify(personalExerciseBase)];
+const keys=[K+'routine',K+'logs',K+'personal_exercise_base',K+'removed_exercise_base'];
+const values=[JSON.stringify(routine),JSON.stringify(logs),JSON.stringify(personalExerciseBase),JSON.stringify(removedExerciseBase)];
 const previous=keys.map(key=>({key,value:localStorage.getItem(key)}));
 
 try{
@@ -1867,7 +1885,8 @@ try{
     created:new Date().toISOString(),
     routine:structuredCloneSafe(routine),
     logs:structuredCloneSafe(logs),
-    personalExerciseBase:structuredCloneSafe(personalExerciseBase)
+    personalExerciseBase:structuredCloneSafe(personalExerciseBase),
+    removedExerciseBase:structuredCloneSafe(removedExerciseBase)
   };
   const serialized=JSON.stringify(data);
   const current=localStorage.getItem(AUTO_BACKUP);
@@ -1942,6 +1961,9 @@ structuredCloneSafe(data.logs);
 
 if(Array.isArray(data.personalExerciseBase)){
   personalExerciseBase=structuredCloneSafe(data.personalExerciseBase);
+}
+if(Array.isArray(data.removedExerciseBase)){
+  removedExerciseBase=structuredCloneSafe(data.removedExerciseBase);
 }
 
 normalizeRoutine();
@@ -2207,6 +2229,9 @@ renderCalendar();
 
 if(x==='informes')
 stats();
+
+if(x==='monitor')
+renderMonitor();
 
 }
 
@@ -3255,7 +3280,7 @@ function loadConfig(){
   const x=routine[d]||{groups:[]};
 
   let h='';
-  h+='<div class="targetBox" style="margin:10px 0">Rutina '+d+' · aquí puedes cambiar los grupos musculares. Después elige los ejercicios de MI BASE para añadirlos a Entreno. Máximo 10 por grupo.</div>';
+  h+='<div class="targetBox" style="margin:10px 0">Rutina '+d+' · aquí puedes cambiar los grupos musculares. Después elige los ejercicios de MI BASE para añadirlos a Entreno. Máximo 15 por grupo.</div>';
 
   (x.groups||[]).forEach((g,gi)=>{
     const exercises=Array.isArray(g.exercises)?g.exercises:[];
@@ -3268,7 +3293,7 @@ function loadConfig(){
       <div class="groupEditorTitle">
         <strong>GRUPO ${gi+1}</strong>
         <span style="display:flex;align-items:center;gap:6px">
-          <span class="count10">${exercises.length}/10</span>
+          <span class="count10">${exercises.length}/15</span>
           <button type="button" class="btn blue sm addRoutineExerciseBtn" onclick="openAddExerciseForGroup(${gi})" title="Añadir ejercicio">➕</button>
         </span>
       </div>
@@ -3280,13 +3305,13 @@ function loadConfig(){
 
     if(exercises.length){
       h+=exercises.map((e,i)=>`
-        <div class="routineExercise">
-          <span>${i+1}. ${esc(e)}</span>
-          <button type="button"
-            class="btn danger sm routineTrash"
-            onclick="window.gymDeleteRoutineExercise(${gi},${i})"
-            title="Borrar ejercicio"
-            aria-label="Borrar ejercicio">🗑️</button>
+        <div class="routineExercise" style="flex-wrap:wrap">
+          <span style="flex:1;min-width:130px">${i+1}. ${esc(e)}</span>
+          <span style="display:flex;gap:4px;flex-wrap:wrap">
+            <button type="button" class="btn sm" onclick="window.gymEditRoutineExercise(${gi},${i})" title="Modificar nombre">✏️</button>
+            <button type="button" class="btn blue sm" onclick="window.gymReplaceRoutineExercise(${gi},${i})" title="Sustituir por otro ejercicio">🔁 Sustituir</button>
+            <button type="button" class="btn danger sm routineTrash" onclick="window.gymDeleteRoutineExercise(${gi},${i})" title="Anular ejercicio" aria-label="Anular ejercicio">🗑️</button>
+          </span>
         </div>`).join('');
     }else{
       h+='<div class="empty">Sin ejercicios seleccionados.</div>';
@@ -3305,8 +3330,8 @@ function openAddExerciseForGroup(gi){
   const d=Number(document.getElementById('cfgday')?.value)||1;
   const g=routine[d]?.groups?.[Number(gi)];
   if(!g)return;
-  if(Array.isArray(g.exercises) && g.exercises.length>=10){
-    alert(`El ${String(g.name||'grupo')} ya tiene 10 ejercicios.`);
+  if(Array.isArray(g.exercises) && g.exercises.length>=15){
+    alert(`El ${String(g.name||'grupo')} ya tiene 15 ejercicios.`);
     return;
   }
   const sel=document.getElementById('libraryMuscleV9');
@@ -3374,6 +3399,33 @@ function changeMuscleGroup(gi,newGroup){
   }
 }
 
+
+window._gymReplaceTarget=null;
+window.gymEditRoutineExercise=function(gi,idx){
+  const d=Number(document.getElementById('cfgday')?.value)||1;
+  const g=routine?.[d]?.groups?.[Number(gi)];
+  if(!g || !Array.isArray(g.exercises) || !g.exercises[Number(idx)]) return alert('No se ha encontrado el ejercicio.');
+  const old=String(g.exercises[Number(idx)]);
+  const name=prompt('Modificar nombre del ejercicio:',old);
+  if(name===null)return;
+  const clean=String(name).trim();
+  if(!clean)return alert('El nombre no puede quedar vacío.');
+  if(g.exercises.some((e,i)=>i!==Number(idx)&&String(e).trim().toLowerCase()===clean.toLowerCase())) return alert('Ese ejercicio ya está en este grupo.');
+  g.exercises[Number(idx)]=clean;
+  normalizeRoutine(); save(); loadConfig();
+};
+window.gymReplaceRoutineExercise=function(gi,idx){
+  const d=Number(document.getElementById('cfgday')?.value)||1;
+  const g=routine?.[d]?.groups?.[Number(gi)];
+  if(!g || !Array.isArray(g.exercises) || Number(idx)<0 || Number(idx)>=g.exercises.length) return alert('No se ha encontrado el ejercicio.');
+  window._gymReplaceTarget={day:d,gi:Number(gi),idx:Number(idx),group:String(g.name||'').trim().toUpperCase()};
+  const sel=document.getElementById('libraryMuscleV9');
+  if(sel){sel.value=window._gymReplaceTarget.group; sel.dispatchEvent(new Event('change'));}
+  const status=document.getElementById('libraryStatusV9');
+  if(status)status.innerText='🔁 MODO SUSTITUCIÓN: pulsa «Sustituir este ejercicio» en el ejercicio elegido de la biblioteca.';
+  const box=document.getElementById('libraryGridV9');
+  if(box)box.scrollIntoView({behavior:'smooth',block:'start'});
+};
 
 window.gymDeleteRoutineExercise=function(gi,idx){
   const d=Number(document.getElementById('cfgday')?.value)||1;
@@ -3489,26 +3541,39 @@ function getPersonalExercisesForGroup(group){
 
 function getLibraryBaseForGroup(group){
   group=String(group||'').trim().toUpperCase();
-
-  const base=(EXERCISE_DB[group]||[]).slice(0,15).map(x=>[
-    String(x[0]||''),
-    String(x[1]||''),
-    String(x[2]||'')
-  ]);
-
+  const removed=new Set(removedExerciseBase
+    .filter(x=>String(x.group||'').toUpperCase()===group)
+    .map(x=>String(x.name||'').trim().toLowerCase()));
+  const base=(EXERCISE_DB[group]||[])
+    .filter(x=>!removed.has(String(x[0]||'').trim().toLowerCase()))
+    .map(x=>[String(x[0]||''),String(x[1]||''),String(x[2]||''),false]);
   getPersonalExercisesForGroup(group).forEach(x=>{
-    if(!base.some(b=>
-      String(b[0]).trim().toLowerCase()===String(x.name).trim().toLowerCase()
-    )){
-      base.push([
-        x.name,
-        x.image,
-        x.equipment||getEquipmentLabel(x.name)
-      ]);
+    if(!base.some(b=>String(b[0]).trim().toLowerCase()===String(x.name).trim().toLowerCase())){
+      base.push([x.name,x.image,x.equipment||getEquipmentLabel(x.name),true]);
     }
   });
-
   return base;
+}
+
+function removeExerciseFromBase(index){
+  const group=String(document.getElementById('libraryMuscleV9')?.value||'').trim().toUpperCase();
+  const data=getLibraryBaseForGroup(group);
+  const item=data[Number(index)];
+  if(!item)return;
+  const name=String(item[0]||'');
+  if(!confirm(`¿Quitar «${name}» de tu base de ${group}?\n\nEsto no borra el historial de entrenamientos anteriores.`))return;
+  if(item[3]){
+    personalExerciseBase=personalExerciseBase.filter(x=>!(String(x.group||'').toUpperCase()===group && String(x.name||'').trim().toLowerCase()===name.trim().toLowerCase()));
+  }else if(!removedExerciseBase.some(x=>String(x.group||'').toUpperCase()===group && String(x.name||'').trim().toLowerCase()===name.trim().toLowerCase())){
+    removedExerciseBase.push({group,name});
+  }
+  if(!save()){
+    alert('No se pudo guardar el cambio. No recargues la aplicación; crea una copia de seguridad e inténtalo de nuevo.');
+    return;
+  }
+  renderLibraryV9();
+  const status=document.getElementById('libraryStatusV9');
+  if(status)status.innerText=`✓ «${name}» quitado de tu base de ${group}.`;
 }
 
 function renderLibraryV9(){
@@ -3531,7 +3596,7 @@ function renderLibraryV9(){
   const personalCount=getPersonalExercisesForGroup(group).length;
 
   if(status){
-    status.innerText=`${group}: ${data.length} ejercicios en MI BASE · ${current.exercises?.length||0}/10 en Entreno`+
+    status.innerText=`${group}: ${data.length} ejercicios en MI BASE · ${current.exercises?.length||0}/15 en Entreno`+
       (personalCount?` · ${personalCount} añadido${personalCount===1?'':'s'} por ti`:'');
   }
 
@@ -3542,9 +3607,9 @@ function renderLibraryV9(){
       <div class="exerciseCardBody">
         <div class="exerciseCardName">${i+1}. ${esc(x[0])}</div>
         <div class="exerciseCardMeta">
-          ${getEquipmentIcon(getItemEquipment(x))} <b>${getItemEquipment(x)}</b>${i>=15?' · MI BASE':''}
+          ${getEquipmentIcon(getItemEquipment(x))} <b>${getItemEquipment(x)}</b>${x[3]?' · AÑADIDO POR TI':''}
         </div>
-        <button type="button" class="btn blue" onclick="addLibraryExerciseV9(${i})">➕ Añadir a Entreno</button>
+        <div style="display:flex;gap:5px;flex-wrap:wrap"><button type="button" class="btn blue" onclick="addLibraryExerciseV9(${i})">${window._gymReplaceTarget?'🔁 Sustituir este ejercicio':'➕ Añadir a Entreno'}</button><button type="button" class="btn danger sm" onclick="removeExerciseFromBase(${i})" title="Quitar de mi base">🗑️ QUITAR</button></div>
       </div>
     </div>
   `).join('') || '<div class="empty">No hay ejercicios en esta base.</div>';
@@ -3566,11 +3631,26 @@ function addLibraryExerciseV9(index){
   }
 
   const g=groups[gi];
+  const target=window._gymReplaceTarget;
+  if(target && target.day===day && target.group===group){
+    const oldName=String(g.exercises?.[target.idx]||'');
+    if(String(item[0]).trim().toLowerCase()===oldName.trim().toLowerCase()){
+      alert('Ese es el mismo ejercicio. Elige otro.'); return;
+    }
+    if(!Array.isArray(g.images))g.images=[];
+    g.exercises[target.idx]=item[0];
+    g.images[target.idx]=item[1]||'';
+    window._gymReplaceTarget=null;
+    normalizeRoutine(); save(); loadConfig();
+    const status=document.getElementById('libraryStatusV9');
+    if(status)status.innerText=`✓ Ejercicio sustituido: ${oldName} → ${item[0]} · Rutina ${day}.`;
+    return;
+  }
   if(!Array.isArray(g.exercises))g.exercises=[];
   if(!Array.isArray(g.images))g.images=[];
 
-  if(g.exercises.length>=10){
-    alert(`El grupo ${g.name} ya tiene 10 ejercicios.`);
+  if(g.exercises.length>=15){
+    alert(`El grupo ${g.name} ya tiene 15 ejercicios.`);
     return;
   }
 
@@ -3726,6 +3806,12 @@ function addRemoteExerciseToBase(index){
 
   if(!item)return;
 
+  const activeCount=getLibraryBaseForGroup(group).length;
+  if(activeCount>=15){
+    alert(`La base de ${group} ya tiene 15 ejercicios. Primero pulsa QUITAR en uno que no quieras; después podrás añadir el nuevo.`);
+    return;
+  }
+
   const duplicate=personalExerciseBase.some(x=>
     String(x.group||'').toUpperCase()===group &&
     String(x.name||'').trim().toLowerCase()===item.name.trim().toLowerCase()
@@ -3860,7 +3946,8 @@ routine:routine,
 
 logs:logs,
 
-personalExerciseBase:personalExerciseBase
+personalExerciseBase:personalExerciseBase,
+removedExerciseBase:removedExerciseBase
 
 };
 
@@ -3981,7 +4068,8 @@ structuredCloneSafe(personalExerciseBase);
 
 // Salvaguarda de los datos actuales justo antes de restaurar otra copia.
 // Si no se puede escribir esta salvaguarda, se cancela la importación.
-const beforeRestore={app:'Mi Gimnasio Pro',version:'10.8',backupType:'pre-restore',created:new Date().toISOString(),routine:oldRoutine,logs:oldLogs,personalExerciseBase:oldPersonalExerciseBase};
+const oldRemovedExerciseBase=structuredCloneSafe(removedExerciseBase);
+const beforeRestore={app:'Mi Gimnasio Pro',version:'10.8',backupType:'pre-restore',created:new Date().toISOString(),routine:oldRoutine,logs:oldLogs,personalExerciseBase:oldPersonalExerciseBase,removedExerciseBase:oldRemovedExerciseBase};
 const beforeRestoreJSON=JSON.stringify(beforeRestore);
 localStorage.setItem(K+'pre_restore_backup',beforeRestoreJSON);
 if(localStorage.getItem(K+'pre_restore_backup')!==beforeRestoreJSON) throw new Error('No se pudo verificar la salvaguarda previa.');
@@ -4002,6 +4090,9 @@ if(Array.isArray(data.personalExerciseBase)){
   personalExerciseBase=
   structuredCloneSafe(data.personalExerciseBase);
 }
+if(Array.isArray(data.removedExerciseBase)){
+  removedExerciseBase=structuredCloneSafe(data.removedExerciseBase);
+}
 
 normalizeRoutine();
 
@@ -4012,6 +4103,7 @@ if(!save()) throw new Error('No se pudieron guardar los datos restaurados.');
 routine=oldRoutine;
 logs=oldLogs;
 personalExerciseBase=oldPersonalExerciseBase;
+removedExerciseBase=oldRemovedExerciseBase;
 
 save();
 
@@ -4525,6 +4617,42 @@ e.style.display==='block'
 ?'none'
 :'block';
 
+}
+
+function renderMonitor(){
+  const sessions=uniqueSessions(logs).filter(l=>(l.groups||[]).some(g=>(g.exercises||[]).some(e=>(e.sets||[]).some(s=>num(s.reps)>0)))).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const now=new Date(); const cutoff=new Date(now); cutoff.setDate(now.getDate()-6);
+  const week=sessions.filter(l=>new Date(l.date)>=cutoff);
+  const totalSets=week.flatMap(l=>(l.groups||[]).flatMap(g=>(g.exercises||[]).flatMap(e=>(e.sets||[]).filter(s=>num(s.reps)>0)))).length;
+  const totalVol=week.flatMap(l=>(l.groups||[]).flatMap(g=>(g.exercises||[]).flatMap(e=>(e.sets||[]).filter(s=>num(s.reps)>0)))).reduce((n,set)=>n+num(set.reps)*num(set.weight),0);
+  document.getElementById('monitorSummary').innerHTML=sessions.length?`<div class="summary"><h3>${week.length? '📈':'📋'} ${week.length} sesiones en los últimos 7 días</h3><p><b>${totalSets}</b> series registradas · <b>${Math.round(totalVol).toLocaleString('es-ES')} kg</b> de volumen acumulado en esos 7 días.</p><p>Historial disponible: ${sessions.length} sesiones con ejercicios registrados.</p></div>`:`<div class="empty">Todavía no hay entrenamientos guardados para evaluar. Guarda una sesión con repeticiones y peso para que pueda comparar resultados.</div>`;
+  const allNames=[...new Set(sessions.flatMap(l=>(l.groups||[]).flatMap(g=>(g.exercises||[]).map(e=>e.name))))];
+  const cards=[];
+  allNames.forEach(name=>{
+    const history=sessions.map(l=>({l,e:(l.groups||[]).flatMap(g=>g.exercises||[]).find(e=>e.name===name)})).filter(x=>x.e && (x.e.sets||[]).some(s=>num(s.reps)>0));
+    if(!history.length)return;
+    const latest=history[history.length-1], sets=(latest.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
+    const reps=sets.map(s=>num(s.reps)), weights=sets.map(s=>num(s.weight));
+    const prev=history.length>1?history[history.length-2]:null;
+    const currReps=reps.reduce((a,b)=>a+b,0), prevSets=prev?(prev.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3):[];
+    const prevReps=prevSets.reduce((a,s)=>a+num(s.reps),0), currVol=sets.reduce((a,s)=>a+num(s.reps)*num(s.weight),0), prevVol=prevSets.reduce((a,s)=>a+num(s.reps)*num(s.weight),0);
+    let icon='🟡',title='MANTÉN Y CONSOLIDA',advice='Intenta sumar una repetición total manteniendo el mismo peso y una técnica limpia.';
+    if(sets.length>=3 && reps.every(r=>r>=12) && weights.every(w=>w>0)){icon='🟢';title='VALORA SUBIR UN POCO EL PESO';advice='Has alcanzado 12 repeticiones en las tres series. Si la técnica fue buena y te quedaron 1–3 repeticiones en reserva, prueba el incremento mínimo disponible.';}
+    else if(reps.some(r=>r<8)){icon='🟠';title='NO SUBAS TODAVÍA';advice='Mantén o reduce ligeramente la carga si pierdes la técnica; busca un rango controlado de 8–12 repeticiones.';}
+    if(prev){if(currReps>prevReps || currVol>prevVol){icon='🟢';if(title==='MANTÉN Y CONSOLIDA')title='PROGRESO REGISTRADO';advice+=' La última sesión mejoró respecto a la anterior.';}else if(currReps<prevReps && currVol<prevVol){icon='🟠';title='REVISA FATIGA Y RECUPERACIÓN';advice='El resultado bajó respecto a la sesión anterior. No fuerces la subida; revisa descanso, molestias y técnica.';}}
+    cards.push(`<div class="card" style="margin:8px 0"><b>${icon} ${name}</b><p style="margin:6px 0"><b>${title}</b></p><p>${advice}</p><small>Última sesión: ${dateKey(latest.l.date)} · ${reps.join(' / ')} repeticiones · ${weights.join(' / ')} kg</small></div>`);
+  });
+  document.getElementById('monitorExercises').innerHTML=cards.length?cards.join(''):'No hay ejercicios con datos suficientes.';
+  const groupMap={};
+  week.forEach(l=>(l.groups||[]).forEach(g=>{const n=g.name||'Sin grupo';if(!groupMap[n])groupMap[n]={sets:0,ex:new Set(),sessions:new Set()};(g.exercises||[]).forEach(e=>{const valid=(e.sets||[]).filter(s=>num(s.reps)>0);if(valid.length){groupMap[n].sets+=valid.length;groupMap[n].ex.add(e.name);groupMap[n].sessions.add(dateKey(l.date));}})}));
+  const groupRows=Object.entries(groupMap).sort((a,b)=>b[1].sets-a[1].sets).map(([n,v])=>`<div class="card" style="margin:7px 0"><b>${n}</b><p>${v.sets} series · ${v.ex.size} ejercicios · ${v.sessions.size} sesiones esta semana</p></div>`);
+  document.getElementById('monitorGroups').innerHTML=groupRows.length?groupRows.join(''):'Aún no hay trabajo registrado en los últimos 7 días.';
+  let plan='Prioriza la regularidad, registra todas las series y evita aumentar peso si la técnica se deteriora.';
+  if(!sessions.length) plan='Empieza registrando tu próxima sesión completa. Con dos o más sesiones del mismo ejercicio podré comparar tu evolución.';
+  else if(week.length===0) plan='No hay sesiones registradas en los últimos 7 días. Retoma tu rutina habitual cuando estés recuperado y registra los resultados.';
+  else if(cards.some(x=>x.includes('REVISA FATIGA Y RECUPERACIÓN'))) plan='En los ejercicios cuyo rendimiento bajó, mantén o reduce la carga y revisa sueño, descanso y molestias antes de progresar.';
+  else if(cards.some(x=>x.includes('VALORA SUBIR UN POCO EL PESO'))) plan='En los ejercicios que alcanzaron 3 series de 12 repeticiones, valora solo el incremento mínimo si la técnica y el esfuerzo lo permiten. En los demás, intenta mejorar poco a poco las repeticiones.';
+  document.getElementById('monitorWeek').innerHTML=`<p>${plan}</p><small>El volumen de distintos grupos no es directamente comparable en todos los casos; la app no asumirá que más series siempre es mejor.</small>`;
 }
 
 function stats(){
