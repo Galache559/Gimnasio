@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'mi-gimnasio-pro-v10-8-v2';
+const CACHE_NAME = 'mi-gimnasio-pro-v10-9-gmail-v1';
 
 const APP_FILES = [
   './',
