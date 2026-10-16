@@ -3154,7 +3154,11 @@ totalVol+=data.volume;
 
 cleanSession(log);
 
-save();
+if(!save()){
+  document.getElementById('summary').innerHTML=`<div class="summary"><h3>⚠️ NO SE PUDO CONFIRMAR EL GUARDADO</h3><p>Los datos siguen en pantalla. No cierres ni recargues la aplicación. Descarga una copia de seguridad y vuelve a intentarlo cuando haya espacio disponible.</p><button class="btn" onclick="exportData()">Descargar copia de seguridad</button></div>`;
+  alert('⚠️ El navegador no ha confirmado el guardado. Se mantienen los datos en pantalla; no recargues la aplicación.');
+  return;
+}
 
 clearWorkoutInputs();
 
@@ -3838,10 +3842,13 @@ box.remove();
 function saveConfig(){
   enforceTenExercisesPerGroup();
   normalizeRoutine();
-  save();
+  const ok=save();
   loadConfig();
   const s=document.getElementById('libraryStatusV9');
-  if(s)s.innerText='✓ Rutina guardada correctamente.';
+  if(s)s.innerText=ok
+    ?'✓ Rutina guardada correctamente.'
+    :'⚠️ No se pudo guardar. Comprueba el espacio disponible del navegador y descarga una copia de seguridad.';
+  if(!ok) alert('⚠️ No se han podido guardar los cambios. No cierres ni recargues la aplicación. Descarga una copia de seguridad y comprueba el almacenamiento del navegador.');
 }
 
 function exportData(){
@@ -3850,7 +3857,7 @@ let data={
 
 app:'Mi Gimnasio Pro',
 
-version:'10.6',
+version:'10.9',
 
 exported:new Date().toISOString(),
 
@@ -3884,7 +3891,7 @@ document.createElement('a');
 a.href=url;
 
 a.download=
-'Mi_Gimnasio_Pro_v10_6_backup_'+
+'Mi_Gimnasio_Pro_v10_9_backup_'+
 new Date()
 .toISOString()
 .slice(0,10)+
@@ -4001,6 +4008,19 @@ throw new Error();
 if(data.personalExerciseBase!==undefined && !Array.isArray(data.personalExerciseBase))
 throw new Error();
 
+// Comprobación mínima de estructura antes de tocar los datos actuales.
+const validDays=Object.keys(data.routine).some(k=>/^([1-5])$/.test(k));
+if(!validDays) throw new Error('La rutina no contiene días reconocibles.');
+for(const key of Object.keys(data.routine)){
+  if(!/^([1-5])$/.test(key)) continue;
+  const d=data.routine[key];
+  if(d!==null && typeof d!=='object') throw new Error('Día de rutina no válido.');
+  if(d && d.groups!==undefined && !Array.isArray(d.groups)) throw new Error('Grupos no válidos.');
+  for(const g of (Array.isArray(d?.groups)?d.groups:[])){
+    if(!g || typeof g!=='object' || (g.exercises!==undefined && !Array.isArray(g.exercises)) || (g.images!==undefined && !Array.isArray(g.images))) throw new Error('Ejercicios o imágenes no válidos.');
+  }
+}
+
 let oldRoutine=
 structuredCloneSafe(routine);
 
@@ -4009,6 +4029,13 @@ structuredCloneSafe(logs);
 
 let oldPersonalExerciseBase=
 structuredCloneSafe(personalExerciseBase);
+
+// Salvaguarda de los datos actuales justo antes de restaurar otra copia.
+// Si no se puede escribir esta salvaguarda, se cancela la importación.
+const beforeRestore={app:'Mi Gimnasio Pro',version:'10.9',backupType:'pre-restore',created:new Date().toISOString(),routine:oldRoutine,logs:oldLogs,personalExerciseBase:oldPersonalExerciseBase};
+const beforeRestoreJSON=JSON.stringify(beforeRestore);
+localStorage.setItem(K+'pre_restore_backup',beforeRestoreJSON);
+if(localStorage.getItem(K+'pre_restore_backup')!==beforeRestoreJSON) throw new Error('No se pudo verificar la salvaguarda previa.');
 
 try{
 
