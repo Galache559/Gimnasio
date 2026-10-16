@@ -824,6 +824,10 @@ color:#000;
   padding:6px 8px!important;
   font-size:.68rem!important;
 }
+.smartRoutine{margin:7px 0;padding:8px 10px;border-radius:8px;background:#17251c;border:1px solid #31583c;color:#d8f5df;font-size:.76rem;line-height:1.4}
+.smartRoutine.warn{background:#302717;border-color:#735c2d;color:#ffe5a3}
+.smartActions{display:flex;gap:5px;flex-wrap:wrap;margin:5px 0 9px}
+.smartActions .btn{font-size:.68rem;padding:7px 8px}
 .routineCount{
   font-size:.68rem;color:var(--sub);margin:5px 0 8px;
 }
@@ -2267,6 +2271,92 @@ return null;
 
 }
 
+function routineInsightHTML(d, ex){
+  // Doble progresión: primero se consolidan repeticiones (8-12), luego se sube la carga.
+  const sessions=uniqueSessions(logs)
+    .filter(l=>Number(l.day)===Number(d) && getPreviousExercise(l,ex))
+    .sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const recent=sessions.slice(-3);
+  if(!recent.length) return '💡 <b>Objetivo inicial:</b> elige una carga controlable y trabaja entre 8 y 12 repeticiones por serie, con buena técnica y 1-3 repeticiones en reserva.';
+
+  const latest=getPreviousExercise(recent[recent.length-1],ex);
+  const latestSets=(latest?.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
+  const maxW=latestSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
+  const totalVol=latestSets.reduce((v,s)=>v+num(s.reps)*num(s.weight),0);
+  const reps=latestSets.map(s=>num(s.reps));
+  const weights=latestSets.map(s=>num(s.weight));
+  const allAtTop=latestSets.length===3 && reps.every(r=>r>=12) && weights.every(w=>w>0);
+  const belowRange=reps.some(r=>r<8);
+  let advice=`📌 <b>Última sesión:</b> ${dateKey(recent[recent.length-1].date)} · ${maxW} kg máximo · volumen ${Math.round(totalVol)} kg.`;
+
+  if(allAtTop){
+    advice+=' 🟢 <b>Objetivo siguiente:</b> has alcanzado 12 repeticiones en las 3 series. Si la técnica fue limpia y te quedó margen, prueba el incremento más pequeño disponible y vuelve a construir desde 8-10 repeticiones.';
+  } else if(belowRange){
+    advice+=' 🎯 <b>Objetivo siguiente:</b> mantén la carga e intenta acercar todas las series a 8 repeticiones sin perder técnica. No subas peso todavía.';
+  } else {
+    const targets=reps.map(r=>Math.min(12,r+1));
+    advice+=` 🎯 <b>Objetivo siguiente:</b> mantén el peso e intenta sumar alguna repetición. Referencia por series: ${targets.join(' / ')} reps.`;
+  }
+
+  if(recent.length>=2){
+    const prev=getPreviousExercise(recent[recent.length-2],ex);
+    const prevSets=(prev?.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
+    const currentReps=reps.reduce((a,b)=>a+b,0);
+    const prevReps=prevSets.reduce((a,s)=>a+num(s.reps),0);
+    const currentVol=latestSets.reduce((v,s)=>v+num(s.reps)*num(s.weight),0);
+    const prevVol=prevSets.reduce((v,s)=>v+num(s.reps)*num(s.weight),0);
+    if(currentReps>prevReps || currentVol>prevVol) advice+=' <b>Comparación:</b> mejora registrada respecto a la sesión anterior.';
+    else if(currentReps===prevReps && currentVol===prevVol) advice+=' <b>Comparación:</b> mismo resultado que la sesión anterior; busca una repetición más antes de subir carga.';
+    else advice+=' <b>Comparación:</b> resultado inferior a la sesión anterior; valora cansancio y técnica, sin forzar la progresión.';
+  } else {
+    advice+=' Registra otra sesión para comparar la evolución.';
+  }
+  advice+=' <small>La recomendación es orientativa: técnica correcta y esfuerzo controlado tienen prioridad.</small>';
+  return advice;
+}
+
+function copyLastSets(prefix){
+  const gi=Number(prefix.match(/^g(\d+)-e/ )?.[1]);
+  const ei=Number(prefix.match(/-e(\d+)$/)?.[1]);
+  const ex=routine?.[day]?.groups?.[gi]?.exercises?.[ei];
+  if(!ex){alert('No se ha encontrado el ejercicio.');return;}
+  const previous=previousDayLog(day);
+  const old=getPreviousExercise(previous,ex);
+  if(!old || !(old.sets||[]).some(s=>num(s.reps)>0)){alert('Este ejercicio aún no tiene datos anteriores guardados.');return;}
+  for(let j=0;j<3;j++){
+    const set=(old.sets||[])[j]||{};
+    const r=document.getElementById(`${prefix}-r${j}`);
+    const w=document.getElementById(`${prefix}-w${j}`);
+    if(r)r.value=set.reps??'';
+    if(w)w.value=set.weight??'';
+  }
+  calc(prefix);pr(prefix,ex);
+}
+
+function increaseExerciseWeights(prefix,delta){
+  let changed=false;
+  for(let j=0;j<3;j++){
+    const w=document.getElementById(`${prefix}-w${j}`);
+    if(w && w.value!==''){
+      w.value=String(Math.max(0,Math.round((num(w.value)+delta)*10)/10));
+      w.dispatchEvent(new Event('input',{bubbles:true}));
+      changed=true;
+    }
+  }
+  if(!changed){
+    const previous=previousDayLog(day);
+    const gi=Number(prefix.match(/^g(\d+)-e/)?.[1]);
+    const ei=Number(prefix.match(/-e(\d+)$/)?.[1]);
+    const ex=routine?.[day]?.groups?.[gi]?.exercises?.[ei];
+    const old=getPreviousExercise(previous,ex);
+    if(old){
+      for(let j=0;j<3;j++){const w=document.getElementById(`${prefix}-w${j}`);const set=(old.sets||[])[j];if(w&&set&&num(set.weight)>0){w.value=String(Math.max(0,Math.round((num(set.weight)+delta)*10)/10));w.dispatchEvent(new Event('input',{bubbles:true}));changed=true;}}
+    }
+  }
+  if(!changed) alert('Introduce primero los kilos o carga los últimos datos para poder ajustarlos.');
+  else {const gi=Number(prefix.match(/^g(\d+)-e/)?.[1]);const ei=Number(prefix.match(/-e(\d+)$/)?.[1]);const ex=routine?.[day]?.groups?.[gi]?.exercises?.[ei];calc(prefix);pr(prefix,ex);}
+}
+
 function selectDay(d){
 
 day=d;
@@ -2385,6 +2475,13 @@ style="display:none">
 🏆 PR
 </span>
 
+</div>
+
+<div class="smartRoutine" id="smart-${gi}-${i}">${routineInsightHTML(day, ex)}</div>
+<div class="smartActions">
+  <button type="button" class="btn out sm" onclick="copyLastSets('${prefix}')">↪ CARGAR ÚLTIMOS DATOS</button>
+  <button type="button" class="btn out sm" onclick="increaseExerciseWeights('${prefix}',0.5)">＋ 0,5 KG</button>
+  <button type="button" class="btn out sm" onclick="increaseExerciseWeights('${prefix}',-0.5)">－ 0,5 KG</button>
 </div>
 
 ${img?`
