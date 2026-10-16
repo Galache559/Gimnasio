@@ -824,10 +824,6 @@ color:#000;
   padding:6px 8px!important;
   font-size:.68rem!important;
 }
-.smartRoutine{margin:7px 0;padding:8px 10px;border-radius:8px;background:#17251c;border:1px solid #31583c;color:#d8f5df;font-size:.76rem;line-height:1.4}
-.smartRoutine.warn{background:#302717;border-color:#735c2d;color:#ffe5a3}
-.smartActions{display:flex;gap:5px;flex-wrap:wrap;margin:5px 0 9px}
-.smartActions .btn{font-size:.68rem;padding:7px 8px}
 .routineCount{
   font-size:.68rem;color:var(--sub);margin:5px 0 8px;
 }
@@ -1836,60 +1832,82 @@ const num=v=>parseFloat(v)||0;
 
 function save(){
 
-const keys=[K+'routine',K+'logs',K+'personal_exercise_base'];
-const values=[JSON.stringify(routine),JSON.stringify(logs),JSON.stringify(personalExerciseBase)];
-const previous=keys.map(key=>({key,value:localStorage.getItem(key)}));
-
 try{
-  // Preparar los datos antes de escribir y verificar cada clave.
-  keys.forEach((key,i)=>localStorage.setItem(key,values[i]));
-  for(let i=0;i<keys.length;i++){
-    if(localStorage.getItem(keys[i])!==values[i]) throw new Error('No se pudo verificar el guardado.');
-  }
-  return true;
+
+localStorage.setItem(
+K+'routine',
+JSON.stringify(routine)
+);
+
+localStorage.setItem(
+K+'logs',
+JSON.stringify(logs)
+);
+
+localStorage.setItem(
+K+'personal_exercise_base',
+JSON.stringify(personalExerciseBase)
+);
+
 }catch(e){
-  // Si una escritura falla, intentar dejar las tres claves como estaban.
-  previous.forEach(item=>{
-    try{
-      if(item.value===null) localStorage.removeItem(item.key);
-      else localStorage.setItem(item.key,item.value);
-    }catch(rollbackError){ console.error('No se pudo revertir una clave de almacenamiento',rollbackError); }
-  });
-  console.error('Error guardando datos',e);
-  return false;
+
+console.error('Error guardando datos',e);
+
 }
+
 }
 
 function createAutoBackup(){
 
 try{
-  if(!save()) throw new Error('No se pudieron guardar los datos principales.');
 
-  const data={
-    app:'Mi Gimnasio Pro',
-    version:'10.8',
-    backupType:'automatic',
-    created:new Date().toISOString(),
-    routine:structuredCloneSafe(routine),
-    logs:structuredCloneSafe(logs),
-    personalExerciseBase:structuredCloneSafe(personalExerciseBase)
-  };
-  const serialized=JSON.stringify(data);
-  const current=localStorage.getItem(AUTO_BACKUP);
+let current=
+localStorage.getItem(AUTO_BACKUP);
 
-  // Guardar la nueva copia primero; solo después conservar la anterior.
-  localStorage.setItem(AUTO_BACKUP,serialized);
-  if(localStorage.getItem(AUTO_BACKUP)!==serialized) throw new Error('No se pudo verificar la copia automática.');
-  if(current){
-    try{ localStorage.setItem(PREV_BACKUP,current); }
-    catch(previousError){ console.warn('La copia nueva está guardada, pero no se pudo conservar la copia anterior.',previousError); }
-  }
-  localStorage.setItem(BACKUP_DATE,data.created);
-  return true;
-}catch(e){
-  console.error('Error creando copia automática',e);
-  return false;
+if(current){
+
+localStorage.setItem(
+PREV_BACKUP,
+current
+);
+
 }
+
+save();
+
+let data={
+app:'Mi Gimnasio Pro',
+version:'10.6',
+backupType:'automatic',
+created:new Date().toISOString(),
+routine:structuredCloneSafe(routine),
+logs:structuredCloneSafe(logs),
+personalExerciseBase:structuredCloneSafe(personalExerciseBase)
+};
+
+localStorage.setItem(
+AUTO_BACKUP,
+JSON.stringify(data)
+);
+
+localStorage.setItem(
+BACKUP_DATE,
+data.created
+);
+
+return true;
+
+}catch(e){
+
+console.error(
+'Error creando copia automática',
+e
+);
+
+return false;
+
+}
+
 }
 
 function restoreAutoBackupIfNeeded(){
@@ -2271,92 +2289,6 @@ return null;
 
 }
 
-function routineInsightHTML(d, ex){
-  // Doble progresión: primero se consolidan repeticiones (8-12), luego se sube la carga.
-  const sessions=uniqueSessions(logs)
-    .filter(l=>Number(l.day)===Number(d) && getPreviousExercise(l,ex))
-    .sort((a,b)=>new Date(a.date)-new Date(b.date));
-  const recent=sessions.slice(-3);
-  if(!recent.length) return '💡 <b>Objetivo inicial:</b> elige una carga controlable y trabaja entre 8 y 12 repeticiones por serie, con buena técnica y 1-3 repeticiones en reserva.';
-
-  const latest=getPreviousExercise(recent[recent.length-1],ex);
-  const latestSets=(latest?.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
-  const maxW=latestSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
-  const totalVol=latestSets.reduce((v,s)=>v+num(s.reps)*num(s.weight),0);
-  const reps=latestSets.map(s=>num(s.reps));
-  const weights=latestSets.map(s=>num(s.weight));
-  const allAtTop=latestSets.length===3 && reps.every(r=>r>=12) && weights.every(w=>w>0);
-  const belowRange=reps.some(r=>r<8);
-  let advice=`📌 <b>Última sesión:</b> ${dateKey(recent[recent.length-1].date)} · ${maxW} kg máximo · volumen ${Math.round(totalVol)} kg.`;
-
-  if(allAtTop){
-    advice+=' 🟢 <b>Objetivo siguiente:</b> has alcanzado 12 repeticiones en las 3 series. Si la técnica fue limpia y te quedó margen, prueba el incremento más pequeño disponible y vuelve a construir desde 8-10 repeticiones.';
-  } else if(belowRange){
-    advice+=' 🎯 <b>Objetivo siguiente:</b> mantén la carga e intenta acercar todas las series a 8 repeticiones sin perder técnica. No subas peso todavía.';
-  } else {
-    const targets=reps.map(r=>Math.min(12,r+1));
-    advice+=` 🎯 <b>Objetivo siguiente:</b> mantén el peso e intenta sumar alguna repetición. Referencia por series: ${targets.join(' / ')} reps.`;
-  }
-
-  if(recent.length>=2){
-    const prev=getPreviousExercise(recent[recent.length-2],ex);
-    const prevSets=(prev?.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
-    const currentReps=reps.reduce((a,b)=>a+b,0);
-    const prevReps=prevSets.reduce((a,s)=>a+num(s.reps),0);
-    const currentVol=latestSets.reduce((v,s)=>v+num(s.reps)*num(s.weight),0);
-    const prevVol=prevSets.reduce((v,s)=>v+num(s.reps)*num(s.weight),0);
-    if(currentReps>prevReps || currentVol>prevVol) advice+=' <b>Comparación:</b> mejora registrada respecto a la sesión anterior.';
-    else if(currentReps===prevReps && currentVol===prevVol) advice+=' <b>Comparación:</b> mismo resultado que la sesión anterior; busca una repetición más antes de subir carga.';
-    else advice+=' <b>Comparación:</b> resultado inferior a la sesión anterior; valora cansancio y técnica, sin forzar la progresión.';
-  } else {
-    advice+=' Registra otra sesión para comparar la evolución.';
-  }
-  advice+=' <small>La recomendación es orientativa: técnica correcta y esfuerzo controlado tienen prioridad.</small>';
-  return advice;
-}
-
-function copyLastSets(prefix){
-  const gi=Number(prefix.match(/^g(\d+)-e/ )?.[1]);
-  const ei=Number(prefix.match(/-e(\d+)$/)?.[1]);
-  const ex=routine?.[day]?.groups?.[gi]?.exercises?.[ei];
-  if(!ex){alert('No se ha encontrado el ejercicio.');return;}
-  const previous=previousDayLog(day);
-  const old=getPreviousExercise(previous,ex);
-  if(!old || !(old.sets||[]).some(s=>num(s.reps)>0)){alert('Este ejercicio aún no tiene datos anteriores guardados.');return;}
-  for(let j=0;j<3;j++){
-    const set=(old.sets||[])[j]||{};
-    const r=document.getElementById(`${prefix}-r${j}`);
-    const w=document.getElementById(`${prefix}-w${j}`);
-    if(r)r.value=set.reps??'';
-    if(w)w.value=set.weight??'';
-  }
-  calc(prefix);pr(prefix,ex);
-}
-
-function increaseExerciseWeights(prefix,delta){
-  let changed=false;
-  for(let j=0;j<3;j++){
-    const w=document.getElementById(`${prefix}-w${j}`);
-    if(w && w.value!==''){
-      w.value=String(Math.max(0,Math.round((num(w.value)+delta)*10)/10));
-      w.dispatchEvent(new Event('input',{bubbles:true}));
-      changed=true;
-    }
-  }
-  if(!changed){
-    const previous=previousDayLog(day);
-    const gi=Number(prefix.match(/^g(\d+)-e/)?.[1]);
-    const ei=Number(prefix.match(/-e(\d+)$/)?.[1]);
-    const ex=routine?.[day]?.groups?.[gi]?.exercises?.[ei];
-    const old=getPreviousExercise(previous,ex);
-    if(old){
-      for(let j=0;j<3;j++){const w=document.getElementById(`${prefix}-w${j}`);const set=(old.sets||[])[j];if(w&&set&&num(set.weight)>0){w.value=String(Math.max(0,Math.round((num(set.weight)+delta)*10)/10));w.dispatchEvent(new Event('input',{bubbles:true}));changed=true;}}
-    }
-  }
-  if(!changed) alert('Introduce primero los kilos o carga los últimos datos para poder ajustarlos.');
-  else {const gi=Number(prefix.match(/^g(\d+)-e/)?.[1]);const ei=Number(prefix.match(/-e(\d+)$/)?.[1]);const ex=routine?.[day]?.groups?.[gi]?.exercises?.[ei];calc(prefix);pr(prefix,ex);}
-}
-
 function selectDay(d){
 
 day=d;
@@ -2475,13 +2407,6 @@ style="display:none">
 🏆 PR
 </span>
 
-</div>
-
-<div class="smartRoutine" id="smart-${gi}-${i}">${routineInsightHTML(day, ex)}</div>
-<div class="smartActions">
-  <button type="button" class="btn out sm" onclick="copyLastSets('${prefix}')">↪ CARGAR ÚLTIMOS DATOS</button>
-  <button type="button" class="btn out sm" onclick="increaseExerciseWeights('${prefix}',0.5)">＋ 0,5 KG</button>
-  <button type="button" class="btn out sm" onclick="increaseExerciseWeights('${prefix}',-0.5)">－ 0,5 KG</button>
 </div>
 
 ${img?`
@@ -3154,11 +3079,7 @@ totalVol+=data.volume;
 
 cleanSession(log);
 
-if(!save()){
-  document.getElementById('summary').innerHTML=`<div class="summary"><h3>⚠️ NO SE PUDO CONFIRMAR EL GUARDADO</h3><p>Los datos siguen en pantalla. No cierres ni recargues la aplicación. Descarga una copia de seguridad y vuelve a intentarlo cuando haya espacio disponible.</p><button class="btn" onclick="exportData()">Descargar copia de seguridad</button></div>`;
-  alert('⚠️ El navegador no ha confirmado el guardado. Se mantienen los datos en pantalla; no recargues la aplicación.');
-  return;
-}
+save();
 
 clearWorkoutInputs();
 
@@ -3842,13 +3763,10 @@ box.remove();
 function saveConfig(){
   enforceTenExercisesPerGroup();
   normalizeRoutine();
-  const ok=save();
+  save();
   loadConfig();
   const s=document.getElementById('libraryStatusV9');
-  if(s)s.innerText=ok
-    ?'✓ Rutina guardada correctamente.'
-    :'⚠️ No se pudo guardar. Comprueba el espacio disponible del navegador y descarga una copia de seguridad.';
-  if(!ok) alert('⚠️ No se han podido guardar los cambios. No cierres ni recargues la aplicación. Descarga una copia de seguridad y comprueba el almacenamiento del navegador.');
+  if(s)s.innerText='✓ Rutina guardada correctamente.';
 }
 
 function exportData(){
@@ -3857,7 +3775,7 @@ let data={
 
 app:'Mi Gimnasio Pro',
 
-version:'10.9',
+version:'10.6',
 
 exported:new Date().toISOString(),
 
@@ -3891,7 +3809,7 @@ document.createElement('a');
 a.href=url;
 
 a.download=
-'Mi_Gimnasio_Pro_v10_9_backup_'+
+'Mi_Gimnasio_Pro_v10_6_backup_'+
 new Date()
 .toISOString()
 .slice(0,10)+
@@ -4005,22 +3923,6 @@ if(
 )
 throw new Error();
 
-if(data.personalExerciseBase!==undefined && !Array.isArray(data.personalExerciseBase))
-throw new Error();
-
-// Comprobación mínima de estructura antes de tocar los datos actuales.
-const validDays=Object.keys(data.routine).some(k=>/^([1-5])$/.test(k));
-if(!validDays) throw new Error('La rutina no contiene días reconocibles.');
-for(const key of Object.keys(data.routine)){
-  if(!/^([1-5])$/.test(key)) continue;
-  const d=data.routine[key];
-  if(d!==null && typeof d!=='object') throw new Error('Día de rutina no válido.');
-  if(d && d.groups!==undefined && !Array.isArray(d.groups)) throw new Error('Grupos no válidos.');
-  for(const g of (Array.isArray(d?.groups)?d.groups:[])){
-    if(!g || typeof g!=='object' || (g.exercises!==undefined && !Array.isArray(g.exercises)) || (g.images!==undefined && !Array.isArray(g.images))) throw new Error('Ejercicios o imágenes no válidos.');
-  }
-}
-
 let oldRoutine=
 structuredCloneSafe(routine);
 
@@ -4029,13 +3931,6 @@ structuredCloneSafe(logs);
 
 let oldPersonalExerciseBase=
 structuredCloneSafe(personalExerciseBase);
-
-// Salvaguarda de los datos actuales justo antes de restaurar otra copia.
-// Si no se puede escribir esta salvaguarda, se cancela la importación.
-const beforeRestore={app:'Mi Gimnasio Pro',version:'10.9',backupType:'pre-restore',created:new Date().toISOString(),routine:oldRoutine,logs:oldLogs,personalExerciseBase:oldPersonalExerciseBase};
-const beforeRestoreJSON=JSON.stringify(beforeRestore);
-localStorage.setItem(K+'pre_restore_backup',beforeRestoreJSON);
-if(localStorage.getItem(K+'pre_restore_backup')!==beforeRestoreJSON) throw new Error('No se pudo verificar la salvaguarda previa.');
 
 try{
 
@@ -4056,7 +3951,7 @@ if(Array.isArray(data.personalExerciseBase)){
 
 normalizeRoutine();
 
-if(!save()) throw new Error('No se pudieron guardar los datos restaurados.');
+save();
 
 }catch(err){
 
@@ -4072,7 +3967,7 @@ throw err;
 
 alert(
 '✓ Datos recuperados correctamente.\n\n'+
-'Rutina, grupos, ejercicios, imágenes y entrenamientos han sido restaurados y guardados.'
+'Rutina, grupos, ejercicios, imágenes y entrenamientos han sido restaurados.'
 );
 
 location.reload();
