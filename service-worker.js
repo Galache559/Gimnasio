@@ -1,9 +1,9 @@
-const CACHE_NAME = 'mi-gimnasio-pro-v10-10';
+const CACHE_NAME = 'mi-gimnasio-pro-v10-11-base-personalizable';
 
 const APP_FILES = [
   './',
   './index.html',
-  './manifest.webmanifest',
+  './manifest.webmanifest?v=108-11',
   './icon-192.png',
   './icon-512.png'
 ];
