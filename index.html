@@ -4,9 +4,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MI GIMNASIO PRO v10.11.1 · MONITOR</title>
+<title>MI GIMNASIO PRO v10.11.3 · MONITOR</title>
 <meta name="theme-color" content="#121212">
-<link rel="manifest" href="./manifest.webmanifest?v=10-11-1">
+<link rel="manifest" href="./manifest.webmanifest?v=10-11-3">
 
 <style>
 :root{
@@ -1056,7 +1056,7 @@ color:#000;
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v10.11.1</h1>
+<h1>MI GIMNASIO PRO v10.11.3</h1>
 </header>
 
 <div class="container">
@@ -2284,6 +2284,43 @@ return null;
 
 }
 
+// Busca los datos reales de la sesión anterior de este día y ejercicio.
+// No depende de que el último registro global del día tenga exactamente la misma estructura.
+function getPreviousExerciseForDay(d, name, groupIndex){
+  const selected=document.getElementById('date')?.value || '';
+  const sessions=uniqueSessions(logs)
+    .filter(l=>sessionHasResults(l) && (!selected || dateKey(l.date)!==dateKey(selected)))
+    .sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const hasResults=e=>e && (e.sets||[]).some(st=>num(st.reps)>0);
+
+  // 1) Preferir la última sesión de la misma rutina/día y el grupo exacto.
+  for(const log of sessions.filter(l=>Number(l.day)===Number(d))){
+    const groups=log.groups||[];
+    const indexed=groups.find(g=>g.groupIndex!==undefined && Number(g.groupIndex)===Number(groupIndex));
+    const foundIndexed=(indexed?.exercises||[]).find(e=>e.name===name && hasResults(e));
+    if(foundIndexed)return foundIndexed;
+    // Compatibilidad con copias antiguas sin groupIndex: probar por posición y luego por nombre.
+    const positional=groups[groupIndex];
+    const foundPositional=(positional?.exercises||[]).find(e=>e.name===name && hasResults(e));
+    if(foundPositional)return foundPositional;
+    for(const g of groups){
+      const found=(g.exercises||[]).find(e=>e.name===name && hasResults(e));
+      if(found)return found;
+    }
+  }
+
+  // 2) Si este ejercicio no se registró en ese día de rutina, buscar su sesión anterior
+  // en cualquier otro día. Así las casillas ÚLTIMO no quedan vacías si el Monitor sí
+  // encuentra historial del mismo ejercicio en una sesión anterior.
+  for(const log of sessions){
+    for(const g of (log.groups||[])){
+      const found=(g.exercises||[]).find(e=>e.name===name && hasResults(e));
+      if(found)return found;
+    }
+  }
+  return null;
+}
+
 function routineInsightHTML(d, ex){
   // Doble progresión: primero se consolidan repeticiones (8-12), luego se sube la carga.
   const sessions=uniqueSessions(logs)
@@ -2445,13 +2482,9 @@ html+=
 
 exerciseCounter++;
 
-let old=getPreviousExercise(
-previous,
-ex
-);
+let old=getPreviousExerciseForDay(day, ex, gi);
 
-let previousSets=
-old
+let previousSets=old
 ?(old.sets||[]).slice(0,3)
 :[];
 
@@ -4025,7 +4058,7 @@ document.createElement('a');
 a.href=url;
 
 a.download=
-'Mi_Gimnasio_Pro_v10_9_2_backup_'+
+'Mi_Gimnasio_Pro_v10_11_3_backup_'+
 new Date()
 .toISOString()
 .slice(0,10)+
