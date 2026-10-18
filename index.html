@@ -4,9 +4,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MI GIMNASIO PRO v10.9 · MONITOR</title>
+<title>MI GIMNASIO PRO v10.11.1 · MONITOR</title>
 <meta name="theme-color" content="#121212">
-<link rel="manifest" href="./manifest.webmanifest?v=108-3">
+<link rel="manifest" href="./manifest.webmanifest?v=10-11-1">
 
 <style>
 :root{
@@ -72,11 +72,13 @@ padding:7px 0;
 }
 
 nav button{
-width:25%;
+width:20%;
+min-width:0;
+padding:0 1px;
 background:none;
 border:0;
 color:var(--sub);
-font-size:.7rem;
+font-size:clamp(.55rem,1.8vw,.66rem);
 display:flex;
 flex-direction:column;
 gap:2px;
@@ -1054,7 +1056,7 @@ color:#000;
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v10.8</h1>
+<h1>MI GIMNASIO PRO v10.11.1</h1>
 </header>
 
 <div class="container">
@@ -1629,37 +1631,32 @@ function structuredCloneSafe(obj){
 return JSON.parse(JSON.stringify(obj));
 }
 
-function safeParse(value,fallback){
-
-try{
-
-if(!value)return fallback;
-
-let x=JSON.parse(value);
-
-return x??fallback;
-
-}catch(e){
-
-return fallback;
-
-}
-
+let STORAGE_JSON_ERRORS=[];
+function safeParse(value,fallback,key='desconocida'){
+  try{
+    if(value===null || value===undefined || value==='') return fallback;
+    const x=JSON.parse(value);
+    return x===null || x===undefined ? fallback : x;
+  }catch(e){
+    STORAGE_JSON_ERRORS.push({key,raw:value,error:String(e)});
+    console.error('Datos locales con JSON dañado:',key,e);
+    return fallback;
+  }
 }
 
 let routine=safeParse(
 localStorage.getItem(K+'routine'),
-structuredCloneSafe(DEFAULT_ROUTINE)
+structuredCloneSafe(DEFAULT_ROUTINE),K+'routine'
 );
 
 let logs=safeParse(
 localStorage.getItem(K+'logs'),
-[]
+[],K+'logs'
 );
 
 let personalExerciseBase=safeParse(
 localStorage.getItem(K+'personal_exercise_base'),
-[]
+[],K+'personal_exercise_base'
 );
 
 // Ejercicios originales retirados por el usuario de su base personalizada.
@@ -1906,7 +1903,7 @@ try{
 
   const data={
     app:'Mi Gimnasio Pro',
-    version:'10.8',
+    version:'10.11.1',
     backupType:'automatic',
     created:new Date().toISOString(),
     routine:structuredCloneSafe(routine),
@@ -1932,143 +1929,115 @@ try{
 }
 }
 
+function isValidRoutineData(value){
+  if(!value || typeof value!=='object' || Array.isArray(value)) return false;
+  const dayKeys=Object.keys(value).filter(k=>/^[1-5]$/.test(k));
+  if(!dayKeys.length) return false;
+  for(const key of dayKeys){
+    const day=value[key];
+    if(!day || typeof day!=='object' || !Array.isArray(day.groups)) return false;
+    for(const group of day.groups){
+      if(!group || typeof group!=='object' || typeof group.name!=='string' ||
+         (group.exercises!==undefined && !Array.isArray(group.exercises)) ||
+         (group.images!==undefined && !Array.isArray(group.images))) return false;
+    }
+  }
+  return true;
+}
+function isValidLogsData(value){
+  return Array.isArray(value) && value.every(l=>l && typeof l==='object' &&
+    Number.isFinite(Number(l.day)) && typeof l.date==='string' && Array.isArray(l.groups) &&
+    l.groups.every(g=>g && typeof g==='object' && Array.isArray(g.exercises)));
+}
+function parseBackupCandidate(raw){
+  try{
+    if(!raw) return null;
+    const data=JSON.parse(raw);
+    if(!data || typeof data!=='object' || !isValidRoutineData(data.routine) || !isValidLogsData(data.logs)) return null;
+    if(data.personalExerciseBase!==undefined && !Array.isArray(data.personalExerciseBase)) return null;
+    if(data.removedExerciseBase!==undefined && !Array.isArray(data.removedExerciseBase)) return null;
+    return data;
+  }catch(_){ return null; }
+}
+function preserveCorruptStorage(key,raw){
+  if(raw===null || raw===undefined) return;
+  try{
+    const stamp=new Date().toISOString().replace(/[:.]/g,'-');
+    const backupKey=K+'corrupt_'+stamp+'_'+String(key).replace(/[^a-zA-Z0-9_-]/g,'_');
+    localStorage.setItem(backupKey,String(raw));
+    if(localStorage.getItem(backupKey)!==String(raw)) console.error('No se pudo verificar la preservación de',key);
+  }catch(e){ console.error('No se pudo preservar el dato dañado',key,e); }
+}
 function restoreAutoBackupIfNeeded(){
+  try{
+    const keys={
+      routine:K+'routine', logs:K+'logs',
+      personal:K+'personal_exercise_base', removed:K+'removed_exercise_base'
+    };
+    const raw={};
+    Object.entries(keys).forEach(([name,key])=>raw[name]={key,value:localStorage.getItem(key)});
+    const valid={routine:false,logs:false,personal:raw.personal.value!==null,removed:raw.removed.value!==null};
+    try{valid.routine=isValidRoutineData(JSON.parse(raw.routine.value));}catch(_){valid.routine=false;}
+    try{valid.logs=isValidLogsData(JSON.parse(raw.logs.value));}catch(_){valid.logs=false;}
+    if(raw.personal.value!==null){try{valid.personal=Array.isArray(JSON.parse(raw.personal.value));}catch(_){valid.personal=false;}}
+    if(raw.removed.value!==null){try{valid.removed=Array.isArray(JSON.parse(raw.removed.value));}catch(_){valid.removed=false;}}
+    const invalid=Object.keys(valid).filter(name=>!valid[name]);
+    if(!invalid.length){updateBackupStatus();return false;}
 
-try{
+    // Preserve only invalid present values before attempting recovery.
+    invalid.forEach(name=>{const item=raw[name];if(item && item.value!==null)preserveCorruptStorage(item.key,item.value);});
+    const candidates=[
+      {name:'copia automática',raw:localStorage.getItem(AUTO_BACKUP)},
+      {name:'copia automática anterior',raw:localStorage.getItem(PREV_BACKUP)},
+      {name:'copia previa a restauración',raw:localStorage.getItem(K+'pre_restore_backup')}
+    ];
+    let data=null,source='';
+    for(const candidate of candidates){
+      const parsed=parseBackupCandidate(candidate.raw);
+      if(parsed){data=parsed;source=candidate.name;break;}
+    }
+    if(!data){
+      console.error('Hay datos locales ausentes o dañados, pero no se encontró una copia válida. Los datos originales dañados se han conservado cuando ha sido posible.');
+      updateBackupStatus();
+      return false;
+    }
 
-let raw=
-localStorage.getItem(AUTO_BACKUP);
-
-if(!raw){
-
-updateBackupStatus();
-
-return false;
-
-}
-
-let data=
-JSON.parse(raw);
-
-if(
-!data||
-typeof data!=='object'||
-!data.routine||
-!Array.isArray(data.logs)
-){
-
-updateBackupStatus();
-
-return false;
-
-}
-
-let mainRoutine=
-localStorage.getItem(K+'routine');
-
-let mainLogs=
-localStorage.getItem(K+'logs');
-
-let needRestore=false;
-
-if(!mainRoutine)
-needRestore=true;
-
-if(!mainLogs)
-needRestore=true;
-
-if(needRestore){
-
-routine=
-structuredCloneSafe(data.routine);
-
-logs=
-structuredCloneSafe(data.logs);
-
-if(Array.isArray(data.personalExerciseBase)){
-  personalExerciseBase=structuredCloneSafe(data.personalExerciseBase);
-}
-if(Array.isArray(data.removedExerciseBase)){
-  removedExerciseBase=structuredCloneSafe(data.removedExerciseBase);
-}
-
-normalizeRoutine();
-
-save();
-
-console.log(
-'✓ Copia automática restaurada.'
-);
-
-}
-
-updateBackupStatus();
-
-return needRestore;
-
-}catch(e){
-
-console.error(
-'Error comprobando copia automática',
-e
-);
-
-return false;
-
-}
-
+    // Restore only missing/damaged components. Valid current data is left untouched.
+    if(!valid.routine) routine=structuredCloneSafe(data.routine);
+    if(!valid.logs) logs=structuredCloneSafe(data.logs);
+    if(!valid.personal) personalExerciseBase=Array.isArray(data.personalExerciseBase)?structuredCloneSafe(data.personalExerciseBase):[];
+    if(!valid.removed) removedExerciseBase=Array.isArray(data.removedExerciseBase)?structuredCloneSafe(data.removedExerciseBase):[];
+    normalizeRoutine();
+    if(!save()) throw new Error('La copia es válida, pero el navegador no confirmó su restauración.');
+    console.warn('Se han recuperado componentes de datos desde '+source+'.');
+    alert('⚠️ Se detectó un problema en parte de los datos locales. Se han recuperado los componentes dañados desde '+source+'. Los componentes válidos actuales se han conservado. Los datos dañados se han guardado aparte cuando el navegador lo permitió.');
+    updateBackupStatus();
+    return true;
+  }catch(e){
+    console.error('Error comprobando o restaurando la copia automática',e);
+    updateBackupStatus();
+    return false;
+  }
 }
 
 function updateBackupStatus(){
-
-let box=
-document.getElementById('backupStatus');
-
-if(!box)return;
-
-let d=
-localStorage.getItem(BACKUP_DATE);
-
-if(!d){
-
-box.innerHTML=`
-<span class="backupWarn">
-⚠️ Todavía no existe una copia automática.
-</span>
-`;
-
-return;
-
-}
-
-let fecha;
-
-try{
-
-fecha=
-new Date(d)
-.toLocaleString(
-'es-ES',
-{
-dateStyle:'short',
-timeStyle:'short'
-}
-);
-
-}catch(e){
-
-fecha=d;
-
-}
-
-box.innerHTML=`
-<span class="backupOk">
-✓ Copia automática disponible.
-<br>
-Última copia: ${esc(fecha)}
-</span>
-`;
-
+  const box=document.getElementById('backupStatus');
+  if(!box)return;
+  const autoData=parseBackupCandidate(localStorage.getItem(AUTO_BACKUP));
+  const prevData=parseBackupCandidate(localStorage.getItem(PREV_BACKUP));
+  const validData=autoData||prevData;
+  if(!validData){
+    box.innerHTML='<span class="backupWarn">⚠️ No hay una copia automática válida verificada. Exporta una copia JSON.</span>';
+    return;
+  }
+  const d=(autoData&&autoData.created)||(prevData&&prevData.created)||localStorage.getItem(BACKUP_DATE)||'';
+  let fecha='fecha no disponible';
+  if(d){
+    const parsed=new Date(d);
+    if(!isNaN(parsed.getTime())) fecha=parsed.toLocaleString('es-ES',{dateStyle:'short',timeStyle:'short'});
+  }
+  const source=autoData?'copia automática':'copia automática anterior';
+  box.innerHTML=`<span class="backupOk">✓ Copia de seguridad válida disponible (${source}).<br>Fecha: ${esc(fecha)}</span>`;
 }
 
 function exitApp(){
@@ -2288,20 +2257,18 @@ return a.sort(
 
 }
 
+function sessionHasResults(log){
+  return !!log && (log.groups||[]).some(g=>(g.exercises||[]).some(e=>(e.sets||[]).some(s=>num(s.reps)>0)));
+}
 function previousDayLog(d){
-
-let a=logs.filter(
-l=>Number(l.day)===Number(d)
-);
-
-if(!a.length)return null;
-
-a.sort(
-(x,y)=>new Date(x.date)-new Date(y.date)
-);
-
-return a[a.length-1];
-
+  const a=logs.filter(l=>Number(l.day)===Number(d) && sessionHasResults(l) && !isSameWorkoutDate(l));
+  if(!a.length)return null;
+  a.sort((x,y)=>new Date(x.date)-new Date(y.date));
+  return a[a.length-1];
+}
+function isSameWorkoutDate(log){
+  const selected=document.getElementById('date')?.value;
+  return !!selected && dateKey(log.date)===dateKey(selected);
 }
 
 function getPreviousExercise(log,name){
@@ -2409,7 +2376,7 @@ day=d;
 
 routine=safeParse(
 localStorage.getItem(K+'routine'),
-structuredCloneSafe(DEFAULT_ROUTINE)
+structuredCloneSafe(DEFAULT_ROUTINE),K+'routine'
 );
 
 normalizeRoutine();
@@ -3086,11 +3053,21 @@ let currentDate=
 document.getElementById('date').value;
 
 if(!currentDate){
+  alert('Selecciona una fecha.');
+  return;
+}
 
-alert('Selecciona una fecha.');
-
-return;
-
+// No crear ni sobrescribir sesiones vacías: no deben contaminar el historial del Monitor.
+let plannedSets=0;
+(routine[day]?.groups||[]).forEach((group,gi)=>{
+  (group.exercises||[]).forEach((ex,i)=>{
+    const data=getCurrentExerciseData(`g${gi}-e${i}`,ex);
+    plannedSets+=(data.realSets||[]).length;
+  });
+});
+if(plannedSets===0){
+  alert('No hay series con repeticiones registradas. Introduce al menos una serie antes de guardar el entrenamiento.');
+  return;
 }
 
 let log=findSession(
@@ -3322,6 +3299,11 @@ function loadConfig(){
 
   const dayEl=document.getElementById('cfgday');
   const d=Number(dayEl?.value)||1;
+  if(window._gymSelectedGroupDay!==undefined && window._gymSelectedGroupDay!==d){
+    window._gymSelectedGroupIndex=undefined;
+    if(window._gymReplaceTarget && window._gymReplaceTarget.day!==d) window._gymReplaceTarget=null;
+  }
+  window._gymSelectedGroupDay=d;
   const x=routine[d]||{groups:[]};
 
   let h='';
@@ -3379,6 +3361,7 @@ function loadConfig(){
 
 function openAddExerciseForGroup(gi){
   const d=Number(document.getElementById('cfgday')?.value)||1;
+  window._gymSelectedGroupIndex=Number(gi);
   const g=routine[d]?.groups?.[Number(gi)];
   if(!g)return;
   if(Array.isArray(g.exercises) && g.exercises.length>=15){
@@ -3436,12 +3419,18 @@ function changeMuscleGroup(gi,newGroup){
     }
   }
 
+  const oldState=structuredCloneSafe(g);
   g.name=newGroup;
   g.exercises=[];
   g.images=[];
 
   normalizeRoutine();
-  save();
+  if(!save()){
+    routine[d].groups[Number(gi)]=oldState;
+    loadConfig();
+    alert('No se pudo confirmar el cambio. Se ha restaurado el grupo anterior en pantalla; descarga una copia de seguridad antes de continuar.');
+    return;
+  }
   loadConfig();
 
   const status=document.getElementById('libraryStatusV9');
@@ -3463,13 +3452,17 @@ window.gymEditRoutineExercise=function(gi,idx){
   if(!clean)return alert('El nombre no puede quedar vacío.');
   if(g.exercises.some((e,i)=>i!==Number(idx)&&String(e).trim().toLowerCase()===clean.toLowerCase())) return alert('Ese ejercicio ya está en este grupo.');
   g.exercises[Number(idx)]=clean;
-  normalizeRoutine(); save(); loadConfig();
+  normalizeRoutine();
+  if(!save()){ alert('No se pudo confirmar el guardado del nombre. No recargues la aplicación; exporta una copia de seguridad.'); return; }
+  loadConfig();
 };
 window.gymReplaceRoutineExercise=function(gi,idx){
   const d=Number(document.getElementById('cfgday')?.value)||1;
   const g=routine?.[d]?.groups?.[Number(gi)];
   if(!g || !Array.isArray(g.exercises) || Number(idx)<0 || Number(idx)>=g.exercises.length) return alert('No se ha encontrado el ejercicio.');
   window._gymReplaceTarget={day:d,gi:Number(gi),idx:Number(idx),group:String(g.name||'').trim().toUpperCase()};
+  window._gymSelectedGroupIndex=Number(gi);
+  window._gymSelectedGroupDay=d;
   const sel=document.getElementById('libraryMuscleV9');
   if(sel){sel.value=window._gymReplaceTarget.group; sel.dispatchEvent(new Event('change'));}
   const status=document.getElementById('libraryStatusV9');
@@ -3495,25 +3488,20 @@ window.gymDeleteRoutineExercise=function(gi,idx){
   const name=String(g.exercises[idx]);
   const groupName=String(g.name||'grupo');
 
-  // Do not depend on confirm() to perform the deletion.
-  // The user has explicitly pressed the trash button.
+  // The user explicitly pressed the trash button.
+  const oldState=structuredCloneSafe(g);
   g.exercises.splice(idx,1);
-
-  if(Array.isArray(g.images)){
-    g.images.splice(idx,1);
-  }
-
+  if(Array.isArray(g.images)) g.images.splice(idx,1);
   normalizeRoutine();
-  save();
-
-  // Re-render from the actual routine object.
-  loadConfig();
-
-  const status=document.getElementById('libraryStatusV9');
-  if(status){
-    status.innerText=`✓ ${name} eliminado de ${groupName} · Rutina ${d}.`;
+  if(!save()){
+    routine[d].groups[gi]=oldState;
+    loadConfig();
+    alert('No se pudo confirmar el borrado. El ejercicio se ha restaurado en pantalla; descarga una copia de seguridad antes de continuar.');
+    return false;
   }
-
+  loadConfig();
+  const status=document.getElementById('libraryStatusV9');
+  if(status) status.innerText=`✓ ${name} eliminado de ${groupName} · Rutina ${d}.`;
   return false;
 };
 
@@ -3574,11 +3562,15 @@ function syncV9Target(){
   const day=Number(document.getElementById('cfgday')?.value)||1;
   const muscle=String(document.getElementById('libraryMuscleV9')?.value||'').trim().toUpperCase();
   const groups=routine[day]?.groups||[];
-  const gi=groups.findIndex(g=>String(g.name||'').trim().toUpperCase()===muscle);
-
+  let gi=Number.isInteger(window._gymSelectedGroupIndex) ? window._gymSelectedGroupIndex : -1;
+  if(!(gi>=0 && groups[gi] && String(groups[gi].name||'').trim().toUpperCase()===muscle)){
+    const matches=[];
+    groups.forEach((g,index)=>{if(String(g.name||'').trim().toUpperCase()===muscle)matches.push(index);});
+    gi=matches.length===1 ? matches[0] : -1;
+  }
   const label=document.getElementById('v9TargetLabel');
   if(gi>=0){
-    if(label)label.innerText=`Destino: Rutina ${day} · ${groups[gi].name} · ${(groups[gi].exercises||[]).length}/5`;
+    if(label)label.innerText=`Destino: Rutina ${day} · Grupo ${gi+1} ${groups[gi].name} · ${(groups[gi].exercises||[]).length}/15`;
     return gi;
   }
   if(label)label.innerText=`⚠️ ${muscle} no está en la Rutina ${day}`;
@@ -3674,16 +3666,23 @@ function addLibraryExerciseV9(index){
 
   const day=Number(document.getElementById('cfgday')?.value)||1;
   const groups=routine[day]?.groups||[];
-  const gi=groups.findIndex(g=>String(g.name||'').trim().toUpperCase()===group);
+  const target=window._gymReplaceTarget;
+  const selectedGi=Number.isInteger(window._gymSelectedGroupIndex) ? window._gymSelectedGroupIndex : NaN;
+  let gi=(target && target.day===day && Number.isInteger(target.gi)) ? target.gi : selectedGi;
+  if(!(gi>=0 && groups[gi] && String(groups[gi].name||'').trim().toUpperCase()===group)){
+    const matches=[];
+    groups.forEach((g,index)=>{if(String(g.name||'').trim().toUpperCase()===group)matches.push(index);});
+    if(matches.length===1) gi=matches[0];
+    else gi=-1;
+  }
 
   if(gi<0){
-    alert(`El grupo ${group} no existe en la Rutina ${day}.`);
+    alert(`Hay más de un grupo ${group} en la Rutina ${day}, o no se ha seleccionado el grupo exacto. Pulsa el botón ➕ del grupo concreto al que quieras añadir o sustituir el ejercicio.`);
     return;
   }
 
   const g=groups[gi];
-  const target=window._gymReplaceTarget;
-  if(target && target.day===day && target.group===group){
+  if(target && target.day===day && Number(target.gi)===gi && target.group===group){
     const oldName=String(g.exercises?.[target.idx]||'');
     if(String(item[0]).trim().toLowerCase()===oldName.trim().toLowerCase()){
       alert('Ese es el mismo ejercicio. Elige otro.'); return;
@@ -3692,9 +3691,11 @@ function addLibraryExerciseV9(index){
     g.exercises[target.idx]=item[0];
     g.images[target.idx]=item[1]||'';
     window._gymReplaceTarget=null;
-    normalizeRoutine(); save(); loadConfig();
+    normalizeRoutine();
+    if(!save()){ alert('No se pudo confirmar el guardado de la sustitución. No recargues la aplicación; exporta una copia de seguridad.'); return; }
+    loadConfig();
     const status=document.getElementById('libraryStatusV9');
-    if(status)status.innerText=`✓ Ejercicio sustituido: ${oldName} → ${item[0]} · Rutina ${day}.`;
+    if(status)status.innerText=`✓ Ejercicio sustituido: ${oldName} → ${item[0]} · Rutina ${day} · Grupo ${gi+1}.`;
     return;
   }
   if(!Array.isArray(g.exercises))g.exercises=[];
@@ -3717,11 +3718,11 @@ function addLibraryExerciseV9(index){
 
   normalizeRoutine();
   enforceTenExercisesPerGroup();
-  save();
+  if(!save()){ alert('No se pudo confirmar el guardado. No recargues la aplicación; exporta una copia de seguridad.'); return; }
   loadConfig();
 
   const status=document.getElementById('libraryStatusV9');
-  if(status)status.innerText=`✓ ${item[0]} añadido a ${g.name} · Rutina ${day} · GIF incluido.`;
+  if(status)status.innerText=`✓ ${item[0]} añadido a ${g.name} · Rutina ${day} · Grupo ${gi+1} · GIF incluido.`;
 }
 
 const REMOTE_API_BASE='https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0';
@@ -3989,7 +3990,7 @@ let data={
 
 app:'Mi Gimnasio Pro',
 
-version:'10.8',
+version:'10.11.1',
 
 exported:new Date().toISOString(),
 
@@ -4024,7 +4025,7 @@ document.createElement('a');
 a.href=url;
 
 a.download=
-'Mi_Gimnasio_Pro_v10_8_backup_'+
+'Mi_Gimnasio_Pro_v10_9_2_backup_'+
 new Date()
 .toISOString()
 .slice(0,10)+
@@ -4120,7 +4121,7 @@ structuredCloneSafe(personalExerciseBase);
 // Salvaguarda de los datos actuales justo antes de restaurar otra copia.
 // Si no se puede escribir esta salvaguarda, se cancela la importación.
 const oldRemovedExerciseBase=structuredCloneSafe(removedExerciseBase);
-const beforeRestore={app:'Mi Gimnasio Pro',version:'10.8',backupType:'pre-restore',created:new Date().toISOString(),routine:oldRoutine,logs:oldLogs,personalExerciseBase:oldPersonalExerciseBase,removedExerciseBase:oldRemovedExerciseBase};
+const beforeRestore={app:'Mi Gimnasio Pro',version:'10.11.1',backupType:'pre-restore',created:new Date().toISOString(),routine:oldRoutine,logs:oldLogs,personalExerciseBase:oldPersonalExerciseBase,removedExerciseBase:oldRemovedExerciseBase};
 const beforeRestoreJSON=JSON.stringify(beforeRestore);
 localStorage.setItem(K+'pre_restore_backup',beforeRestoreJSON);
 if(localStorage.getItem(K+'pre_restore_backup')!==beforeRestoreJSON) throw new Error('No se pudo verificar la salvaguarda previa.');
@@ -4672,15 +4673,29 @@ e.style.display==='block'
 
 function renderMonitor(){
   const sessions=uniqueSessions(logs).filter(l=>(l.groups||[]).some(g=>(g.exercises||[]).some(e=>(e.sets||[]).some(s=>num(s.reps)>0)))).sort((a,b)=>new Date(a.date)-new Date(b.date));
-  const now=new Date(); const cutoff=new Date(now); cutoff.setDate(now.getDate()-6);
-  const week=sessions.filter(l=>new Date(l.date)>=cutoff);
+  const now=new Date(); const cutoff=new Date(now.getFullYear(),now.getMonth(),now.getDate()-6);
+  const week=sessions.filter(l=>new Date(l.date)>=cutoff && new Date(l.date)<new Date(now.getFullYear(),now.getMonth(),now.getDate()+1));
   const totalSets=week.flatMap(l=>(l.groups||[]).flatMap(g=>(g.exercises||[]).flatMap(e=>(e.sets||[]).filter(s=>num(s.reps)>0)))).length;
   const totalVol=week.flatMap(l=>(l.groups||[]).flatMap(g=>(g.exercises||[]).flatMap(e=>(e.sets||[]).filter(s=>num(s.reps)>0)))).reduce((n,set)=>n+num(set.reps)*num(set.weight),0);
   document.getElementById('monitorSummary').innerHTML=sessions.length?`<div class="summary"><h3>${week.length? '📈':'📋'} ${week.length} sesiones en los últimos 7 días</h3><p><b>${totalSets}</b> series registradas · <b>${Math.round(totalVol).toLocaleString('es-ES')} kg</b> de volumen acumulado en esos 7 días.</p><p>Historial disponible: ${sessions.length} sesiones con ejercicios registrados.</p></div>`:`<div class="empty">Todavía no hay entrenamientos guardados para evaluar. Guarda una sesión con repeticiones y peso para que pueda comparar resultados.</div>`;
-  const allNames=[...new Set(sessions.flatMap(l=>(l.groups||[]).flatMap(g=>(g.exercises||[]).map(e=>e.name))))];
+  const exerciseKeys=new Map();
+  sessions.forEach(l=>(l.groups||[]).forEach((g,groupPosition)=>(g.exercises||[]).forEach(e=>{
+    const groupIndex=Number.isInteger(Number(g.groupIndex))?Number(g.groupIndex):groupPosition;
+    const key=`${Number(l.day)}|${groupIndex}|${String(g.name||'').trim().toUpperCase()}|${String(e.name||'').trim().toLowerCase()}`;
+    if(!exerciseKeys.has(key))exerciseKeys.set(key,{key,name:e.name,group:g.name||'Sin grupo',groupIndex,day:Number(l.day)});
+  })));
   const cards=[];
-  allNames.forEach(name=>{
-    const history=sessions.map(l=>({l,e:(l.groups||[]).flatMap(g=>g.exercises||[]).find(e=>e.name===name)})).filter(x=>x.e && (x.e.sets||[]).some(s=>num(s.reps)>0));
+  [...exerciseKeys.values()].forEach(item=>{
+    const {key,name,group,groupIndex,day}=item;
+    const history=sessions.map(l=>{
+      if(Number(l.day)!==day)return null;
+      const g=(l.groups||[]).find((candidate,position)=>{
+        const candidateIndex=Number.isInteger(Number(candidate.groupIndex))?Number(candidate.groupIndex):position;
+        return candidateIndex===groupIndex && String(candidate.name||'').trim().toUpperCase()===String(group).trim().toUpperCase();
+      });
+      const e=(g?.exercises||[]).find(e=>String(e.name||'').trim().toLowerCase()===String(name).trim().toLowerCase());
+      return e?{l,e}:null;
+    }).filter(x=>x && (x.e.sets||[]).some(s=>num(s.reps)>0));
     if(!history.length)return;
     const latest=history[history.length-1], sets=(latest.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
     const reps=sets.map(s=>num(s.reps)), weights=sets.map(s=>num(s.weight));
@@ -4691,7 +4706,15 @@ function renderMonitor(){
     if(sets.length>=3 && reps.every(r=>r>=12) && weights.every(w=>w>0)){icon='🟢';title='VALORA SUBIR UN POCO EL PESO';advice='Has alcanzado 12 repeticiones en las tres series. Si la técnica fue buena y te quedaron 1–3 repeticiones en reserva, prueba el incremento mínimo disponible.';}
     else if(reps.some(r=>r<8)){icon='🟠';title='NO SUBAS TODAVÍA';advice='Mantén o reduce ligeramente la carga si pierdes la técnica; busca un rango controlado de 8–12 repeticiones.';}
     if(prev){if(currReps>prevReps || currVol>prevVol){icon='🟢';if(title==='MANTÉN Y CONSOLIDA')title='PROGRESO REGISTRADO';advice+=' La última sesión mejoró respecto a la anterior.';}else if(currReps<prevReps && currVol<prevVol){icon='🟠';title='REVISA FATIGA Y RECUPERACIÓN';advice='El resultado bajó respecto a la sesión anterior. No fuerces la subida; revisa descanso, molestias y técnica.';}}
-    cards.push(`<div class="card" style="margin:8px 0"><b>${icon} ${name}</b><p style="margin:6px 0"><b>${title}</b></p><p>${advice}</p><small>Última sesión: ${dateKey(latest.l.date)} · ${reps.join(' / ')} repeticiones · ${weights.join(' / ')} kg</small></div>`);
+    if(history.length>=3){
+      const last3=history.slice(-3).map(x=>{
+        const valid=(x.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
+        return {reps:valid.reduce((a,s)=>a+num(s.reps),0),vol:valid.reduce((a,s)=>a+num(s.reps)*num(s.weight),0)};
+      });
+      const noGainTwice=last3[1].reps<=last3[0].reps && last3[1].vol<=last3[0].vol && last3[2].reps<=last3[1].reps && last3[2].vol<=last3[1].vol;
+      if(noGainTwice){icon='🟡';title='POSIBLE ESTANCAMIENTO';advice='Los dos últimos registros no muestran mejora clara. No aumentes todo a la vez: revisa técnica y recuperación, y prueba progresar una sola variable (una repetición o el incremento mínimo de peso) cuando el esfuerzo lo permita.';}
+    }
+    cards.push(`<div class="card" style="margin:8px 0"><b>${icon} ${name}</b><div><small>Rutina ${day} · ${group}</small></div><p style="margin:6px 0"><b>${title}</b></p><p>${advice}</p><small>Última sesión: ${dateKey(latest.l.date)} · ${reps.join(' / ')} repeticiones · ${weights.join(' / ')} kg</small></div>`);
   });
   document.getElementById('monitorExercises').innerHTML=cards.length?cards.join(''):'No hay ejercicios con datos suficientes.';
   const groupMap={};
@@ -5297,7 +5320,7 @@ c.currentTime+.18
 
 restoreAutoBackupIfNeeded();
 
-save();
+if(!save()) console.error('No se pudo verificar el guardado inicial. No cierres la aplicación hasta exportar una copia.');
 
 updateBackupStatus();
 
