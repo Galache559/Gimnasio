@@ -853,6 +853,32 @@ color:#000;
 .targetBox{background:#062d3c;border:1px solid #17607c;border-radius:8px;padding:8px;margin:8px 0;font-size:.7rem}
 .routineExercise{display:flex;align-items:center;justify-content:space-between;gap:6px;background:#191919;border:1px solid var(--bor);border-radius:7px;padding:7px;margin:5px 0}
 .routineExercise span{font-size:.72rem}.count10{font-size:.65rem;color:var(--sub)}
+/* Miniaturas GIF en la configuración de Rutinas */
+.routineExercise{
+  display:flex;align-items:center;justify-content:flex-start;gap:9px;
+  flex-wrap:nowrap!important;min-height:58px;padding:6px 8px;
+}
+.routineExercise .routineGif{
+  display:block;flex:0 0 54px;width:54px;height:46px;
+  object-fit:contain;background:#0d0d0d;border:1px solid #383838;
+  border-radius:6px;
+}
+.routineExercise .routineExerciseName{
+  display:block;flex:1 1 auto;min-width:0;font-size:.78rem;font-weight:600;
+  line-height:1.2;overflow-wrap:anywhere;color:var(--txt,#fff);
+}
+.routineExercise .routineExerciseActions{
+  display:flex;align-items:center;gap:6px;margin-left:auto;flex-wrap:nowrap;flex-shrink:0;
+}
+.routineExercise .routineExerciseActions .btn{
+  white-space:nowrap;min-height:34px;padding:6px 8px;font-size:.68rem;
+}
+@media(max-width:380px){
+  .routineExercise{gap:6px;padding:5px}
+  .routineExercise .routineGif{flex-basis:46px;width:46px;height:42px}
+  .routineExercise .routineExerciseActions{gap:4px}
+  .routineExercise .routineExerciseActions .btn{padding:5px 6px;font-size:.63rem}
+}
 @media(max-width:380px){.libraryGrid{grid-template-columns:1fr}.libraryControls{grid-template-columns:1fr}}
 
 /* ===== v8.0 · MODO ENTRENAMIENTO ===== */
@@ -3272,6 +3298,25 @@ const MUSCLE_GROUPS=[
   'ABDOMINALES'
 ];
 
+function getRoutineExerciseGif(groupName, exerciseName, storedUrl){
+  const saved=String(storedUrl||'').trim();
+  if(saved) return saved;
+  const group=String(groupName||'').trim().toUpperCase();
+  const name=String(exerciseName||'').trim().toLowerCase();
+  const local=(EXERCISE_DB[group]||[]).find(item=>
+    String(item?.[0]||'').trim().toLowerCase()===name
+  );
+  if(local && local[1]) return String(local[1]);
+  try{
+    const base=typeof getLibraryBaseForGroup==='function' ? getLibraryBaseForGroup(group) : [];
+    const match=(Array.isArray(base)?base:[]).find(item=>
+      String(item?.[0]||'').trim().toLowerCase()===name
+    );
+    if(match && match[1]) return String(match[1]);
+  }catch(_){}
+  return '';
+}
+
 function loadConfig(){
   enforceTenExercisesPerGroup();
 
@@ -3304,15 +3349,21 @@ function loadConfig(){
       </select>`;
 
     if(exercises.length){
-      h+=exercises.map((e,i)=>`
-        <div class="routineExercise" style="flex-wrap:wrap">
-          <span style="flex:1;min-width:130px">${i+1}. ${esc(e)}</span>
-          <span style="display:flex;gap:4px;flex-wrap:wrap">
-            <button type="button" class="btn sm" onclick="window.gymEditRoutineExercise(${gi},${i})" title="Modificar nombre">✏️</button>
-            <button type="button" class="btn blue sm" onclick="window.gymReplaceRoutineExercise(${gi},${i})" title="Sustituir por otro ejercicio">🔁 Sustituir</button>
-            <button type="button" class="btn danger sm routineTrash" onclick="window.gymDeleteRoutineExercise(${gi},${i})" title="Anular ejercicio" aria-label="Anular ejercicio">🗑️</button>
+      h+=exercises.map((e,i)=>{
+        const gif=getRoutineExerciseGif(g.name,e,g.images?.[i]);
+        const safeName=esc(e);
+        return `
+        <div class="routineExercise" title="${safeName}">
+          ${gif
+            ? `<img class="routineGif" src="${esc(gif)}" alt="${safeName}" title="${safeName}" loading="lazy" onerror="this.style.visibility='hidden'">`
+            : `<span class="routineGif" role="img" aria-label="${safeName}" title="${safeName}" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem">🏋️</span>`}
+          <span class="routineExerciseName">${safeName}</span>
+          <span class="routineExerciseActions">
+            <button type="button" class="btn blue sm" onclick="window.gymReplaceRoutineExercise(${gi},${i})" title="Sustituir ${safeName}">🔁 Sustituir</button>
+            <button type="button" class="btn danger sm routineTrash" onclick="window.gymDeleteRoutineExercise(${gi},${i})" title="Eliminar ${safeName}" aria-label="Eliminar ${safeName}">🗑️</button>
           </span>
-        </div>`).join('');
+        </div>`;
+      }).join('');
     }else{
       h+='<div class="empty">Sin ejercicios seleccionados.</div>';
     }
