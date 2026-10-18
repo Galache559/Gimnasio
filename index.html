@@ -4,9 +4,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MI GIMNASIO PRO v10.11.3 · MONITOR</title>
+<title>MI GIMNASIO PRO v10.11.5 · MONITOR</title>
 <meta name="theme-color" content="#121212">
-<link rel="manifest" href="./manifest.webmanifest?v=10-11-3">
+<link rel="manifest" href="./manifest.webmanifest?v=10-11-5">
 
 <style>
 :root{
@@ -1056,7 +1056,7 @@ color:#000;
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v10.11.3</h1>
+<h1>MI GIMNASIO PRO v10.11.5</h1>
 </header>
 
 <div class="container">
@@ -1903,7 +1903,7 @@ try{
 
   const data={
     app:'Mi Gimnasio Pro',
-    version:'10.11.1',
+    version:'10.11.5',
     backupType:'automatic',
     created:new Date().toISOString(),
     routine:structuredCloneSafe(routine),
@@ -2284,61 +2284,63 @@ return null;
 
 }
 
-// Busca los datos reales de la sesión anterior de este día y ejercicio.
-// No depende de que el último registro global del día tenga exactamente la misma estructura.
+// Normaliza el nombre para identificar el mismo ejercicio aunque cambien mayúsculas,
+// acentos, signos o espacios. La identidad del ejercicio no depende del día/rutina.
+function exerciseNameKey(value){
+  return String(value||'')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g,' ')
+    .trim()
+    .replace(/\s+/g,' ');
+}
+
+// Historial único por ejercicio: la rutina, el día y el grupo no cambian su identidad.
+// Se agrupan las series del mismo ejercicio dentro de una misma sesión para evitar
+// duplicar registros si aparece más de una vez en el entrenamiento.
+function getExerciseHistory(name, excludeDate=''){
+  const key=exerciseNameKey(name);
+  if(!key)return [];
+  return uniqueSessions(logs)
+    .filter(l=>sessionHasResults(l) && (!excludeDate || dateKey(l.date)!==dateKey(excludeDate)))
+    .map(l=>{
+      const matches=[];
+      (l.groups||[]).forEach((g,groupPosition)=>(g.exercises||[]).forEach(e=>{
+        if(exerciseNameKey(e.name)===key && (e.sets||[]).some(st=>num(st.reps)>0)){
+          matches.push({group:g.name||'Sin grupo',groupIndex:Number.isInteger(Number(g.groupIndex))?Number(g.groupIndex):groupPosition,e});
+        }
+      }));
+      if(!matches.length)return null;
+      const sets=matches.flatMap(m=>(m.e.sets||[]).filter(st=>num(st.reps)>0).map(st=>({...st})));
+      const latestMatch=matches[matches.length-1];
+      return {l,e:{name:latestMatch.e.name||name,sets},group:latestMatch.group,groupIndex:latestMatch.groupIndex,groups:[...new Set(matches.map(m=>m.group))]};
+    })
+    .filter(Boolean)
+    .sort((a,b)=>new Date(a.l.date)-new Date(b.l.date));
+}
+
+// Las casillas ÚLTIMO muestran la sesión más reciente del ejercicio en cualquier rutina.
 function getPreviousExerciseForDay(d, name, groupIndex){
   const selected=document.getElementById('date')?.value || '';
-  const sessions=uniqueSessions(logs)
-    .filter(l=>sessionHasResults(l) && (!selected || dateKey(l.date)!==dateKey(selected)))
-    .sort((a,b)=>new Date(b.date)-new Date(a.date));
-  const hasResults=e=>e && (e.sets||[]).some(st=>num(st.reps)>0);
-
-  // 1) Preferir la última sesión de la misma rutina/día y el grupo exacto.
-  for(const log of sessions.filter(l=>Number(l.day)===Number(d))){
-    const groups=log.groups||[];
-    const indexed=groups.find(g=>g.groupIndex!==undefined && Number(g.groupIndex)===Number(groupIndex));
-    const foundIndexed=(indexed?.exercises||[]).find(e=>e.name===name && hasResults(e));
-    if(foundIndexed)return foundIndexed;
-    // Compatibilidad con copias antiguas sin groupIndex: probar por posición y luego por nombre.
-    const positional=groups[groupIndex];
-    const foundPositional=(positional?.exercises||[]).find(e=>e.name===name && hasResults(e));
-    if(foundPositional)return foundPositional;
-    for(const g of groups){
-      const found=(g.exercises||[]).find(e=>e.name===name && hasResults(e));
-      if(found)return found;
-    }
-  }
-
-  // 2) Si este ejercicio no se registró en ese día de rutina, buscar su sesión anterior
-  // en cualquier otro día. Así las casillas ÚLTIMO no quedan vacías si el Monitor sí
-  // encuentra historial del mismo ejercicio en una sesión anterior.
-  for(const log of sessions){
-    for(const g of (log.groups||[])){
-      const found=(g.exercises||[]).find(e=>e.name===name && hasResults(e));
-      if(found)return found;
-    }
-  }
-  return null;
+  const history=getExerciseHistory(name,selected);
+  return history.length ? history[history.length-1].e : null;
 }
 
 function routineInsightHTML(d, ex){
-  // Doble progresión: primero se consolidan repeticiones (8-12), luego se sube la carga.
-  const sessions=uniqueSessions(logs)
-    .filter(l=>Number(l.day)===Number(d) && getPreviousExercise(l,ex))
-    .sort((a,b)=>new Date(a.date)-new Date(b.date));
-  const recent=sessions.slice(-3);
+  const selected=document.getElementById('date')?.value || '';
+  const history=getExerciseHistory(ex,selected);
+  const recent=history.slice(-4);
   if(!recent.length) return '💡 <b>Objetivo inicial:</b> elige una carga controlable y trabaja entre 8 y 12 repeticiones por serie, con buena técnica y 1-3 repeticiones en reserva.';
-
-  const latest=getPreviousExercise(recent[recent.length-1],ex);
-  const latestSets=(latest?.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
+  const latest=recent[recent.length-1];
+  const latestSets=(latest.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
   const maxW=latestSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
   const totalVol=latestSets.reduce((v,s)=>v+num(s.reps)*num(s.weight),0);
   const reps=latestSets.map(s=>num(s.reps));
   const weights=latestSets.map(s=>num(s.weight));
   const allAtTop=latestSets.length===3 && reps.every(r=>r>=12) && weights.every(w=>w>0);
   const belowRange=reps.some(r=>r<8);
-  let advice=`📌 <b>Última sesión:</b> ${dateKey(recent[recent.length-1].date)} · ${maxW} kg máximo · volumen ${Math.round(totalVol)} kg.`;
-
+  let advice=`📌 <b>Última sesión de este ejercicio:</b> ${dateKey(latest.l.date)} · ${maxW} kg máximo · volumen ${Math.round(totalVol)} kg.`;
   if(allAtTop){
     advice+=' 🟢 <b>Objetivo siguiente:</b> has alcanzado 12 repeticiones en las 3 series. Si la técnica fue limpia y te quedó margen, prueba el incremento más pequeño disponible y vuelve a construir desde 8-10 repeticiones.';
   } else if(belowRange){
@@ -2347,19 +2349,29 @@ function routineInsightHTML(d, ex){
     const targets=reps.map(r=>Math.min(12,r+1));
     advice+=` 🎯 <b>Objetivo siguiente:</b> mantén el peso e intenta sumar alguna repetición. Referencia por series: ${targets.join(' / ')} reps.`;
   }
-
   if(recent.length>=2){
-    const prev=getPreviousExercise(recent[recent.length-2],ex);
-    const prevSets=(prev?.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
+    const prev=recent[recent.length-2];
+    const prevSets=(prev.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
     const currentReps=reps.reduce((a,b)=>a+b,0);
     const prevReps=prevSets.reduce((a,s)=>a+num(s.reps),0);
     const currentVol=latestSets.reduce((v,s)=>v+num(s.reps)*num(s.weight),0);
     const prevVol=prevSets.reduce((v,s)=>v+num(s.reps)*num(s.weight),0);
-    if(currentReps>prevReps || currentVol>prevVol) advice+=' <b>Comparación:</b> mejora registrada respecto a la sesión anterior.';
-    else if(currentReps===prevReps && currentVol===prevVol) advice+=' <b>Comparación:</b> mismo resultado que la sesión anterior; busca una repetición más antes de subir carga.';
+    const currentMax=latestSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
+    const prevMax=prevSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
+    if(currentReps>prevReps || currentVol>prevVol || currentMax>prevMax) advice+=' <b>Comparación:</b> mejora registrada respecto a la sesión anterior de este ejercicio, aunque fuera en otra rutina.';
+    else if(currentReps===prevReps && currentVol===prevVol && currentMax===prevMax) advice+=' <b>Comparación:</b> mismo resultado que la sesión anterior; busca una repetición más antes de subir carga.';
     else advice+=' <b>Comparación:</b> resultado inferior a la sesión anterior; valora cansancio y técnica, sin forzar la progresión.';
-  } else {
-    advice+=' Registra otra sesión para comparar la evolución.';
+  } else advice+=' Registra otra sesión para comparar la evolución.';
+  if(recent.length>=4){
+    const firstSets=(recent[0].e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
+    const firstReps=firstSets.reduce((a,s)=>a+num(s.reps),0);
+    const firstVol=firstSets.reduce((a,s)=>a+num(s.reps)*num(s.weight),0);
+    const lastReps=reps.reduce((a,b)=>a+b,0);
+    const lastMax=latestSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
+    const firstMax=firstSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
+    if(lastReps<=firstReps && totalVol<=firstVol && lastMax<=firstMax){
+      advice+=' 🟡 <b>Seguimiento:</b> en las últimas cuatro sesiones no se aprecia una mejora neta; revisa recuperación, técnica y consistencia antes de cambiar la carga.';
+    }
   }
   advice+=' <small>La recomendación es orientativa: técnica correcta y esfuerzo controlado tienen prioridad.</small>';
   return advice;
@@ -2370,8 +2382,7 @@ function copyLastSets(prefix){
   const ei=Number(prefix.match(/-e(\d+)$/)?.[1]);
   const ex=routine?.[day]?.groups?.[gi]?.exercises?.[ei];
   if(!ex){alert('No se ha encontrado el ejercicio.');return;}
-  const previous=previousDayLog(day);
-  const old=getPreviousExercise(previous,ex);
+  const old=getPreviousExerciseForDay(day,ex,gi);
   if(!old || !(old.sets||[]).some(s=>num(s.reps)>0)){alert('Este ejercicio aún no tiene datos anteriores guardados.');return;}
   for(let j=0;j<3;j++){
     const set=(old.sets||[])[j]||{};
@@ -2394,11 +2405,10 @@ function increaseExerciseWeights(prefix,delta){
     }
   }
   if(!changed){
-    const previous=previousDayLog(day);
     const gi=Number(prefix.match(/^g(\d+)-e/)?.[1]);
     const ei=Number(prefix.match(/-e(\d+)$/)?.[1]);
     const ex=routine?.[day]?.groups?.[gi]?.exercises?.[ei];
-    const old=getPreviousExercise(previous,ex);
+    const old=getPreviousExerciseForDay(day,ex,gi);
     if(old){
       for(let j=0;j<3;j++){const w=document.getElementById(`${prefix}-w${j}`);const set=(old.sets||[])[j];if(w&&set&&num(set.weight)>0){w.value=String(Math.max(0,Math.round((num(set.weight)+delta)*10)/10));w.dispatchEvent(new Event('input',{bubbles:true}));changed=true;}}
     }
@@ -2453,7 +2463,7 @@ let completedExercises=0;
 
 (x.groups||[]).forEach(g=>{
   (g.exercises||[]).forEach(ex=>{
-    let old=getPreviousExercise(previous,ex);
+    let old=getPreviousExerciseForDay(day,ex);
     if(old && (old.sets||[]).some(s=>num(s.reps)>0)) completedExercises++;
   });
 });
@@ -4023,7 +4033,7 @@ let data={
 
 app:'Mi Gimnasio Pro',
 
-version:'10.11.1',
+version:'10.11.5',
 
 exported:new Date().toISOString(),
 
@@ -4058,7 +4068,7 @@ document.createElement('a');
 a.href=url;
 
 a.download=
-'Mi_Gimnasio_Pro_v10_11_3_backup_'+
+'Mi_Gimnasio_Pro_v10_11_4_backup_'+
 new Date()
 .toISOString()
 .slice(0,10)+
@@ -4154,7 +4164,7 @@ structuredCloneSafe(personalExerciseBase);
 // Salvaguarda de los datos actuales justo antes de restaurar otra copia.
 // Si no se puede escribir esta salvaguarda, se cancela la importación.
 const oldRemovedExerciseBase=structuredCloneSafe(removedExerciseBase);
-const beforeRestore={app:'Mi Gimnasio Pro',version:'10.11.1',backupType:'pre-restore',created:new Date().toISOString(),routine:oldRoutine,logs:oldLogs,personalExerciseBase:oldPersonalExerciseBase,removedExerciseBase:oldRemovedExerciseBase};
+const beforeRestore={app:'Mi Gimnasio Pro',version:'10.11.5',backupType:'pre-restore',created:new Date().toISOString(),routine:oldRoutine,logs:oldLogs,personalExerciseBase:oldPersonalExerciseBase,removedExerciseBase:oldRemovedExerciseBase};
 const beforeRestoreJSON=JSON.stringify(beforeRestore);
 localStorage.setItem(K+'pre_restore_backup',beforeRestoreJSON);
 if(localStorage.getItem(K+'pre_restore_backup')!==beforeRestoreJSON) throw new Error('No se pudo verificar la salvaguarda previa.');
@@ -4705,61 +4715,119 @@ e.style.display==='block'
 }
 
 function renderMonitor(){
-  const sessions=uniqueSessions(logs).filter(l=>(l.groups||[]).some(g=>(g.exercises||[]).some(e=>(e.sets||[]).some(s=>num(s.reps)>0)))).sort((a,b)=>new Date(a.date)-new Date(b.date));
-  const now=new Date(); const cutoff=new Date(now.getFullYear(),now.getMonth(),now.getDate()-6);
-  const week=sessions.filter(l=>new Date(l.date)>=cutoff && new Date(l.date)<new Date(now.getFullYear(),now.getMonth(),now.getDate()+1));
-  const totalSets=week.flatMap(l=>(l.groups||[]).flatMap(g=>(g.exercises||[]).flatMap(e=>(e.sets||[]).filter(s=>num(s.reps)>0)))).length;
-  const totalVol=week.flatMap(l=>(l.groups||[]).flatMap(g=>(g.exercises||[]).flatMap(e=>(e.sets||[]).filter(s=>num(s.reps)>0)))).reduce((n,set)=>n+num(set.reps)*num(set.weight),0);
-  document.getElementById('monitorSummary').innerHTML=sessions.length?`<div class="summary"><h3>${week.length? '📈':'📋'} ${week.length} sesiones en los últimos 7 días</h3><p><b>${totalSets}</b> series registradas · <b>${Math.round(totalVol).toLocaleString('es-ES')} kg</b> de volumen acumulado en esos 7 días.</p><p>Historial disponible: ${sessions.length} sesiones con ejercicios registrados.</p></div>`:`<div class="empty">Todavía no hay entrenamientos guardados para evaluar. Guarda una sesión con repeticiones y peso para que pueda comparar resultados.</div>`;
+  const sessions=uniqueSessions(logs)
+    .filter(sessionHasResults)
+    .sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const now=new Date();
+  const todayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const cutoff=new Date(now.getFullYear(),now.getMonth(),now.getDate()-6);
+  const week=sessions.filter(l=>new Date(l.date)>=cutoff && new Date(l.date)<new Date(todayStart.getTime()+86400000));
+  const allWeekSets=week.flatMap(l=>(l.groups||[]).flatMap(g=>(g.exercises||[]).flatMap(e=>(e.sets||[]).filter(s=>num(s.reps)>0))));
+  const totalSets=allWeekSets.length;
+  const totalVol=allWeekSets.reduce((n,set)=>n+num(set.reps)*num(set.weight),0);
+  document.getElementById('monitorSummary').innerHTML=sessions.length
+    ?`<div class="summary"><h3>${week.length?'📈':'📋'} ${week.length} sesiones en los últimos 7 días</h3><p><b>${totalSets}</b> series registradas · <b>${Math.round(totalVol).toLocaleString('es-ES')} kg</b> de volumen acumulado en esos 7 días.</p><p>Historial disponible: ${sessions.length} sesiones con ejercicios registrados.</p><p>El análisis de cada ejercicio reúne sus sesiones aunque se haya realizado en distintos días o rutinas.</p></div>`
+    :`<div class="empty">Todavía no hay entrenamientos guardados para evaluar. Guarda una sesión con repeticiones y peso para que pueda comparar resultados.</div>`;
+
+  // El historial se agrupa por nombre normalizado del ejercicio, no por día, grupo ni rutina.
   const exerciseKeys=new Map();
-  sessions.forEach(l=>(l.groups||[]).forEach((g,groupPosition)=>(g.exercises||[]).forEach(e=>{
-    const groupIndex=Number.isInteger(Number(g.groupIndex))?Number(g.groupIndex):groupPosition;
-    const key=`${Number(l.day)}|${groupIndex}|${String(g.name||'').trim().toUpperCase()}|${String(e.name||'').trim().toLowerCase()}`;
-    if(!exerciseKeys.has(key))exerciseKeys.set(key,{key,name:e.name,group:g.name||'Sin grupo',groupIndex,day:Number(l.day)});
+  sessions.forEach(l=>(l.groups||[]).forEach(g=>(g.exercises||[]).forEach(e=>{
+    const key=exerciseNameKey(e.name);
+    if(key && !exerciseKeys.has(key)) exerciseKeys.set(key,{key,name:e.name});
   })));
   const cards=[];
-  [...exerciseKeys.values()].forEach(item=>{
-    const {key,name,group,groupIndex,day}=item;
-    const history=sessions.map(l=>{
-      if(Number(l.day)!==day)return null;
-      const g=(l.groups||[]).find((candidate,position)=>{
-        const candidateIndex=Number.isInteger(Number(candidate.groupIndex))?Number(candidate.groupIndex):position;
-        return candidateIndex===groupIndex && String(candidate.name||'').trim().toUpperCase()===String(group).trim().toUpperCase();
-      });
-      const e=(g?.exercises||[]).find(e=>String(e.name||'').trim().toLowerCase()===String(name).trim().toLowerCase());
-      return e?{l,e}:null;
-    }).filter(x=>x && (x.e.sets||[]).some(s=>num(s.reps)>0));
-    if(!history.length)return;
-    const latest=history[history.length-1], sets=(latest.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
-    const reps=sets.map(s=>num(s.reps)), weights=sets.map(s=>num(s.weight));
+  for(const item of exerciseKeys.values()){
+    const history=getExerciseHistory(item.name);
+    if(!history.length)continue;
+    const latest=history[history.length-1];
+    const sets=(latest.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
+    if(!sets.length)continue;
+    const reps=sets.map(s=>num(s.reps));
+    const weights=sets.map(s=>num(s.weight));
+    const currReps=reps.reduce((a,b)=>a+b,0);
+    const currVol=sets.reduce((a,s)=>a+num(s.reps)*num(s.weight),0);
+    const currMax=sets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
     const prev=history.length>1?history[history.length-2]:null;
-    const currReps=reps.reduce((a,b)=>a+b,0), prevSets=prev?(prev.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3):[];
-    const prevReps=prevSets.reduce((a,s)=>a+num(s.reps),0), currVol=sets.reduce((a,s)=>a+num(s.reps)*num(s.weight),0), prevVol=prevSets.reduce((a,s)=>a+num(s.reps)*num(s.weight),0);
+    const prevSets=prev?(prev.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3):[];
+    const prevReps=prevSets.reduce((a,s)=>a+num(s.reps),0);
+    const prevVol=prevSets.reduce((a,s)=>a+num(s.reps)*num(s.weight),0);
+    const prevMax=prevSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
     let icon='🟡',title='MANTÉN Y CONSOLIDA',advice='Intenta sumar una repetición total manteniendo el mismo peso y una técnica limpia.';
     if(sets.length>=3 && reps.every(r=>r>=12) && weights.every(w=>w>0)){icon='🟢';title='VALORA SUBIR UN POCO EL PESO';advice='Has alcanzado 12 repeticiones en las tres series. Si la técnica fue buena y te quedaron 1–3 repeticiones en reserva, prueba el incremento mínimo disponible.';}
     else if(reps.some(r=>r<8)){icon='🟠';title='NO SUBAS TODAVÍA';advice='Mantén o reduce ligeramente la carga si pierdes la técnica; busca un rango controlado de 8–12 repeticiones.';}
-    if(prev){if(currReps>prevReps || currVol>prevVol){icon='🟢';if(title==='MANTÉN Y CONSOLIDA')title='PROGRESO REGISTRADO';advice+=' La última sesión mejoró respecto a la anterior.';}else if(currReps<prevReps && currVol<prevVol){icon='🟠';title='REVISA FATIGA Y RECUPERACIÓN';advice='El resultado bajó respecto a la sesión anterior. No fuerces la subida; revisa descanso, molestias y técnica.';}}
-    if(history.length>=3){
-      const last3=history.slice(-3).map(x=>{
-        const valid=(x.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
-        return {reps:valid.reduce((a,s)=>a+num(s.reps),0),vol:valid.reduce((a,s)=>a+num(s.reps)*num(s.weight),0)};
-      });
-      const noGainTwice=last3[1].reps<=last3[0].reps && last3[1].vol<=last3[0].vol && last3[2].reps<=last3[1].reps && last3[2].vol<=last3[1].vol;
-      if(noGainTwice){icon='🟡';title='POSIBLE ESTANCAMIENTO';advice='Los dos últimos registros no muestran mejora clara. No aumentes todo a la vez: revisa técnica y recuperación, y prueba progresar una sola variable (una repetición o el incremento mínimo de peso) cuando el esfuerzo lo permita.';}
+    if(prev){
+      if(currReps>prevReps || currVol>prevVol || currMax>prevMax){icon='🟢';if(title==='MANTÉN Y CONSOLIDA')title='PROGRESO REGISTRADO';advice+=' La última sesión mejoró respecto a la sesión anterior de este ejercicio, independientemente de la rutina.';}
+      else if(currReps<prevReps && currVol<prevVol && currMax<=prevMax){icon='🟠';title='REVISA FATIGA Y RECUPERACIÓN';advice='El resultado bajó respecto a la sesión anterior. No fuerces la subida; revisa descanso, molestias y técnica.';}
     }
-    cards.push(`<div class="card" style="margin:8px 0"><b>${icon} ${name}</b><div><small>Rutina ${day} · ${group}</small></div><p style="margin:6px 0"><b>${title}</b></p><p>${advice}</p><small>Última sesión: ${dateKey(latest.l.date)} · ${reps.join(' / ')} repeticiones · ${weights.join(' / ')} kg</small></div>`);
-  });
+    // Tendencia semanal: agrupa por semana natural y compara el rendimiento medio por sesión.
+    const weekKeyFor=value=>{const d=new Date(value);const dayNum=d.getDay()||7;d.setHours(0,0,0,0);d.setDate(d.getDate()-dayNum+1);return dateKey(d);};
+    const byWeek=new Map();
+    history.forEach(rec=>{
+      const key=weekKeyFor(rec.l.date);
+      if(!byWeek.has(key))byWeek.set(key,[]);
+      byWeek.get(key).push(rec);
+    });
+    const weeklyTrend=[...byWeek.entries()].sort((a,b)=>a[0].localeCompare(b[0])).slice(-4).map(([weekStart,records])=>{
+      const metrics=records.map(rec=>{const valid=(rec.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);return {reps:valid.reduce((a,s)=>a+num(s.reps),0),vol:valid.reduce((a,s)=>a+num(s.reps)*num(s.weight),0),max:valid.reduce((m,s)=>Math.max(m,num(s.weight)),0)};});
+      return {weekStart,sessions:records.length,reps:metrics.reduce((a,m)=>a+m.reps,0)/metrics.length,vol:metrics.reduce((a,m)=>a+m.vol,0)/metrics.length,max:Math.max(...metrics.map(m=>m.max))};
+    });
+    let trendText='Aún faltan semanas con registros para comparar la progresión semanal.';
+    if(weeklyTrend.length>=2){
+      const first=weeklyTrend[0],last=weeklyTrend[weeklyTrend.length-1];
+      const delta=(a,b)=>a===0?(b===0?'0%':`+${b.toFixed(0)}`):`${b>a?'+':''}${(((b-a)/Math.abs(a))*100).toFixed(0)}%`;
+      trendText=`Tendencia de ${weeklyTrend.length} semanas: repeticiones medias por sesión ${delta(first.reps,last.reps)} · volumen medio ${delta(first.vol,last.vol)} · carga máxima ${first.max} → ${last.max} kg.`;
+    }
+    let plateau=false;
+    if(history.length>=4){
+      const last4=history.slice(-4).map(rec=>{const v=(rec.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);return {reps:v.reduce((a,s)=>a+num(s.reps),0),vol:v.reduce((a,s)=>a+num(s.reps)*num(s.weight),0),max:v.reduce((m,s)=>Math.max(m,num(s.weight)),0)};});
+      plateau=last4.slice(1).every((v,i)=>v.reps<=last4[i].reps && v.vol<=last4[i].vol && v.max<=last4[i].max);
+      if(plateau){icon='🟡';title='POSIBLE ESTANCAMIENTO';advice='En las últimas cuatro sesiones no se observa mejora sostenida en repeticiones, volumen ni carga máxima. Revisa recuperación, técnica y regularidad; prueba cambiar una sola variable cuando te encuentres recuperado.';}
+    }
+    const groupLabel=latest.groups?.join(' / ')||latest.group||'grupo no identificado';
+    cards.push(`<div class="card" style="margin:8px 0"><b>${icon} ${esc(item.name)}</b><div><small>Historial global · última vez: rutina ${Number(latest.l.day)} · ${esc(groupLabel)}</small></div><p style="margin:6px 0"><b>${title}</b></p><p>${advice}</p><small>Última sesión: ${dateKey(latest.l.date)} · ${reps.join(' / ')} repeticiones · ${weights.join(' / ')} kg</small><p style="margin:7px 0 0"><small>📊 ${trendText}</small></p>${weeklyTrend.length?`<small>Semanas (inicio): ${weeklyTrend.map(w=>`${w.weekStart}: ${w.reps.toFixed(0)} reps medias, ${Math.round(w.vol)} kg de volumen medio`).join(' · ')}</small><br>`:''}<small>Sesiones registradas para este ejercicio: ${history.length}</small></div>`);
+  }
   document.getElementById('monitorExercises').innerHTML=cards.length?cards.join(''):'No hay ejercicios con datos suficientes.';
-  const groupMap={};
-  week.forEach(l=>(l.groups||[]).forEach(g=>{const n=g.name||'Sin grupo';if(!groupMap[n])groupMap[n]={sets:0,ex:new Set(),sessions:new Set()};(g.exercises||[]).forEach(e=>{const valid=(e.sets||[]).filter(s=>num(s.reps)>0);if(valid.length){groupMap[n].sets+=valid.length;groupMap[n].ex.add(e.name);groupMap[n].sessions.add(dateKey(l.date));}})}));
-  const groupRows=Object.entries(groupMap).sort((a,b)=>b[1].sets-a[1].sets).map(([n,v])=>`<div class="card" style="margin:7px 0"><b>${n}</b><p>${v.sets} series · ${v.ex.size} ejercicios · ${v.sessions.size} sesiones esta semana</p></div>`);
-  document.getElementById('monitorGroups').innerHTML=groupRows.length?groupRows.join(''):'Aún no hay trabajo registrado en los últimos 7 días.';
+
+  // Equilibrio orientativo: compara el trabajo registrado con la distribución de ejercicios
+  // configurada por el usuario; no impone un número universal de series por músculo.
+  const normalizeGroup=name=>exerciseNameKey(name||'Sin grupo');
+  const planned={};
+  let plannedTotal=0;
+  Object.values(routine||{}).forEach(d=>(d.groups||[]).forEach(g=>{
+    const key=normalizeGroup(g.name); const count=(g.exercises||[]).length;
+    if(!planned[key])planned[key]={name:g.name||'Sin grupo',exercises:0,days:new Set()};
+    planned[key].exercises+=count;
+    if(count)planned[key].days.add(String(Object.keys(routine).find(k=>routine[k]===d)||''));
+    plannedTotal+=count;
+  }));
+  const actual={};
+  week.forEach(l=>(l.groups||[]).forEach(g=>{
+    const key=normalizeGroup(g.name);if(!actual[key])actual[key]={name:g.name||'Sin grupo',sets:0,ex:new Set(),sessions:new Set()};
+    (g.exercises||[]).forEach(e=>{const valid=(e.sets||[]).filter(s=>num(s.reps)>0);if(valid.length){actual[key].sets+=valid.length;actual[key].ex.add(exerciseNameKey(e.name));actual[key].sessions.add(dateKey(l.date));}});
+  }));
+  const allKeys=new Set([...Object.keys(planned),...Object.keys(actual)]);
+  const actualTotal=Object.values(actual).reduce((n,v)=>n+v.sets,0);
+  const groupRows=[...allKeys].map(key=>{
+    const p=planned[key]||{name:actual[key]?.name||key,exercises:0,days:new Set()};
+    const a=actual[key]||{name:p.name,sets:0,ex:new Set(),sessions:new Set()};
+    const expectedShare=plannedTotal?p.exercises/plannedTotal:0;
+    const actualShare=actualTotal?a.sets/actualTotal:0;
+    let note='';
+    if(week.length && p.exercises>0 && a.sets===0)note=' · <span style="color:var(--gold)">Sin trabajo registrado en los últimos 7 días</span>';
+    else if(week.length>=3 && expectedShare>0 && actualShare>expectedShare*1.8 && a.sets>=9 && a.sessions.size>=2)note=' · <span style="color:var(--gold)">Más trabajo relativo que el previsto en la rutina</span>';
+    else if(week.length>=3 && expectedShare>0 && actualShare<expectedShare*0.4 && a.sets>0)note=' · <span style="color:var(--gold)">Menos presencia relativa que en la rutina configurada</span>';
+    const plannedInfo=p.exercises?`${p.exercises} ejercicios configurados en la rutina`:'No aparece en la rutina configurada';
+    return `<div class="card" style="margin:7px 0"><b>${esc(p.name)}</b><p>${a.sets} series · ${a.ex.size} ejercicios · ${a.sessions.size} sesiones esta semana</p><small>${plannedInfo}${note}</small></div>`;
+  }).join('');
+  document.getElementById('monitorGroups').innerHTML=groupRows||'Aún no hay grupos musculares configurados.';
+
   let plan='Prioriza la regularidad, registra todas las series y evita aumentar peso si la técnica se deteriora.';
-  if(!sessions.length) plan='Empieza registrando tu próxima sesión completa. Con dos o más sesiones del mismo ejercicio podré comparar tu evolución.';
-  else if(week.length===0) plan='No hay sesiones registradas en los últimos 7 días. Retoma tu rutina habitual cuando estés recuperado y registra los resultados.';
-  else if(cards.some(x=>x.includes('REVISA FATIGA Y RECUPERACIÓN'))) plan='En los ejercicios cuyo rendimiento bajó, mantén o reduce la carga y revisa sueño, descanso y molestias antes de progresar.';
-  else if(cards.some(x=>x.includes('VALORA SUBIR UN POCO EL PESO'))) plan='En los ejercicios que alcanzaron 3 series de 12 repeticiones, valora solo el incremento mínimo si la técnica y el esfuerzo lo permiten. En los demás, intenta mejorar poco a poco las repeticiones.';
-  document.getElementById('monitorWeek').innerHTML=`<p>${plan}</p><small>El volumen de distintos grupos no es directamente comparable en todos los casos; la app no asumirá que más series siempre es mejor.</small>`;
+  if(!sessions.length)plan='Empieza registrando tu próxima sesión completa. Con dos o más sesiones del mismo ejercicio podré comparar tu evolución.';
+  else if(!week.length)plan='No hay sesiones registradas en los últimos 7 días. Retoma tu rutina habitual cuando estés recuperado y registra los resultados.';
+  else if(cards.some(x=>x.includes('POSIBLE ESTANCAMIENTO')))plan='En los ejercicios con posible estancamiento, revisa primero recuperación, técnica y consistencia. No aumentes todas las variables a la vez.';
+  else if(cards.some(x=>x.includes('REVISA FATIGA Y RECUPERACIÓN')))plan='En los ejercicios cuyo rendimiento bajó, mantén o reduce la carga y revisa sueño, descanso y molestias antes de progresar.';
+  else if(cards.some(x=>x.includes('VALORA SUBIR UN POCO EL PESO')))plan='En los ejercicios que alcanzaron 3 series de 12 repeticiones, valora solo el incremento mínimo si la técnica y el esfuerzo lo permiten. En los demás, intenta mejorar poco a poco las repeticiones.';
+  document.getElementById('monitorWeek').innerHTML=`<p>${plan}</p><small>La tendencia compara hasta cuatro sesiones del mismo ejercicio, aunque se haya realizado en diferentes rutinas. El equilibrio muscular es una orientación relativa a tu configuración, no una prescripción médica ni un objetivo universal de series.</small>`;
 }
 
 function stats(){
