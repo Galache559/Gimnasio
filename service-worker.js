@@ -1,9 +1,9 @@
-const CACHE_NAME = 'mi-gimnasio-pro-v10-11-base-personalizable';
+const CACHE_NAME = 'mi-gimnasio-pro-v10-11-1-base-personalizable';
 
 const APP_FILES = [
   './',
   './index.html',
-  './manifest.webmanifest?v=108-11',
+  './manifest.webmanifest?v=10-11-1',
   './icon-192.png',
   './icon-512.png'
 ];
@@ -34,8 +34,7 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
 
-  // Para la página principal y el HTML, consultar primero la versión publicada.
-  // Solo si no hay conexión se utiliza la copia guardada.
+  // HTML: red primero para recibir la versión publicada; caché como respaldo sin conexión.
   const isHTML = event.request.mode === 'navigate' ||
                  url.pathname.endsWith('/index.html') ||
                  url.pathname.endsWith('/');
@@ -57,7 +56,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Para los demás recursos: caché primero y red como alternativa.
+  // Los demás recursos se sirven desde la caché y se descargan si aún no están guardados.
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) return cached;
