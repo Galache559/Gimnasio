@@ -1,9 +1,9 @@
-const CACHE_NAME = 'mi-gimnasio-pro-v10-11-5-base-personalizable';
+const CACHE_NAME = 'mi-gimnasio-pro-v10-11-6-email-destinatario-base-personalizable';
 
 const APP_FILES = [
   './',
   './index.html',
-  './manifest.webmanifest?v=10-11-5',
+  './manifest.webmanifest?v=10-11-6',
   './icon-192.png',
   './icon-512.png'
 ];
@@ -21,7 +21,7 @@ self.addEventListener('activate', event => {
     caches.keys()
       .then(keys => Promise.all(
         keys
-          .filter(key => key.startsWith('mi-gimnasio-pro-') && key !== CACHE_NAME)
+          .filter(key => key.startsWith('mi-gimnasio-pro-v10-11-6-email-destinatario') && key !== CACHE_NAME)
           .map(key => caches.delete(key))
       ))
       .then(() => self.clients.claim())
