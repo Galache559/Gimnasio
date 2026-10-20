@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mi-gimnasio-pro-v10-11-6-email-movil-mailto';
+const CACHE_NAME = 'mi-gimnasio-pro-v10-11-7-ultimo-historial';
 
 const APP_FILES = [
   './',
@@ -21,7 +21,7 @@ self.addEventListener('activate', event => {
     caches.keys()
       .then(keys => Promise.all(
         keys
-          .filter(key => key.startsWith('mi-gimnasio-pro-v10-11-6-email-destinatario') && key !== CACHE_NAME)
+          .filter(key => key.startsWith('mi-gimnasio-pro-') && key !== CACHE_NAME)
           .map(key => caches.delete(key))
       ))
       .then(() => self.clients.claim())
