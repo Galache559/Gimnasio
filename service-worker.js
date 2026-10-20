@@ -1,9 +1,9 @@
-const CACHE_NAME = 'mi-gimnasio-pro-v10-11-6-email-destinatario-base-personalizable';
+const CACHE_NAME = 'mi-gimnasio-pro-v10-11-6-email-movil-mailto';
 
 const APP_FILES = [
   './',
   './index.html',
-  './manifest.webmanifest?v=10-11-6',
+  './manifest.webmanifest?v=10-11-6-movil-mailto',
   './icon-192.png',
   './icon-512.png'
 ];
