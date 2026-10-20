@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MI GIMNASIO PRO v10.11.7 · MONITOR</title>
+<title>MI GIMNASIO PRO v10.12.0 · MONITOR</title>
 <meta name="theme-color" content="#121212">
 <link rel="manifest" href="./manifest.webmanifest?v=10-11-6">
 
@@ -1056,7 +1056,7 @@ color:#000;
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v10.11.7</h1>
+<h1>MI GIMNASIO PRO v10.12.0</h1>
 </header>
 
 <div class="container">
@@ -2323,7 +2323,7 @@ function getExerciseHistory(name, excludeDate=''){
       if(!matches.length)return null;
       const sets=matches.flatMap(m=>(m.e.sets||[]).filter(st=>num(st.reps)>0).map(st=>({...st})));
       const latestMatch=matches[matches.length-1];
-      return {l,e:{name:latestMatch.e.name||name,sets},group:latestMatch.group,groupIndex:latestMatch.groupIndex,groups:[...new Set(matches.map(m=>m.group))]};
+      return {l,e:{name:latestMatch.e.name||name,sets,feedback:latestMatch.e.feedback||{},objective:latestMatch.e.objective||null},group:latestMatch.group,groupIndex:latestMatch.groupIndex,groups:[...new Set(matches.map(m=>m.group))]};
     })
     .filter(Boolean)
     .sort((a,b)=>new Date(a.l.date)-new Date(b.l.date));
@@ -2337,6 +2337,30 @@ function getPreviousExerciseForDay(d, name, groupIndex){
   return history.length ? history[history.length-1].e : null;
 }
 
+function adaptiveTargetData(name, excludeDate=''){
+  const history=getExerciseHistory(name,excludeDate);
+  const latest=history.length?history[history.length-1]:null;
+  if(!latest){
+    return {sourceDate:'',sets:[{reps:8,weight:null},{reps:8,weight:null},{reps:8,weight:null}],note:'Inicio: elige una carga controlable para 8 repeticiones y deja 1–3 repeticiones en reserva.'};
+  }
+  const prevSets=(latest.e.sets||[]).filter(st=>num(st.reps)>0).slice(0,3);
+  const lastFeedback=latest.e.feedback||{};
+  const progressionAllowed=lastFeedback.technique==='good'&&['easy','moderate'].includes(lastFeedback.effort)&&lastFeedback.pain==='no'&&['good','regular'].includes(lastFeedback.recovery);
+  const caution=lastFeedback.pain==='yes'||lastFeedback.technique==='poor'||lastFeedback.effort==='hard'||lastFeedback.recovery==='poor'||!progressionAllowed;
+  let targets=prevSets.map(st=>Math.max(1,Math.min(12,num(st.reps)+(caution?0:1))));
+  while(targets.length<3) targets.push(8);
+  const allAtTop=prevSets.length===3&&prevSets.every(st=>num(st.reps)>=12)&&progressionAllowed;
+  const sets=prevSets.length?prevSets.map((st,i)=>({reps:allAtTop?8:targets[i],weight:num(st.weight)>0?num(st.weight)+(allAtTop?0.5:0):null})):[{reps:8,weight:null},{reps:8,weight:null},{reps:8,weight:null}];
+  let note='';
+  if(lastFeedback.pain==='yes') note='La última vez indicaste molestias: no fuerces; detén o adapta el ejercicio si reaparece el dolor.';
+  else if(lastFeedback.technique==='poor') note='La última vez la técnica fue mejorable: prioriza ejecución limpia y no aumentes la carga.';
+  else if(lastFeedback.effort==='hard'||lastFeedback.recovery==='poor') note='La última vez fue muy exigente o la recuperación fue mala: mantén o reduce la exigencia; no subas peso.';
+  else if(allAtTop) note='Alcanzaste 12 repeticiones en las 3 series y la valoración fue favorable. Objetivo orientativo: +0,5 kg y volver a 8 repeticiones, si el incremento disponible es adecuado.';
+  else if(!progressionAllowed) note='Antes de recomendar una subida, registra técnica buena, esfuerzo controlado, ausencia de molestias y recuperación suficiente.';
+  else note='Referencia basada en la última sesión; ajusta según sensaciones y técnica de hoy.';
+  return {sourceDate:dateKey(latest.l.date),sets,note};
+}
+
 function routineInsightHTML(d, ex){
   // La recomendación y la tabla ÚLTIMO usan el historial real completo,
   // incluida una sesión ya guardada en la fecha seleccionada.
@@ -2344,6 +2368,7 @@ function routineInsightHTML(d, ex){
   const recent=history.slice(-4);
   if(!recent.length) return '💡 <b>Objetivo inicial:</b> elige una carga controlable y trabaja entre 8 y 12 repeticiones por serie, con buena técnica y 1-3 repeticiones en reserva.';
   const latest=recent[recent.length-1];
+  const lastFeedback=latest.e.feedback||{};
   const latestSets=(latest.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
   const maxW=latestSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
   const totalVol=latestSets.reduce((v,s)=>v+num(s.reps)*num(s.weight),0);
@@ -2352,14 +2377,21 @@ function routineInsightHTML(d, ex){
   const allAtTop=latestSets.length===3 && reps.every(r=>r>=12) && weights.every(w=>w>0);
   const belowRange=reps.some(r=>r<8);
   let advice=`📌 <b>Última sesión de este ejercicio:</b> ${dateKey(latest.l.date)} · ${maxW} kg máximo · volumen ${Math.round(totalVol)} kg.`;
-  if(allAtTop){
+  const progressionAllowed=lastFeedback.technique==='good'&&['easy','moderate'].includes(lastFeedback.effort)&&lastFeedback.pain==='no'&&['good','regular'].includes(lastFeedback.recovery);
+  const safetyHold=!progressionAllowed||lastFeedback.pain==='yes'||lastFeedback.technique==='poor'||lastFeedback.effort==='hard'||lastFeedback.recovery==='poor';
+  if(allAtTop && !safetyHold){
     advice+=' 🟢 <b>Objetivo siguiente:</b> has alcanzado 12 repeticiones en las 3 series. Si la técnica fue limpia y te quedó margen, prueba el incremento más pequeño disponible y vuelve a construir desde 8-10 repeticiones.';
+  } else if(allAtTop && safetyHold){
+    advice+=' 🎯 <b>Objetivo siguiente:</b> aunque completaste las repeticiones, no subas peso por ahora; prioriza técnica, esfuerzo controlado y recuperación.';
   } else if(belowRange){
     advice+=' 🎯 <b>Objetivo siguiente:</b> mantén la carga e intenta acercar todas las series a 8 repeticiones sin perder técnica. No subas peso todavía.';
   } else {
     const targets=reps.map(r=>Math.min(12,r+1));
     advice+=` 🎯 <b>Objetivo siguiente:</b> mantén el peso e intenta sumar alguna repetición. Referencia por series: ${targets.join(' / ')} reps.`;
   }
+  if(lastFeedback.pain==='yes') advice+=' 🔴 <b>Precaución:</b> la última vez indicaste molestias. No fuerces el movimiento; detén o adapta el ejercicio si el dolor aparece de nuevo y consulta a un profesional si persiste.';
+  else if(lastFeedback.technique==='poor') advice+=' 🟠 <b>Prioridad:</b> la última vez la técnica fue mejorable. Mantén o reduce la carga hasta controlar la ejecución; no aumentes peso.';
+  else if(lastFeedback.effort==='hard'||lastFeedback.recovery==='poor') advice+=' 🟠 <b>Recuperación:</b> la última sesión fue muy exigente o la recuperación fue mala. No aumentes peso; mantén o reduce la exigencia según sensaciones.';
   if(recent.length>=2){
     const prev=recent[recent.length-2];
     const prevSets=(prev.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
@@ -2549,6 +2581,28 @@ style="display:none">
   <button type="button" class="btn out sm" onclick="copyLastSets('${prefix}')">↪ CARGAR ÚLTIMOS DATOS</button>
   <button type="button" class="btn out sm" onclick="increaseExerciseWeights('${prefix}',0.5)">＋ 0,5 KG</button>
   <button type="button" class="btn out sm" onclick="increaseExerciseWeights('${prefix}',-0.5)">－ 0,5 KG</button>
+</div>
+<div class="adaptiveTarget" id="target-${gi}-${i}" style="margin:8px 0;padding:9px;border:1px solid var(--line);border-radius:10px;background:var(--soft)">
+  <b>🎯 Objetivo propuesto:</b> ${adaptiveTargetData(ex).sets.map((st,idx)=>`S${idx+1}: ${st.reps} reps${st.weight!==null&&st.weight>0?` · ${st.weight} kg`:''}`).join(' · ')}<br>
+  <small>${esc(adaptiveTargetData(ex).note)}</small>
+</div>
+<div class="exerciseFeedback" style="margin:8px 0;padding:10px;border:1px solid var(--line);border-radius:10px">
+  <b>📝 Cómo te ha ido (para ajustar la próxima sesión)</b>
+  <div class="row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;margin-top:8px">
+    <label>Técnica
+      <select id="${prefix}-fb-tech"><option value="">Sin indicar</option><option value="good">Buena</option><option value="poor">Mejorable</option></select>
+    </label>
+    <label>Esfuerzo
+      <select id="${prefix}-fb-effort"><option value="">Sin indicar</option><option value="easy">Fácil</option><option value="moderate">Moderado</option><option value="hard">Muy duro</option></select>
+    </label>
+    <label>Dolor o molestias
+      <select id="${prefix}-fb-pain"><option value="">Sin indicar</option><option value="no">Ninguna</option><option value="yes">Sí, molestias</option></select>
+    </label>
+    <label>Recuperación
+      <select id="${prefix}-fb-recovery"><option value="">Sin indicar</option><option value="good">Buena</option><option value="regular">Regular</option><option value="poor">Mala</option></select>
+    </label>
+  </div>
+  <small>Si indicas dolor, mala técnica, esfuerzo muy alto o mala recuperación, el Monitor evitará recomendar una subida automática.</small>
 </div>
 
 ${img?`
@@ -3124,6 +3178,13 @@ if(plannedSets===0){
   return;
 }
 
+// Congela los objetivos antes de modificar el registro de esta sesión, para que
+// el resultado de hoy nunca se use por error como su propio historial previo.
+const objectivesBeforeSave=new Map();
+(routine[day]?.groups||[]).forEach((group,gi)=>(group.exercises||[]).forEach((ex,i)=>{
+  objectivesBeforeSave.set(`${gi}|${i}`,adaptiveTargetData(ex,currentDate));
+}));
+
 let log=findSession(
 day,
 currentDate
@@ -3194,11 +3255,20 @@ weight:num(s.weight)
 })
 );
 
+const feedback={
+  technique:document.getElementById(`${prefix}-fb-tech`)?.value||'',
+  effort:document.getElementById(`${prefix}-fb-effort`)?.value||'',
+  pain:document.getElementById(`${prefix}-fb-pain`)?.value||'',
+  recovery:document.getElementById(`${prefix}-fb-recovery`)?.value||''
+};
+const targetSnapshot=objectivesBeforeSave.get(`${gi}|${i}`)||adaptiveTargetData(ex);
 let exerciseData={
 name:ex,
 sets:cleanSets,
 volume:data.volume,
-rm:data.rm
+rm:data.rm,
+objective:{date:currentDate,sets:targetSnapshot.sets,note:targetSnapshot.note,sourceDate:targetSnapshot.sourceDate},
+feedback
 };
 
 let old=
@@ -3211,6 +3281,8 @@ if(old){
 old.sets=exerciseData.sets;
 old.volume=exerciseData.volume;
 old.rm=exerciseData.rm;
+old.objective=exerciseData.objective;
+old.feedback=exerciseData.feedback;
 
 }else{
 
@@ -3290,6 +3362,7 @@ form
 .forEach(el=>{
 el.value='';
 });
+form.querySelectorAll('.exerciseFeedback select').forEach(el=>{el.value='';});
 
 form
 .querySelectorAll('.rm')
@@ -4079,7 +4152,7 @@ document.createElement('a');
 a.href=url;
 
 a.download=
-'Mi_Gimnasio_Pro_v10_11_7_backup_'+
+'Mi_Gimnasio_Pro_v10_12_0_backup_'+
 new Date()
 .toISOString()
 .slice(0,10)+
@@ -4172,7 +4245,7 @@ function exportAndEmail(){
     removedExerciseBase:removedExerciseBase
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-  const filename = 'Mi_Gimnasio_Pro_v10_11_7_backup_' + new Date().toISOString().slice(0,10) + '.json';
+  const filename = 'Mi_Gimnasio_Pro_v10_12_0_backup_' + new Date().toISOString().slice(0,10) + '.json';
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -4183,7 +4256,7 @@ function exportAndEmail(){
   setTimeout(() => URL.revokeObjectURL(url), 3000);
 
   const subject = 'Copia de seguridad Mi Gimnasio Pro';
-  const body = 'Adjunta a este correo el archivo JSON que acabas de descargar: ' + filename + '\n\nCopia de seguridad de Mi Gimnasio Pro v10.11.7.';
+  const body = 'Adjunta a este correo el archivo JSON que acabas de descargar: ' + filename + '\n\nCopia de seguridad de Mi Gimnasio Pro v10.12.0.';
   const gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(email) + '&su=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
   // En móviles, mail.google.com puede abrir Recibidos en vez del borrador.
   // Usamos mailto para pedir a Android que abra la aplicación de correo configurada;
@@ -4860,12 +4933,22 @@ function renderMonitor(){
     const prevReps=prevSets.reduce((a,s)=>a+num(s.reps),0);
     const prevVol=prevSets.reduce((a,s)=>a+num(s.reps)*num(s.weight),0);
     const prevMax=prevSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
+    const fb=latest.e.feedback||{};
+    const progressionAllowed=fb.technique==='good'&&['easy','moderate'].includes(fb.effort)&&fb.pain==='no'&&['good','regular'].includes(fb.recovery);
+    const safetyHold=!progressionAllowed||fb.pain==='yes'||fb.technique==='poor'||fb.effort==='hard'||fb.recovery==='poor';
     let icon='🟡',title='MANTÉN Y CONSOLIDA',advice='Intenta sumar una repetición total manteniendo el mismo peso y una técnica limpia.';
-    if(sets.length>=3 && reps.every(r=>r>=12) && weights.every(w=>w>0)){icon='🟢';title='VALORA SUBIR UN POCO EL PESO';advice='Has alcanzado 12 repeticiones en las tres series. Si la técnica fue buena y te quedaron 1–3 repeticiones en reserva, prueba el incremento mínimo disponible.';}
+    if(safetyHold){
+      icon=fb.pain==='yes'?'🔴':'🟠';
+      if(fb.pain==='yes'){title='REVISA LAS MOLESTIAS';advice='Indicaste dolor o molestias en la última sesión. No fuerces el movimiento; detén o adapta el ejercicio si reaparece.';}
+      else if(fb.technique==='poor'){title='NO AUMENTES TODAVÍA';advice='La técnica fue mejorable: mantén o reduce la carga hasta controlar el movimiento.';}
+      else if(fb.effort==='hard'||fb.recovery==='poor'){title='PRIORIZA LA RECUPERACIÓN';advice='El esfuerzo fue muy alto o la recuperación fue mala. Mantén o reduce la exigencia y valora cómo te encuentras.';}
+      else {title='MANTÉN HASTA VALORAR';advice='No hay una valoración favorable completa de técnica, esfuerzo, molestias y recuperación. Mantén la carga; no se recomienda subir peso todavía.';}
+    }
+    else if(sets.length>=3 && reps.every(r=>r>=12) && weights.every(w=>w>0)){icon='🟢';title='VALORA SUBIR UN POCO EL PESO';advice='Has alcanzado 12 repeticiones en las tres series. Solo si la técnica fue buena, el esfuerzo controlado y la recuperación adecuada, valora el incremento mínimo disponible.';}
     else if(reps.some(r=>r<8)){icon='🟠';title='NO SUBAS TODAVÍA';advice='Mantén o reduce ligeramente la carga si pierdes la técnica; busca un rango controlado de 8–12 repeticiones.';}
     if(prev){
-      if(currReps>prevReps || currVol>prevVol || currMax>prevMax){icon='🟢';if(title==='MANTÉN Y CONSOLIDA')title='PROGRESO REGISTRADO';advice+=' La última sesión mejoró respecto a la sesión anterior de este ejercicio, independientemente de la rutina.';}
-      else if(currReps<prevReps && currVol<prevVol && currMax<=prevMax){icon='🟠';title='REVISA FATIGA Y RECUPERACIÓN';advice='El resultado bajó respecto a la sesión anterior. No fuerces la subida; revisa descanso, molestias y técnica.';}
+      if(!safetyHold && (currReps>prevReps || currVol>prevVol || currMax>prevMax)){icon='🟢';if(title==='MANTÉN Y CONSOLIDA')title='PROGRESO REGISTRADO';advice+=' La última sesión mejoró respecto a la sesión anterior de este ejercicio, independientemente de la rutina.';}
+      else if(!safetyHold && currReps<prevReps && currVol<prevVol && currMax<=prevMax){icon='🟠';title='REVISA FATIGA Y RECUPERACIÓN';advice='El resultado bajó respecto a la sesión anterior. No fuerces la subida; revisa descanso, molestias y técnica.';}
     }
     // Tendencia semanal: agrupa por semana natural y compara el rendimiento medio por sesión.
     const weekKeyFor=value=>{const d=new Date(value);const dayNum=d.getDay()||7;d.setHours(0,0,0,0);d.setDate(d.getDate()-dayNum+1);return dateKey(d);};
@@ -4892,7 +4975,15 @@ function renderMonitor(){
       if(plateau){icon='🟡';title='POSIBLE ESTANCAMIENTO';advice='En las últimas cuatro sesiones no se observa mejora sostenida en repeticiones, volumen ni carga máxima. Revisa recuperación, técnica y regularidad; prueba cambiar una sola variable cuando te encuentres recuperado.';}
     }
     const groupLabel=latest.groups?.join(' / ')||latest.group||'grupo no identificado';
-    cards.push(`<div class="card" style="margin:8px 0"><b>${icon} ${esc(item.name)}</b><div><small>Historial global · última vez: rutina ${Number(latest.l.day)} · ${esc(groupLabel)}</small></div><p style="margin:6px 0"><b>${title}</b></p><p>${advice}</p><small>Última sesión: ${dateKey(latest.l.date)} · ${reps.join(' / ')} repeticiones · ${weights.join(' / ')} kg</small><p style="margin:7px 0 0"><small>📊 ${trendText}</small></p>${weeklyTrend.length?`<small>Semanas (inicio): ${weeklyTrend.map(w=>`${w.weekStart}: ${w.reps.toFixed(0)} reps medias, ${Math.round(w.vol)} kg de volumen medio`).join(' · ')}</small><br>`:''}<small>Sesiones registradas para este ejercicio: ${history.length}</small></div>`);
+    const objective=latest.e.objective;
+    let objectiveComparison='';
+    if(objective && Array.isArray(objective.sets) && objective.sets.length){
+      const targetReps=objective.sets.map(st=>num(st.reps));
+      const achievedReps=(latest.e.sets||[]).filter(st=>num(st.reps)>0).slice(0,3).map(st=>num(st.reps));
+      const targetTotal=targetReps.reduce((a,b)=>a+b,0), achievedTotal=achievedReps.reduce((a,b)=>a+b,0);
+      objectiveComparison=`<p style="margin:6px 0"><small>🎯 Objetivo guardado: ${targetReps.join(' / ')} reps${objective.sourceDate?` (basado en ${esc(objective.sourceDate)})`:' (objetivo inicial)'}. Resultado real: ${achievedReps.join(' / ')||'sin reps'} reps. ${achievedTotal>=targetTotal?'Objetivo de repeticiones alcanzado o superado.':'Objetivo de repeticiones no alcanzado; ajusta sin forzar.'}</small></p>`;
+    }
+    cards.push(`<div class="card" style="margin:8px 0"><b>${icon} ${esc(item.name)}</b><div><small>Historial global · última vez: rutina ${Number(latest.l.day)} · ${esc(groupLabel)}</small></div><p style="margin:6px 0"><b>${title}</b></p><p>${advice}</p><small>Última sesión: ${dateKey(latest.l.date)} · ${reps.join(' / ')} repeticiones · ${weights.join(' / ')} kg</small>${objectiveComparison}<p style="margin:7px 0 0"><small>📊 ${trendText}</small></p>${weeklyTrend.length?`<small>Semanas (inicio): ${weeklyTrend.map(w=>`${w.weekStart}: ${w.reps.toFixed(0)} reps medias, ${Math.round(w.vol)} kg de volumen medio`).join(' · ')}</small><br>`:''}<small>Sesiones registradas para este ejercicio: ${history.length}</small></div>`);
   }
   document.getElementById('monitorExercises').innerHTML=cards.length?cards.join(''):'No hay ejercicios con datos suficientes.';
 
