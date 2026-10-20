@@ -1,9 +1,9 @@
-const CACHE_NAME = 'mi-gimnasio-pro-v10-11-7-ultimo-historial';
+const CACHE_NAME = 'mi-gimnasio-pro-v10-12-0-monitor-adaptativo';
 
 const APP_FILES = [
   './',
   './index.html',
-  './manifest.webmanifest?v=10-11-6-movil-mailto',
+  './manifest.webmanifest?v=10-12-0-monitor-adaptativo',
   './icon-192.png',
   './icon-512.png'
 ];
