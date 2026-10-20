@@ -4183,8 +4183,23 @@ function exportAndEmail(){
   const subject = 'Copia de seguridad Mi Gimnasio Pro';
   const body = 'Adjunta a este correo el archivo JSON que acabas de descargar: ' + filename + '\n\nCopia de seguridad de Mi Gimnasio Pro v10.11.6.';
   const gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(email) + '&su=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-  const win = window.open(gmailUrl, '_blank');
-  if(!win){
+  // En móviles, mail.google.com puede abrir Recibidos en vez del borrador.
+  // Usamos mailto para pedir a Android que abra la aplicación de correo configurada;
+  // en PC mantenemos el acceso web de Gmail que ya está probado.
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+                   (navigator.userAgentData && navigator.userAgentData.mobile);
+  let win = null;
+  if (isMobile) {
+    try {
+      window.location.href = 'mailto:' + encodeURIComponent(email) +
+        '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    } catch (err) {
+      win = window.open(gmailUrl, '_blank');
+    }
+  } else {
+    win = window.open(gmailUrl, '_blank');
+  }
+  if(!isMobile && !win){
     if(status) status.textContent = 'La copia se ha descargado. El navegador ha bloqueado la ventana de Gmail; permite las ventanas emergentes o abre Gmail y escribe el destinatario guardado: ' + email + '. Adjunta el JSON descargado.';
     alert('La copia JSON se ha descargado, pero el navegador ha bloqueado Gmail. Abre Gmail manualmente, usa el destinatario guardado y adjunta el archivo descargado.');
     return;
