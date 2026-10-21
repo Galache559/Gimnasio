@@ -2586,25 +2586,6 @@ style="display:none">
   <b>🎯 Objetivo propuesto:</b> ${adaptiveTargetData(ex).sets.map((st,idx)=>`S${idx+1}: ${st.reps} reps${st.weight!==null&&st.weight>0?` · ${st.weight} kg`:''}`).join(' · ')}<br>
   <small>${esc(adaptiveTargetData(ex).note)}</small>
 </div>
-<div class="exerciseFeedback" style="margin:8px 0;padding:10px;border:1px solid var(--line);border-radius:10px">
-  <b>📝 Cómo te ha ido (para ajustar la próxima sesión)</b>
-  <div class="row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;margin-top:8px">
-    <label>Técnica
-      <select id="${prefix}-fb-tech"><option value="">Sin indicar</option><option value="good">Buena</option><option value="poor">Mejorable</option></select>
-    </label>
-    <label>Esfuerzo
-      <select id="${prefix}-fb-effort"><option value="">Sin indicar</option><option value="easy">Fácil</option><option value="moderate">Moderado</option><option value="hard">Muy duro</option></select>
-    </label>
-    <label>Dolor o molestias
-      <select id="${prefix}-fb-pain"><option value="">Sin indicar</option><option value="no">Ninguna</option><option value="yes">Sí, molestias</option></select>
-    </label>
-    <label>Recuperación
-      <select id="${prefix}-fb-recovery"><option value="">Sin indicar</option><option value="good">Buena</option><option value="regular">Regular</option><option value="poor">Mala</option></select>
-    </label>
-  </div>
-  <small>Si indicas dolor, mala técnica, esfuerzo muy alto o mala recuperación, el Monitor evitará recomendar una subida automática.</small>
-</div>
-
 ${img?`
 
 <img
@@ -2729,6 +2710,25 @@ class="restbtn"
 onclick="startTimer()">
 ⏱️ Descanso 2:00
 </button>
+
+<div class="exerciseFeedback" style="margin:8px 0;padding:10px;border:1px solid var(--line);border-radius:10px">
+  <b>📝 Cómo te ha ido (para ajustar la próxima sesión)</b>
+  <div class="row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;margin-top:8px">
+    <label>Técnica
+      <select id="${prefix}-fb-tech"><option value="">Sin indicar</option><option value="good">Buena</option><option value="poor">Mejorable</option></select>
+    </label>
+    <label>Esfuerzo
+      <select id="${prefix}-fb-effort"><option value="">Sin indicar</option><option value="easy">Fácil</option><option value="moderate">Moderado</option><option value="hard">Muy duro</option></select>
+    </label>
+    <label>Dolor o molestias
+      <select id="${prefix}-fb-pain"><option value="">Sin indicar</option><option value="no">Ninguna</option><option value="yes">Sí, molestias</option></select>
+    </label>
+    <label>Recuperación
+      <select id="${prefix}-fb-recovery"><option value="">Sin indicar</option><option value="good">Buena</option><option value="regular">Regular</option><option value="poor">Mala</option></select>
+    </label>
+  </div>
+  <small>Si indicas dolor, mala técnica, esfuerzo muy alto o mala recuperación, el Monitor evitará recomendar una subida automática.</small>
+</div>
 
 <button
 class="save-ex"
