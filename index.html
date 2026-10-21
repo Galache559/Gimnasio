@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MI GIMNASIO PRO v10.12.0 · MONITOR</title>
+<title>MI GIMNASIO PRO v10.12.2 · MONITOR</title>
 <meta name="theme-color" content="#121212">
 <link rel="manifest" href="./manifest.webmanifest?v=10-11-6">
 
@@ -1056,7 +1056,7 @@ color:#000;
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v10.12.0</h1>
+<h1>MI GIMNASIO PRO v10.12.2</h1>
 </header>
 
 <div class="container">
@@ -2337,6 +2337,20 @@ function getPreviousExerciseForDay(d, name, groupIndex){
   return history.length ? history[history.length-1].e : null;
 }
 
+// Recupera el registro guardado de la fecha seleccionada para rellenar HOY al reabrir el entrenamiento.
+function getSavedExerciseForDate(log, name, groupIndex){
+  if(!log)return null;
+  const key=exerciseNameKey(name);
+  for(const g of (log.groups||[])){
+    const gi=Number.isInteger(Number(g.groupIndex))?Number(g.groupIndex):null;
+    if(groupIndex!==undefined && gi!==null && gi!==Number(groupIndex))continue;
+    for(const e of (g.exercises||[])){
+      if(exerciseNameKey(e.name)===key && (e.sets||[]).some(st=>num(st.reps)>0))return e;
+    }
+  }
+  return null;
+}
+
 function adaptiveTargetData(name, excludeDate=''){
   const history=getExerciseHistory(name,excludeDate);
   const latest=history.length?history[history.length-1]:null;
@@ -2762,6 +2776,30 @@ onclick="showHistory('${esc(ex)}')">
 });
 
 document.getElementById('form').innerHTML=html;
+
+// Si el ejercicio ya se guardó en la fecha elegida, recuperar sus datos en HOY y su valoración.
+const savedToday=findSession(day,document.getElementById('date')?.value||'');
+if(savedToday){
+  (x.groups||[]).forEach((g,gi)=>(g.exercises||[]).forEach((ex,i)=>{
+    const saved=getSavedExerciseForDate(savedToday,ex,gi);
+    if(!saved)return;
+    const prefix=`g${gi}-e${i}`;
+    (saved.sets||[]).slice(0,3).forEach((st,j)=>{
+      const r=document.getElementById(`${prefix}-r${j}`);
+      const w=document.getElementById(`${prefix}-w${j}`);
+      if(r)r.value=st.reps??'';
+      if(w)w.value=st.weight??'';
+    });
+    const fb=saved.feedback||{};
+    const fields={tech:fb.technique,effort:fb.effort,pain:fb.pain,recovery:fb.recovery};
+    Object.entries(fields).forEach(([field,value])=>{
+      const el=document.getElementById(`${prefix}-fb-${field}`);
+      if(el && value!==undefined)el.value=value;
+    });
+    const saveBtn=document.getElementById(`save-${prefix}`);
+    if(saveBtn){saveBtn.classList.add('saved');saveBtn.textContent='✓ EJERCICIO GUARDADO';}
+  }));
+}
 
 (x.groups||[]).forEach((g,gi)=>
 (g.exercises||[]).forEach(
