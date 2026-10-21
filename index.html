@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MI GIMNASIO PRO v10.12.2 · MONITOR</title>
+<title>MI GIMNASIO PRO v10.12.3 · MONITOR</title>
 <meta name="theme-color" content="#121212">
 <link rel="manifest" href="./manifest.webmanifest?v=10-11-6">
 
@@ -1056,7 +1056,7 @@ color:#000;
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v10.12.2</h1>
+<h1>MI GIMNASIO PRO v10.12.3</h1>
 </header>
 
 <div class="container">
@@ -2376,37 +2376,18 @@ function adaptiveTargetData(name, excludeDate=''){
 }
 
 function routineInsightHTML(d, ex){
-  // El resumen y la recomendación se basan en la última sesión ANTERIOR
-  // a la fecha seleccionada, para no usar el entrenamiento actual como su propio objetivo.
+  // Este recuadro resume únicamente la última sesión y su comparación.
+  // El objetivo concreto para la próxima sesión se muestra en el bloque inferior.
   const selectedDate=document.getElementById('date')?.value||'';
   const history=getExerciseHistory(ex, selectedDate);
   const recent=history.slice(-4);
-  if(!recent.length) return '💡 <b>Objetivo inicial:</b> elige una carga controlable y trabaja entre 8 y 12 repeticiones por serie, con buena técnica y 1-3 repeticiones en reserva.';
+  if(!recent.length) return '📌 <b>Sin historial anterior:</b> registra este ejercicio para que el Monitor pueda comparar resultados y proponer objetivos personalizados.';
   const latest=recent[recent.length-1];
-  const lastFeedback=latest.e.feedback||{};
   const latestSets=(latest.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
   const maxW=latestSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
   const totalVol=latestSets.reduce((v,s)=>v+num(s.reps)*num(s.weight),0);
   const reps=latestSets.map(s=>num(s.reps));
-  const weights=latestSets.map(s=>num(s.weight));
-  const allAtTop=latestSets.length===3 && reps.every(r=>r>=12) && weights.every(w=>w>0);
-  const belowRange=reps.some(r=>r<8);
-  let advice=`📌 <b>Última sesión de este ejercicio:</b> ${dateKey(latest.l.date)} · ${maxW} kg máximo · volumen ${Math.round(totalVol)} kg.`;
-  const progressionAllowed=lastFeedback.technique==='good'&&['easy','moderate'].includes(lastFeedback.effort)&&lastFeedback.pain==='no'&&['good','regular'].includes(lastFeedback.recovery);
-  const safetyHold=!progressionAllowed||lastFeedback.pain==='yes'||lastFeedback.technique==='poor'||lastFeedback.effort==='hard'||lastFeedback.recovery==='poor';
-  if(allAtTop && !safetyHold){
-    advice+=' 🟢 <b>Objetivo siguiente:</b> has alcanzado 12 repeticiones en las 3 series. Si la técnica fue limpia y te quedó margen, prueba el incremento más pequeño disponible y vuelve a construir desde 8-10 repeticiones.';
-  } else if(allAtTop && safetyHold){
-    advice+=' 🎯 <b>Objetivo siguiente:</b> aunque completaste las repeticiones, no subas peso por ahora; prioriza técnica, esfuerzo controlado y recuperación.';
-  } else if(belowRange){
-    advice+=' 🎯 <b>Objetivo siguiente:</b> mantén la carga e intenta acercar todas las series a 8 repeticiones sin perder técnica. No subas peso todavía.';
-  } else {
-    const targets=reps.map(r=>Math.min(12,r+1));
-    advice+=` 🎯 <b>Objetivo siguiente:</b> mantén el peso e intenta sumar alguna repetición. Referencia por series: ${targets.join(' / ')} reps.`;
-  }
-  if(lastFeedback.pain==='yes') advice+=' 🔴 <b>Precaución:</b> la última vez indicaste molestias. No fuerces el movimiento; detén o adapta el ejercicio si el dolor aparece de nuevo y consulta a un profesional si persiste.';
-  else if(lastFeedback.technique==='poor') advice+=' 🟠 <b>Prioridad:</b> la última vez la técnica fue mejorable. Mantén o reduce la carga hasta controlar la ejecución; no aumentes peso.';
-  else if(lastFeedback.effort==='hard'||lastFeedback.recovery==='poor') advice+=' 🟠 <b>Recuperación:</b> la última sesión fue muy exigente o la recuperación fue mala. No aumentes peso; mantén o reduce la exigencia según sensaciones.';
+  let advice=`📌 <b>Última sesión:</b> ${dateKey(latest.l.date)} · ${maxW} kg máximo · volumen ${Math.round(totalVol)} kg. <b>Referencia por series:</b> ${reps.join(' / ')} reps.`;
   if(recent.length>=2){
     const prev=recent[recent.length-2];
     const prevSets=(prev.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
@@ -2414,24 +2395,17 @@ function routineInsightHTML(d, ex){
     const prevReps=prevSets.reduce((a,s)=>a+num(s.reps),0);
     const currentVol=latestSets.reduce((v,s)=>v+num(s.reps)*num(s.weight),0);
     const prevVol=prevSets.reduce((v,s)=>v+num(s.reps)*num(s.weight),0);
-    const currentMax=latestSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
+    const currentMax=maxW;
     const prevMax=prevSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
-    if(currentReps>prevReps || currentVol>prevVol || currentMax>prevMax) advice+=' <b>Comparación:</b> mejora registrada respecto a la sesión anterior de este ejercicio, aunque fuera en otra rutina.';
-    else if(currentReps===prevReps && currentVol===prevVol && currentMax===prevMax) advice+=' <b>Comparación:</b> mismo resultado que la sesión anterior; busca una repetición más antes de subir carga.';
-    else advice+=' <b>Comparación:</b> resultado inferior a la sesión anterior; valora cansancio y técnica, sin forzar la progresión.';
-  } else advice+=' Registra otra sesión para comparar la evolución.';
-  if(recent.length>=4){
-    const firstSets=(recent[0].e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
-    const firstReps=firstSets.reduce((a,s)=>a+num(s.reps),0);
-    const firstVol=firstSets.reduce((a,s)=>a+num(s.reps)*num(s.weight),0);
-    const lastReps=reps.reduce((a,b)=>a+b,0);
-    const lastMax=latestSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
-    const firstMax=firstSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
-    if(lastReps<=firstReps && totalVol<=firstVol && lastMax<=firstMax){
-      advice+=' 🟡 <b>Seguimiento:</b> en las últimas cuatro sesiones no se aprecia una mejora neta; revisa recuperación, técnica y consistencia antes de cambiar la carga.';
-    }
-  }
-  advice+=' <small>La recomendación es orientativa: técnica correcta y esfuerzo controlado tienen prioridad.</small>';
+    if(currentReps>prevReps || currentVol>prevVol || currentMax>prevMax) advice+=' <b>Comparación:</b> mejora respecto a la sesión anterior.';
+    else if(currentReps===prevReps && currentVol===prevVol && currentMax===prevMax) advice+=' <b>Comparación:</b> resultado similar al de la sesión anterior.';
+    else advice+=' <b>Comparación:</b> resultado inferior a la sesión anterior; valora cansancio y técnica.';
+  } else advice+=' Todavía no hay otra sesión para comparar.';
+  const fb=latest.e.feedback||{};
+  if(fb.pain==='yes') advice+=' 🔴 <b>Precaución:</b> indicaste molestias en la última sesión; no fuerces si reaparecen.';
+  else if(fb.technique==='poor') advice+=' 🟠 <b>Precaución:</b> prioriza la técnica antes de aumentar la carga.';
+  else if(fb.effort==='hard'||fb.recovery==='poor') advice+=' 🟠 <b>Precaución:</b> la sesión fue exigente o la recuperación fue insuficiente.';
+  advice+=' <small>El objetivo concreto para la próxima sesión aparece debajo.</small>';
   return advice;
 }
 
