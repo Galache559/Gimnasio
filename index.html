@@ -5330,6 +5330,20 @@ function emailMonitorWorkoutReport(){
   lines.push('Fecha: '+dateKey(session.date));
   lines.push('Rutina: '+(names[day]||('Rutina '+day)));
   lines.push('');
+  // Resumen ejecutivo al principio para consultar el resultado de un vistazo.
+  let quickSets=0,quickReps=0,quickVolume=0,quickExercises=0;
+  (session.groups||[]).forEach(g=>(g.exercises||[]).forEach(e=>{
+    const qs=(e.sets||[]).filter(st=>num(st.reps)>0).slice(0,6);
+    if(!qs.length)return;
+    quickExercises++;
+    quickSets+=qs.length;
+    quickReps+=qs.reduce((sum,st)=>sum+num(st.reps),0);
+    quickVolume+=qs.reduce((sum,st)=>sum+num(st.reps)*num(st.weight),0);
+  }));
+  lines.push('RESUMEN RÁPIDO');
+  lines.push('Ejercicios: '+quickExercises+' · Series: '+quickSets+' · Repeticiones: '+quickReps+' · Volumen estimado: '+Math.round(quickVolume).toLocaleString('es-ES')+' kg.');
+  lines.push('Consulta a continuación el detalle de cada ejercicio y las recomendaciones del Monitor para la próxima sesión.');
+  lines.push('');
   lines.push('1. LO QUE HE HECHO');
   let totalSets=0,totalReps=0,totalVolume=0,exerciseCount=0;
   (session.groups||[]).forEach(g=>{
