@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MI GIMNASIO PRO v10.12.3 · MONITOR</title>
+<title>MI GIMNASIO PRO v10.12.7 · SUPER 3 BLOQUES</title>
 <meta name="theme-color" content="#121212">
 <link rel="manifest" href="./manifest.webmanifest?v=10-11-6">
 
@@ -1051,12 +1051,68 @@ color:#000;
 
 </style>
 
+
+<style>
+/* SUPER: parejas compactas, dos ejercicios en paralelo y valoración común */
+.superPairGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:10px 0 6px;align-items:start}
+.superPairGrid .ex{min-width:0;margin:0;padding:9px;border-radius:12px}
+.superPairGrid .exhead{font-size:.92rem;display:flex;flex-wrap:wrap;gap:5px}
+.superPairGrid .gifPreview{max-width:100%;max-height:115px;object-fit:contain}
+.superPairGrid .adaptiveTarget{font-size:.82rem;padding:6px!important;margin:5px 0!important}
+.superPairGrid .smartRoutine{font-size:.82rem;padding:6px!important}
+.superPairGrid .smartActions{display:flex;flex-wrap:wrap;gap:4px}
+.superPairGrid .smartActions .btn{font-size:.72rem;padding:5px}
+.superPairGrid .workTable{font-size:.78rem;width:100%;margin:6px 0}
+.superPairGrid .workTable th,.superPairGrid .workTable td{padding:4px 3px}
+.superPairGrid .workTable input{width:100%;min-width:0;padding:4px 2px;font-size:.82rem}
+.superPairGrid .superRestControls{flex-direction:column!important;gap:4px!important}
+.superPairGrid .superRestControls button{font-size:.72rem;padding:5px}
+.superPairGrid .rm,.superPairGrid .vol{font-size:.78rem;margin:4px 0}
+.superPairFeedback{margin:4px 0 18px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--soft)}
+.superPairFeedback .row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:7px}
+.superPairFeedback label{font-size:.82rem}
+.superPairFeedback select{width:100%;min-width:0;font-size:.82rem;padding:6px 3px}
+@media(max-width:650px){.superPairGrid{gap:6px}.superPairGrid .ex{padding:6px}.superPairFeedback .row{grid-template-columns:repeat(2,minmax(0,1fr))}.superPairGrid .exerciseNo{font-size:.68rem}}
+</style>
+
+
+<style>
+/* Nuevo diseño comparativo EXCLUSIVO de las superseries de Rutina 5 */
+.superPairLayout{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:14px 0 24px;background:var(--card,#fff)}
+.superPairTitles,.superPairSummaryContent,.superPairMedia,.superPairDayLabels,.superPairData{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.superPairTitles>div{padding:14px 8px;text-align:center;font-weight:700;border-bottom:1px solid var(--line);min-width:0}
+.superPairTitles>div+div,.superPairMediaCell+ .superPairMediaCell,.superPairDataCell+ .superPairDataCell{border-left:1px solid var(--line)}
+.superPairSummary{border-bottom:1px solid var(--line);padding:8px 6px}
+.superPairSummary>b{display:block;margin-bottom:6px}
+.superPairSummaryContent>div{padding:7px;min-width:0;font-size:.85rem;overflow-wrap:anywhere}
+.superPairSummaryContent>div+div{border-left:1px solid var(--line)}
+.superPairSummaryContent.superPairSingleSummary{grid-template-columns:minmax(0,1fr)}
+.superPairSingleSummary>div{border-left:0!important}
+.superPairSingleSummary>div>div+div{margin-top:5px;padding-top:5px;border-top:1px solid var(--line)}
+.superPairDayLabels>div{text-align:center;font-weight:700;padding:6px;border-bottom:1px solid var(--line)}
+.superPairMediaCell{height:150px;display:flex;align-items:center;justify-content:center;padding:8px;min-width:0;border-bottom:1px solid var(--line)}
+.superPairMediaCell img{max-width:100%;width:auto;height:130px;object-fit:contain}
+.superPairDataCell{padding:8px;min-width:0}
+.superPairTableTitle{text-align:center;font-weight:700;font-size:.83rem;margin:5px 0;padding:6px;background:var(--soft);border-radius:5px}
+.superPairDataCell .workTable{width:100%;font-size:.75rem;table-layout:fixed}
+.superPairDataCell .workTable th,.superPairDataCell .workTable td{padding:3px 2px}
+.superPairDataCell .workTable input{width:100%;min-width:0;padding:4px 1px;font-size:.78rem}
+.superPairControls{padding:6px 8px}
+.superPairControls .smartActions{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.superPairControls .smartActions .btn{font-size:.76rem;padding:6px}
+.superPairControls .superRestControls{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.superPairControls .save-ex,.superPairControls .nextExercise{margin:4px}
+.superPairHiddenRemainder{padding:6px;border-top:1px dashed var(--line)}
+.superPairHiddenRemainder .exhead,.superPairHiddenRemainder .workTable,.superPairHiddenRemainder .exerciseFeedback{display:none!important}
+@media(max-width:560px){.superPairTitles>div{font-size:.82rem;padding:10px 4px}.superPairMediaCell{height:115px;padding:4px}.superPairMediaCell img{height:100px}.superPairSummaryContent>div{font-size:.77rem;padding:5px}.superPairDataCell{padding:4px}.superPairTableTitle{font-size:.72rem}.superPairDataCell .workTable th,.superPairDataCell .workTable td{padding:2px 1px}}
+</style>
+
 </head>
 
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v10.12.3</h1>
+<h1>MI GIMNASIO PRO v10.12.4</h1>
 </header>
 
 <div class="container">
@@ -1069,7 +1125,7 @@ color:#000;
 
 <div class="days">
 
-<button class="btn out" onclick="selectDay(1)">Rutina 1</button> <button class="btn out" onclick="selectDay(2)">Rutina 2</button> <button class="btn out" onclick="selectDay(3)">Rutina 3</button> <button class="btn out" onclick="selectDay(4)">Rutina 4</button> <button class="btn out" onclick="selectDay(5)">Rutina 5</button>
+<button class="btn out" onclick="selectDay(1)">Rutina 1</button> <button class="btn out" onclick="selectDay(2)">Rutina 2</button> <button class="btn out" onclick="selectDay(3)">Rutina 3</button> <button class="btn out" onclick="selectDay(4)">Rutina 4</button> <button class="btn out" onclick="selectDay(5)">SUPER</button>
 
 </div>
 
@@ -1117,7 +1173,7 @@ color:#000;
 <option value="2">Rutina 2</option>
 <option value="3">Rutina 3</option>
 <option value="4">Rutina 4</option>
-<option value="5">Rutina 5</option>
+<option value="5">SUPER · Superseries de brazos</option>
 </select>
 
 <div id="editor"></div>
@@ -1352,7 +1408,14 @@ const DEFAULT_ROUTINE={
 2:{groups:[{name:'ESPALDA',exercises:[],images:[]},{name:'BÍCEPS',exercises:[],images:[]},{name:'ABDOMINALES',exercises:[],images:[]}]},
 3:{groups:[{name:'PIERNAS',exercises:[],images:[]},{name:'PIERNAS',exercises:[],images:[]}]},
 4:{groups:[{name:'PECHO',exercises:[],images:[]},{name:'HOMBROS',exercises:[],images:[]},{name:'TRÍCEPS',exercises:[],images:[]},{name:'ABDOMINALES',exercises:[],images:[]}]},
-5:{groups:[{name:'ESPALDA',exercises:[],images:[]},{name:'BÍCEPS',exercises:[],images:[]},{name:'ABDOMINALES',exercises:[],images:[]}]}
+5:{groups:[
+{name:'BÍCEPS',exercises:['A1 · Curl de bíceps en polea baja'],images:['https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/cable-curl.gif']},
+{name:'TRÍCEPS',exercises:['A2 · Extensión de tríceps en polea alta'],images:['https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/cable-pushdown-with-rope-attachment.gif']},
+{name:'BÍCEPS',exercises:['B1 · Curl martillo con cuerda en polea baja'],images:['https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/cable-hammer-curl-with-rope.gif']},
+{name:'TRÍCEPS',exercises:['B2 · Extensión de tríceps por encima de la cabeza en polea baja'],images:['https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/cable-high-pulley-overhead-tricep-extension.gif']},
+{name:'BÍCEPS',exercises:['C1 · Curl de bíceps a una mano en polea baja'],images:['https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/cable-one-arm-curl.gif']},
+{name:'TRÍCEPS',exercises:['C2 · Extensión de tríceps a una mano en polea alta'],images:['https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/cable-one-arm-tricep-pushdown.gif']}
+]}
 }
 
 
@@ -2468,7 +2531,7 @@ let loadedmsg=document.getElementById('loadedmsg');
 
 work.style.display='block';
 
-title.innerText='Entrenamiento - Rutina '+d;
+title.innerText=d===5?'Entrenamiento - SUPER · Brazos':'Entrenamiento - Rutina '+d;
 
 date.value=new Date().toISOString().slice(0,10);
 
@@ -2505,13 +2568,16 @@ let pct=totalExercises?Math.round((completedExercises/totalExercises)*100):0;
 html+=`<div class="trainingHero">
   <div class="trainingHeroTop">
     <div>
-      <div class="trainingHeroTitle">🏋️ RUTINA ${Number(day)}</div>
-      <div class="trainingHeroSub">${totalExercises} ejercicios · 3 series por ejercicio</div>
+      <div class="trainingHeroTitle">🏋️ ${Number(day)===5?'SUPER · BRAZOS':'RUTINA '+Number(day)}</div>
+      <div class="trainingHeroSub">${totalExercises} ejercicios · ${Number(day)===5?'10-12 repeticiones · superseries':'3 series por ejercicio'}</div>
     </div>
     <div class="trainingPill">${completedExercises}/${totalExercises} hechos</div>
   </div>
   <div class="trainingProgress"><span style="width:${pct}%"></span></div>
 </div>`;
+if(Number(day)===5){
+  html+=`<div class="smartRoutine"><b>⚡ CÓMO HACER LAS SUPERSERIES</b><br>A1 → A2 = 3 rondas · B1 → B2 = 3 rondas · C1 → C2 = 3 rondas.<br>Objetivo: <b>10-12 repeticiones por serie</b>. Haz 1 serie de bíceps, descansa <b>15 segundos</b> y haz 1 serie de tríceps; al completar ambos, descansa <b>90 segundos</b> y repite la vuelta. Registra las series de cada ejercicio por separado. Usa una sola polea; cambia altura y posición cuando toque. El mismo peso es solo un punto de partida: ajusta cada ejercicio si la técnica o las repeticiones lo requieren.</div>`;
+}
 
 let exerciseCounter=0;
 
@@ -2694,11 +2760,10 @@ id="vol-${prefix}">
 📦 Volumen: 0 kg
 </div>
 
-<button
-class="restbtn"
-onclick="startTimer()">
-⏱️ Descanso 2:00
-</button>
+${Number(day)===5?`<div class="superRestControls" style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0">
+<button class="restbtn" style="flex:1" onclick="startTimer(15)">⏱️ Entre ejercicios: 0:15</button>
+<button class="restbtn" style="flex:1" onclick="startTimer(90)">⏱️ Entre vueltas: 1:30</button>
+</div>`:`<button class="restbtn" onclick="startTimer()">⏱️ Descanso 2:00</button>`}
 
 <div class="exerciseFeedback" style="margin:8px 0;padding:10px;border:1px solid var(--line);border-radius:10px">
   <b>📝 Cómo te ha ido (para ajustar la próxima sesión)</b>
@@ -2750,6 +2815,146 @@ onclick="showHistory('${esc(ex)}')">
 });
 
 document.getElementById('form').innerHTML=html;
+
+// SUPER: presentación tipo ficha comparativa de dos ejercicios. Solo afecta a Rutina 5.
+if(Number(day)===5){
+  const form=document.getElementById('form');
+  form.querySelectorAll('.group').forEach(el=>el.style.display='none');
+  const cards=[...form.querySelectorAll('.ex')];
+  for(let p=0;p<cards.length;p+=2){
+    const pairCards=cards.slice(p,p+2);
+    if(pairCards.length!==2) continue;
+    const pairIndex=Math.floor(p/2);
+    const layout=document.createElement('section');
+    layout.className='superPairLayout';
+    pairCards[0].parentNode.insertBefore(layout,pairCards[0]);
+
+    const titleRow=document.createElement('div');
+    titleRow.className='superPairTitles';
+    pairCards.forEach((card,i)=>{
+      const name=card.querySelector('.exhead span:nth-child(2)')?.textContent || `Ejercicio ${p+i+1}`;
+      const cell=document.createElement('div');
+      cell.textContent=name;
+      titleRow.appendChild(cell);
+    });
+    layout.appendChild(titleRow);
+
+    const historyRow=document.createElement('div');
+    historyRow.className='superPairSummary';
+    historyRow.innerHTML='<b>HISTORIAL DE LA PAREJA</b>';
+    const historyContent=document.createElement('div');
+    historyContent.className='superPairSummaryContent superPairSingleSummary';
+    const historyCell=document.createElement('div');
+    const historyTexts=[];
+    pairCards.forEach(card=>{
+      const insight=card.querySelector('.smartRoutine');
+      if(insight){
+        const txt=(insight.innerText||insight.textContent||'').trim();
+        if(txt && !/sin historial anterior/i.test(txt)) historyTexts.push(txt);
+        insight.style.display='none';
+      }
+    });
+    // La superserie se presenta como una sola unidad: un único historial común, sin duplicar columnas.
+    historyCell.textContent=historyTexts.length ? [...new Set(historyTexts)].join(' · ') : 'Sin historial registrado para esta pareja.';
+    historyContent.appendChild(historyCell);
+    historyRow.appendChild(historyContent);
+    layout.appendChild(historyRow);
+
+    const targetRow=document.createElement('div');
+    targetRow.className='superPairSummary';
+    targetRow.innerHTML='<b>PRÓXIMO OBJETIVO DEL MONITOR</b>';
+    const targetContent=document.createElement('div');
+    targetContent.className='superPairSummaryContent superPairSingleSummary';
+    const targetCell=document.createElement('div');
+    const targetTexts=[];
+    pairCards.forEach(card=>{
+      const target=card.querySelector('.adaptiveTarget');
+      if(target){
+        const clone=target.cloneNode(true);
+        clone.querySelectorAll('b').forEach(b=>b.remove());
+        const txt=(clone.innerText||clone.textContent||'').trim();
+        if(txt) targetTexts.push(txt);
+        target.style.display='none';
+      }
+    });
+    // Un solo bloque de objetivo para la pareja; se conservan los datos distintos de ambos movimientos.
+    targetCell.innerHTML=targetTexts.length ? [...new Set(targetTexts)].map((txt,i)=>`<div>${txt}</div>`).join('') : 'Objetivo pendiente de calcular.';
+    targetContent.appendChild(targetCell);
+    targetRow.appendChild(targetContent);
+    layout.appendChild(targetRow);
+
+    const gifRow=document.createElement('div');
+    gifRow.className='superPairMedia';
+    const dayLabels=document.createElement('div');
+    dayLabels.className='superPairDayLabels';
+    dayLabels.innerHTML='<div>GIF</div><div>GIF</div>';
+    pairCards.forEach(card=>{
+      const media=document.createElement('div');
+      media.className='superPairMediaCell';
+      const gif=card.querySelector('.gifPreview');
+      const fallback=card.querySelector('.gifLabel');
+      if(gif) media.appendChild(gif);
+      if(fallback) media.appendChild(fallback);
+      if(!gif && !fallback) media.textContent='GIF no disponible';
+      gifRow.appendChild(media);
+    });
+    layout.appendChild(dayLabels);
+    layout.appendChild(gifRow);
+
+    const dataRow=document.createElement('div');
+    dataRow.className='superPairData';
+    pairCards.forEach(card=>{
+      const data=document.createElement('div');
+      data.className='superPairDataCell';
+      const table=card.querySelector('.workTable');
+      if(table){
+        const today=document.createElement('div');
+        today.className='superPairTableTitle';
+        today.textContent='';
+        const last=document.createElement('div');
+        last.className='superPairTableTitle';
+        last.textContent='';
+        data.append(table);
+      }
+      dataRow.appendChild(data);
+    });
+    layout.appendChild(dataRow);
+
+    pairCards.forEach((card,idx)=>{
+      card.classList.add('superPairExerciseDetails');
+      const feedback=card.querySelector('.exerciseFeedback');
+      if(feedback){
+        if(idx===0){
+          feedback.classList.add('superPairFeedback');
+          feedback.querySelector('b').textContent='📝 ¿Cómo te ha ido esta pareja? Valora los dos ejercicios';
+          feedback.querySelectorAll('select').forEach(sel=>{
+            const field=sel.id.split('-fb-').pop();
+            sel.id=`super-fb-${pairIndex}-${field}`;
+          });
+          feedback.querySelector('small').textContent='Valora el conjunto de la superserie después de completar ambos ejercicios. Esta valoración se aplicará a los dos movimientos.';
+          layout.appendChild(feedback);
+        } else feedback.remove();
+      }
+      // Los controles y botones de cada ejercicio se conservan, pero debajo de la ficha comparativa.
+      const controls=document.createElement('div');
+      controls.className='superPairControls';
+      ['.smartActions','.rm','.vol','.superRestControls','.save-ex','.nextExercise','.row'].forEach(sel=>{
+        card.querySelectorAll(sel).forEach(el=>controls.appendChild(el));
+      });
+      layout.appendChild(controls);
+      card.querySelector('.exhead')?.remove();
+      card.querySelector('.gifPreview')?.remove();
+      card.querySelector('.gifLabel')?.remove();
+      card.querySelector('.workTable')?.remove();
+      card.querySelector('.exerciseFeedback')?.remove();
+      card.querySelector('.smartRoutine')?.remove();
+      card.querySelector('.adaptiveTarget')?.remove();
+      if(card.children.length===0) card.remove();
+      else { card.classList.add('superPairHiddenRemainder'); layout.appendChild(card); }
+    });
+  }
+}
+
 
 // Si el ejercicio ya se guardó en la fecha elegida, recuperar sus datos en HOY y su valoración.
 const savedToday=findSession(day,document.getElementById('date')?.value||'');
@@ -3268,11 +3473,12 @@ weight:num(s.weight)
 })
 );
 
+const pairFeedbackPrefix=Number(day)===5?`super-fb-${Math.floor(gi/2)}`:prefix+'-fb';
 const feedback={
-  technique:document.getElementById(`${prefix}-fb-tech`)?.value||'',
-  effort:document.getElementById(`${prefix}-fb-effort`)?.value||'',
-  pain:document.getElementById(`${prefix}-fb-pain`)?.value||'',
-  recovery:document.getElementById(`${prefix}-fb-recovery`)?.value||''
+  technique:document.getElementById(`${pairFeedbackPrefix}-tech`)?.value||'',
+  effort:document.getElementById(`${pairFeedbackPrefix}-effort`)?.value||'',
+  pain:document.getElementById(`${pairFeedbackPrefix}-pain`)?.value||'',
+  recovery:document.getElementById(`${pairFeedbackPrefix}-recovery`)?.value||''
 };
 const targetSnapshot=objectivesBeforeSave.get(`${gi}|${i}`)||adaptiveTargetData(ex);
 let exerciseData={
@@ -5497,11 +5703,11 @@ document.getElementById(
 
 }
 
-function startTimer(){
+function startTimer(seconds=120){
 
 closeTimer();
 
-timerSeconds=120;
+timerSeconds=Math.max(1,Number(seconds)||120);
 
 document.getElementById(
 'timerOverlay'
@@ -5629,6 +5835,14 @@ c.currentTime+.18
 
 }catch(e){}
 
+}
+
+// Migración única: sustituye la antigua Rutina 5 por la nueva SUPER de brazos.
+// Se conserva el resto de rutinas, la base de ejercicios y el historial.
+if(localStorage.getItem(K+'super_routine_migrated_v2')!=='1'){
+  routine[5]=structuredCloneSafe(DEFAULT_ROUTINE[5]);
+  normalizeRoutine();
+  if(save()) localStorage.setItem(K+'super_routine_migrated_v2','1');
 }
 
 loadBackupEmail();
