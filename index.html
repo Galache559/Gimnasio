@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MI GIMNASIO PRO v10.28.0 · TRES SUPER</title>
+<title>MI GIMNASIO PRO v10.12.7 · SUPER 3 BLOQUES</title>
 <meta name="theme-color" content="#121212">
 <link rel="manifest" href="./manifest.webmanifest?v=10-11-6">
 
@@ -1112,7 +1112,7 @@ color:#000;
 <body>
 
 <header>
-<h1>MI GIMNASIO PRO v10.28.0</h1>
+<h1>MI GIMNASIO PRO v10.24.0</h1>
 </header>
 
 <div class="container">
@@ -1125,9 +1125,7 @@ color:#000;
 
 <div class="days">
 
-<button class="btn out" onclick="selectDay(1)">Rutina 1</button> <button class="btn out" onclick="selectDay(2)">Rutina 2</button> <button class="btn out" onclick="selectDay(3)">Rutina 3</button> <button class="btn out" onclick="selectDay(4)">Rutina 4</button> <button class="btn out" onclick="selectDay(5)">SUPER BRAZOS</button>
-<button class="btn out" onclick="selectDay(6)">SUPER PECTORALES</button>
-<button class="btn out" onclick="selectDay(7)">SUPER DORSALES</button>
+<button class="btn out" onclick="selectDay(1)">Rutina 1</button> <button class="btn out" onclick="selectDay(2)">Rutina 2</button> <button class="btn out" onclick="selectDay(3)">Rutina 3</button> <button class="btn out" onclick="selectDay(4)">Rutina 4</button> <button class="btn out" onclick="selectDay(5)">SUPER</button>
 
 </div>
 
@@ -1197,9 +1195,7 @@ La aplicación guarda automáticamente los datos. Además puedes crear una copia
 <option value="2">Rutina 2</option>
 <option value="3">Rutina 3</option>
 <option value="4">Rutina 4</option>
-<option value="5">SUPER BRAZOS</option>
-<option value="6">SUPER PECTORALES</option>
-<option value="7">SUPER DORSALES</option>
+<option value="5">SUPER · Superseries de brazos</option>
 </select>
 
 <div id="editor"></div>
@@ -1449,23 +1445,7 @@ const DEFAULT_ROUTINE={
 {name:'TRÍCEPS',exercises:['B2 · Extensión de tríceps por encima de la cabeza en polea baja'],images:['https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/cable-high-pulley-overhead-tricep-extension.gif']},
 {name:'BÍCEPS',exercises:['C1 · Curl de bíceps a una mano en polea baja'],images:['https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/cable-one-arm-curl.gif']},
 {name:'TRÍCEPS',exercises:['C2 · Extensión de tríceps a una mano en polea alta'],images:['https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/cable-one-arm-tricep-pushdown.gif']}
-]},
-6:{groups:[
-{name:'PECTORALES',exercises:['A1 · Press de pecho en polea','A2 · Cruce de poleas','B1 · Press inclinado en polea','B2 · Aperturas en polea','C1 · Press de pecho en polea (agarre alterno)','C2 · Cruce de poleas bajo a alto'],images:[
-'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/cable-bench-press.gif',
-'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/cable-cross-over-variation.gif',
-'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/cable-incline-bench-press.gif',
-'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/cable-cross-over-variation.gif',
-'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/cable-bench-press.gif',
-'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/cable-cross-over-variation.gif']}]},
-7:{groups:[
-{name:'DORSALES',exercises:['A1 · Jalón al pecho en polea','A2 · Remo sentado en polea','B1 · Pullover en polea','B2 · Remo con agarre estrecho en polea','C1 · Jalón al pecho con agarre diferente','C2 · Remo unilateral en polea'],images:[
-'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/back/cable-pulldown.gif',
-'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/back/cable-seated-row.gif',
-'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/back/cable-pullover.gif',
-'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/back/cable-seated-row.gif',
-'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/back/cable-pulldown.gif',
-'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/back/cable-one-arm-row.gif']}]}
+]}
 }
 
 
@@ -2053,7 +2033,7 @@ try{
 
 function isValidRoutineData(value){
   if(!value || typeof value!=='object' || Array.isArray(value)) return false;
-  const dayKeys=Object.keys(value).filter(k=>/^[1-7]$/.test(k));
+  const dayKeys=Object.keys(value).filter(k=>/^[1-5]$/.test(k));
   if(!dayKeys.length) return false;
   for(const key of dayKeys){
     const day=value[key];
@@ -2581,7 +2561,7 @@ let loadedmsg=document.getElementById('loadedmsg');
 
 work.style.display='block';
 
-title.innerText=d>=5?'Entrenamiento - '+({5:'SUPER BRAZOS',6:'SUPER PECTORALES',7:'SUPER DORSALES'}[d]||'SUPER'):'Entrenamiento - Rutina '+d;
+title.innerText=d===5?'Entrenamiento - SUPER · Brazos':'Entrenamiento - Rutina '+d;
 
 date.value=new Date().toISOString().slice(0,10);
 
@@ -2618,14 +2598,14 @@ let pct=totalExercises?Math.round((completedExercises/totalExercises)*100):0;
 html+=`<div class="trainingHero">
   <div class="trainingHeroTop">
     <div>
-      <div class="trainingHeroTitle">🏋️ ${Number(day)>=5?({5:'SUPER · BRAZOS',6:'SUPER · PECTORALES',7:'SUPER · DORSALES'}[Number(day)]||'SUPER'):'RUTINA '+Number(day)}</div>
-      <div class="trainingHeroSub">${totalExercises} ejercicios · ${Number(day)>=5?'10-12 repeticiones · superseries':'3 series por ejercicio'}</div>
+      <div class="trainingHeroTitle">🏋️ ${Number(day)===5?'SUPER · BRAZOS':'RUTINA '+Number(day)}</div>
+      <div class="trainingHeroSub">${totalExercises} ejercicios · ${Number(day)===5?'10-12 repeticiones · superseries':'3 series por ejercicio'}</div>
     </div>
     <div class="trainingPill">${completedExercises}/${totalExercises} hechos</div>
   </div>
   <div class="trainingProgress"><span style="width:${pct}%"></span></div>
 </div>`;
-if(Number(day)>=5){
+if(Number(day)===5){
   html+=`<div class="smartRoutine"><b>⚡ CÓMO HACER LAS SUPERSERIES</b><br>A1 → A2 = 3 rondas · B1 → B2 = 3 rondas · C1 → C2 = 3 rondas.<br>Objetivo: <b>10-12 repeticiones por serie</b>. Haz 1 serie de bíceps, descansa <b>15 segundos</b> y haz 1 serie de tríceps; al completar ambos, descansa <b>90 segundos</b> y repite la vuelta. Registra las series de cada ejercicio por separado. Usa una sola polea; cambia altura y posición cuando toque. El mismo peso es solo un punto de partida: ajusta cada ejercicio si la técnica o las repeticiones lo requieren.</div>`;
 }
 
@@ -2810,7 +2790,7 @@ id="vol-${prefix}">
 📦 Volumen: 0 kg
 </div>
 
-${Number(day)>=5?`<div class="superRestControls" style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0">
+${Number(day)===5?`<div class="superRestControls" style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0">
 <button class="restbtn" style="flex:1" onclick="startTimer(15)">⏱️ Entre ejercicios: 0:15</button>
 <button class="restbtn" style="flex:1" onclick="startTimer(90)">⏱️ Entre vueltas: 1:30</button>
 </div>`:`<button class="restbtn" onclick="startTimer()">⏱️ Descanso 2:00</button>`}
@@ -2867,7 +2847,7 @@ onclick="showHistory('${esc(ex)}')">
 document.getElementById('form').innerHTML=html;
 
 // SUPER: presentación tipo ficha comparativa de dos ejercicios. Solo afecta a Rutina 5.
-if(Number(day)>=5){
+if(Number(day)===5){
   const form=document.getElementById('form');
   form.querySelectorAll('.group').forEach(el=>el.style.display='none');
   const cards=[...form.querySelectorAll('.ex')];
@@ -3523,7 +3503,7 @@ weight:num(s.weight)
 })
 );
 
-const pairFeedbackPrefix=Number(day)>=5?`super-fb-${Math.floor(gi/2)}`:prefix+'-fb';
+const pairFeedbackPrefix=Number(day)===5?`super-fb-${Math.floor(gi/2)}`:prefix+'-fb';
 const feedback={
   technique:document.getElementById(`${pairFeedbackPrefix}-tech`)?.value||'',
   effort:document.getElementById(`${pairFeedbackPrefix}-effort`)?.value||'',
@@ -4599,10 +4579,10 @@ if(data.personalExerciseBase!==undefined && !Array.isArray(data.personalExercise
 throw new Error();
 
 // Comprobación mínima de estructura antes de tocar los datos actuales.
-const validDays=Object.keys(data.routine).some(k=>/^([1-7])$/.test(k));
+const validDays=Object.keys(data.routine).some(k=>/^([1-5])$/.test(k));
 if(!validDays) throw new Error('La rutina no contiene días reconocibles.');
 for(const key of Object.keys(data.routine)){
-  if(!/^([1-7])$/.test(key)) continue;
+  if(!/^([1-5])$/.test(key)) continue;
   const d=data.routine[key];
   if(d!==null && typeof d!=='object') throw new Error('Día de rutina no válido.');
   if(d && d.groups!==undefined && !Array.isArray(d.groups)) throw new Error('Grupos no válidos.');
@@ -5275,10 +5255,10 @@ window.monitorSelectedRoutine = 1;
 function renderMonitorRoutine(day){
   const d=Number(day)||1;
   window.monitorSelectedRoutine=d;
-  const routineNames={1:'Rutina 1 · Pecho, hombros, tríceps y abdominales',2:'Rutina 2 · Espalda, bíceps y abdominales',3:'Rutina 3 · Piernas',4:'Rutina 4 · Pecho, hombros, tríceps y abdominales',5:'SUPER BRAZOS',6:'SUPER PECTORALES',7:'SUPER DORSALES'};
+  const routineNames={1:'Rutina 1 · Pecho, hombros, tríceps y abdominales',2:'Rutina 2 · Espalda, bíceps y abdominales',3:'Rutina 3 · Piernas',4:'Rutina 4 · Pecho, hombros, tríceps y abdominales',5:'SUPER · Superserie de brazos'};
   const buttons=document.getElementById('monitorRoutineButtons');
   if(buttons){
-    buttons.innerHTML=[1,2,3,4,5,6,7].map(n=>`<button type="button" class="btn ${n===d?'':'out'}" style="min-height:48px;white-space:normal" onclick="renderMonitorRoutine(${n})">${n>=5?({5:'⚡ SUPER BRAZOS',6:'⚡ SUPER PECTORALES',7:'⚡ SUPER DORSALES'}[n]):`💪 Rutina ${n}`}${n===d?' ✓':''}</button>`).join('');
+    buttons.innerHTML=[1,2,3,4,5].map(n=>`<button type="button" class="btn ${n===d?'':'out'}" style="min-height:48px;white-space:normal" onclick="renderMonitorRoutine(${n})">${n===5?'⚡ SUPER':`💪 Rutina ${n}`}${n===d?' ✓':''}</button>`).join('');
   }
   const title=document.getElementById('monitorRoutineTitle');
   const out=document.getElementById('monitorRoutineAdvice');
@@ -5336,7 +5316,7 @@ function emailMonitorWorkoutReport(){
     return;
   }
   const day=Number(window.monitorSelectedRoutine)||1;
-  const names={1:'Rutina 1 · Pecho, hombros, tríceps y abdominales',2:'Rutina 2 · Espalda, bíceps y abdominales',3:'Rutina 3 · Piernas',4:'Rutina 4 · Pecho, hombros, tríceps y abdominales',5:'SUPER BRAZOS',6:'SUPER PECTORALES',7:'SUPER DORSALES'};
+  const names={1:'Rutina 1 · Pecho, hombros, tríceps y abdominales',2:'Rutina 2 · Espalda, bíceps y abdominales',3:'Rutina 3 · Piernas',4:'Rutina 4 · Pecho, hombros, tríceps y abdominales',5:'SUPER · Superserie de brazos'};
   const today=dateKey(new Date());
   const session=uniqueSessions(logs).filter(l=>Number(l.day)===day&&dateKey(l.date)===today&&sessionHasResults(l)).sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
   if(!session){
