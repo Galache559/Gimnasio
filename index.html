@@ -1098,12 +1098,20 @@ color:#000;
 .superPairDataCell .workTable th,.superPairDataCell .workTable td{padding:3px 2px}
 .superPairDataCell .workTable input{width:100%;min-width:0;padding:4px 1px;font-size:.78rem}
 .superPairControls{padding:6px 8px}
-.superPairControls .smartActions{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
-.superPairControls .smartActions .btn{font-size:.76rem;padding:6px}
+.superPairIndividualControls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;border-top:1px solid var(--bor);padding:6px 4px}
+.superPairIndividualControls .superPairControls{min-width:0;padding:5px;background:#191919;border-radius:7px}
+.superPairExerciseControlTitle{font-size:.7rem;font-weight:800;color:var(--blue);margin-bottom:5px;overflow-wrap:anywhere}
+.superPairControls .smartActions{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px}
+.superPairControls .smartActions .btn{font-size:.68rem;padding:5px;min-width:0;flex:1 1 auto}
+.superPairControls .rm,.superPairControls .vol{font-size:.68rem;margin:3px 0}
 .superPairControls .superRestControls{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
 .superPairControls .save-ex,.superPairControls .nextExercise{margin:4px}
-.superPairHiddenRemainder{padding:6px;border-top:1px dashed var(--line)}
-.superPairHiddenRemainder .exhead,.superPairHiddenRemainder .workTable,.superPairHiddenRemainder .exerciseFeedback{display:none!important}
+@media(max-width:560px){
+ .superPairIndividualControls{gap:4px;padding:5px 2px}
+ .superPairIndividualControls .superPairControls{padding:4px}
+ .superPairControls .smartActions .btn{font-size:.61rem;padding:4px 3px}
+ .superPairControls .rm,.superPairControls .vol{font-size:.62rem}
+}
 @media(max-width:560px){.superPairTitles>div{font-size:.82rem;padding:10px 4px}.superPairMediaCell{height:115px;padding:4px}.superPairMediaCell img{height:100px}.superPairSummaryContent>div{font-size:.77rem;padding:5px}.superPairDataCell{padding:4px}.superPairTableTitle{font-size:.72rem}.superPairDataCell .workTable th,.superPairDataCell .workTable td{padding:2px 1px}}
 </style>
 
@@ -2630,7 +2638,12 @@ html+=`<div class="trainingHero">
   <div class="trainingProgress"><span style="width:${pct}%"></span></div>
 </div>`;
 if(Number(day)>=5){
-  html+=`<div class="smartRoutine"><b>⚡ CÓMO HACER LAS SUPERSERIES</b><br>A1 → A2 = 3 rondas · B1 → B2 = 3 rondas · C1 → C2 = 3 rondas.<br>Objetivo: <b>10-12 repeticiones por serie</b>. Haz 1 serie de bíceps, descansa <b>15 segundos</b> y haz 1 serie de tríceps; al completar ambos, descansa <b>90 segundos</b> y repite la vuelta. Registra las series de cada ejercicio por separado. Usa una sola polea; cambia altura y posición cuando toque. El mismo peso es solo un punto de partida: ajusta cada ejercicio si la técnica o las repeticiones lo requieren.</div>`;
+  const superGuide={
+    5:`<b>⚡ SUPER BRAZOS · CÓMO HACERLA</b><br>A1 (bíceps) → A2 (tríceps), después B1 → B2 y C1 → C2. Completa <b>3 rondas por pareja</b>. Haz 10-12 repeticiones de cada movimiento; descansa <b>15 segundos</b> al cambiar de ejercicio y <b>90 segundos</b> al terminar la pareja. Anota las series y el peso de cada ejercicio por separado. Ajusta la carga individualmente y mantén la técnica.`,
+    6:`<b>⚡ SUPER PECTORALES · CÓMO HACERLA</b><br>Alterna los ejercicios de cada pareja: A1 → A2, B1 → B2 y C1 → C2. Completa <b>3 rondas por pareja</b>, con 10-12 repeticiones por ejercicio. Descansa <b>15 segundos</b> entre movimientos y <b>90 segundos</b> al completar la pareja. Registra cada ejercicio por separado y ajusta la carga para conservar un recorrido controlado y buena técnica.`,
+    7:`<b>⚡ SUPER DORSALES · CÓMO HACERLA</b><br>Alterna los ejercicios de cada pareja: A1 → A2, B1 → B2 y C1 → C2. Completa <b>3 rondas por pareja</b>, con 10-12 repeticiones por ejercicio. Descansa <b>15 segundos</b> entre movimientos y <b>90 segundos</b> al completar la pareja. Registra cada ejercicio por separado; adapta el peso y la posición de la polea al movimiento, sin balancear el cuerpo.`
+  };
+  html+=`<div class="smartRoutine">${superGuide[Number(day)]||''}</div>`;
 }
 
 let exerciseCounter=0;
@@ -2974,28 +2987,46 @@ if(Number(day)>=5){
     });
     layout.appendChild(dataRow);
 
+    // Controles individuales: se colocan en dos columnas, una por ejercicio.
+    const individualControls=document.createElement('div');
+    individualControls.className='superPairIndividualControls';
+    // Valoración común y controles generales: se muestran una sola vez por pareja.
     pairCards.forEach((card,idx)=>{
       card.classList.add('superPairExerciseDetails');
       const feedback=card.querySelector('.exerciseFeedback');
       if(feedback){
         if(idx===0){
           feedback.classList.add('superPairFeedback');
-          feedback.querySelector('b').textContent='📝 ¿Cómo te ha ido esta pareja? Valora los dos ejercicios';
+          feedback.querySelector('b').textContent='📝 ¿Cómo te ha ido esta pareja?';
           feedback.querySelectorAll('select').forEach(sel=>{
             const field=sel.id.split('-fb-').pop();
             sel.id=`super-fb-${pairIndex}-${field}`;
           });
-          feedback.querySelector('small').textContent='Valora el conjunto de la superserie después de completar ambos ejercicios. Esta valoración se aplicará a los dos movimientos.';
+          const note=feedback.querySelector('small');
+          if(note) note.remove();
           layout.appendChild(feedback);
         } else feedback.remove();
       }
-      // Los controles y botones de cada ejercicio se conservan, pero debajo de la ficha comparativa.
-      const controls=document.createElement('div');
-      controls.className='superPairControls';
-      ['.smartActions','.rm','.vol','.superRestControls','.save-ex','.nextExercise','.row'].forEach(sel=>{
-        card.querySelectorAll(sel).forEach(el=>controls.appendChild(el));
+
+      // Los datos y ajustes de carga son propios de cada movimiento; se conservan
+      // en su ficha. Los temporizadores y botones de pareja se centralizan.
+      const specific=document.createElement('div');
+      specific.className='superPairControls';
+      const controlTitle=document.createElement('div');
+      controlTitle.className='superPairExerciseControlTitle';
+      controlTitle.textContent=card.querySelector('.exhead span:nth-child(2)')?.textContent || `Ejercicio ${p+idx+1}`;
+      specific.appendChild(controlTitle);
+      ['.smartActions','.rm','.vol'].forEach(sel=>{
+        card.querySelectorAll(sel).forEach(el=>specific.appendChild(el));
       });
-      layout.appendChild(controls);
+      if(specific.children.length>1) individualControls.appendChild(specific);
+
+      card.querySelector('.superRestControls')?.remove();
+      const individualSave=card.querySelector('.save-ex');
+      if(individualSave) individualSave.style.display='none';
+      card.querySelector('.nextExercise')?.remove();
+      card.querySelector('.row')?.remove();
+
       card.querySelector('.exhead')?.remove();
       card.querySelector('.gifPreview')?.remove();
       card.querySelector('.gifLabel')?.remove();
@@ -3003,9 +3034,24 @@ if(Number(day)>=5){
       card.querySelector('.exerciseFeedback')?.remove();
       card.querySelector('.smartRoutine')?.remove();
       card.querySelector('.adaptiveTarget')?.remove();
-      if(card.children.length===0) card.remove();
-      else { card.classList.add('superPairHiddenRemainder'); layout.appendChild(card); }
+      // Ya se han extraído los controles individuales necesarios. El contenedor
+      // .ex no debe quedarse vacío dentro del diseño: provocaba las franjas grises.
+      card.remove();
     });
+    if(individualControls.children.length) layout.appendChild(individualControls);
+
+    const shared=document.createElement('div');
+    shared.className='superPairControls superPairSharedControls';
+    shared.innerHTML=`
+      <div class="superRestControls" style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0">
+        <button type="button" class="restbtn" style="flex:1" onclick="startTimer(15)">⏱️ Entre ejercicios: 0:15</button>
+        <button type="button" class="restbtn" style="flex:1" onclick="startTimer(90)">⏱️ Entre vueltas: 1:30</button>
+      </div>
+      <button type="button" class="save-ex" onclick="saveSuperPair(${pairIndex})">💾 GUARDAR SUPERSERIE</button>
+      ${p+2<cards.length?`<button type="button" class="nextExercise" onclick="goNextSuperPair(this)">➡️ SIGUIENTE SUPERSERIE</button>`:''}
+      <div class="row"><button type="button" class="finish" onclick="showHistory('${esc(pairCards[0].querySelector('.exhead span:nth-child(2)')?.textContent||'')}')">📜 Historial</button></div>`;
+    layout.appendChild(shared);
+
   }
 }
 
@@ -3044,6 +3090,26 @@ pr(prefix,ex);
 )
 );
 
+}
+
+function saveSuperPair(pairIndex){
+  const pairs=[...document.querySelectorAll('#form .superPairLayout')];
+  const pair=pairs[pairIndex];
+  if(!pair)return;
+  const saveButtons=[...pair.querySelectorAll('.superPairHiddenRemainder .save-ex')];
+  if(!saveButtons.length){
+    alert('No se han encontrado los ejercicios de esta superserie.');
+    return;
+  }
+  // Guardar ambos movimientos por separado conserva sus datos e historial individual.
+  saveButtons.forEach(btn=>btn.click());
+}
+
+function goNextSuperPair(btn){
+  const current=btn.closest('.superPairLayout');
+  let next=current?.nextElementSibling;
+  while(next && !next.classList.contains('superPairLayout')) next=next.nextElementSibling;
+  if(next) next.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function goNextExercise(btn){
