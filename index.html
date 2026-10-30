@@ -4716,7 +4716,18 @@ if(Array.isArray(data.removedExerciseBase)){
 
 normalizeRoutine();
 
-if(!save()) throw new Error('No se pudieron guardar los datos restaurados.');
+// Primer intento de guardado. Si falla por cuota, liberar solo las copias
+// automáticas redundantes (la copia importada debe conservarse fuera del navegador)
+// y volver a intentarlo una vez. No se borran rutina ni entrenamientos actuales.
+if(!save()){
+  let freed=false;
+  [AUTO_BACKUP, PREV_BACKUP, BACKUP_DATE].forEach(key=>{
+    try{
+      if(localStorage.getItem(key)!==null){ localStorage.removeItem(key); freed=true; }
+    }catch(cleanupError){ console.warn('No se pudo liberar la clave de copia automática',key,cleanupError); }
+  });
+  if(!freed || !save()) throw new Error('El navegador sigue sin poder guardar los datos, incluso tras liberar espacio de las copias automáticas. No se ha completado la restauración.');
+}
 
 }catch(err){
 
