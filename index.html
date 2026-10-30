@@ -2004,40 +2004,28 @@ m=>({
 
 const num=v=>parseFloat(v)||0;
 
-let lastSaveError='';
-
 function save(){
 
 const keys=[K+'routine',K+'logs',K+'personal_exercise_base',K+'removed_exercise_base'];
-let values;
-let previous;
-lastSaveError='';
+const values=[JSON.stringify(routine),JSON.stringify(logs),JSON.stringify(personalExerciseBase),JSON.stringify(removedExerciseBase)];
+const previous=keys.map(key=>({key,value:localStorage.getItem(key)}));
 
 try{
-  // Serializar antes de tocar el almacenamiento: un error de JSON no debe
-  // dejar parte de las claves actualizadas.
-  values=[JSON.stringify(routine),JSON.stringify(logs),JSON.stringify(personalExerciseBase),JSON.stringify(removedExerciseBase)];
-  previous=keys.map(key=>({key,value:localStorage.getItem(key)}));
-  // Escribir y verificar cada bloque de datos.
+  // Preparar los datos antes de escribir y verificar cada clave.
   keys.forEach((key,i)=>localStorage.setItem(key,values[i]));
   for(let i=0;i<keys.length;i++){
-    if(localStorage.getItem(keys[i])!==values[i]) throw new Error('La verificación de lectura no coincide.');
+    if(localStorage.getItem(keys[i])!==values[i]) throw new Error('No se pudo verificar el guardado.');
   }
   return true;
 }catch(e){
-  // Intentar restaurar el estado anterior sin eliminar datos por nuestra cuenta.
-  if(previous) previous.forEach(item=>{
+  // Si una escritura falla, intentar dejar las tres claves como estaban.
+  previous.forEach(item=>{
     try{
       if(item.value===null) localStorage.removeItem(item.key);
       else localStorage.setItem(item.key,item.value);
-    }catch(rollbackError){ console.error('No se pudo restaurar una clave de almacenamiento',rollbackError); }
+    }catch(rollbackError){ console.error('No se pudo revertir una clave de almacenamiento',rollbackError); }
   });
-  const name=String(e?.name||'Error');
-  const message=String(e?.message||e||'Error desconocido');
-  lastSaveError=(name==='QuotaExceededError'||/quota|storage.*full|exceed.*storage/i.test(message))
-    ? 'El almacenamiento del navegador está lleno (límite de espacio).'
-    : `${name}: ${message}`;
-  console.error('Error guardando datos:',lastSaveError,e);
+  console.error('Error guardando datos',e);
   return false;
 }
 }
@@ -3655,9 +3643,8 @@ totalVol+=data.volume;
 cleanSession(log);
 
 if(!save()){
-  const detail=esc(lastSaveError||'El navegador no ha dado un motivo concreto.');
-  document.getElementById('summary').innerHTML=`<div class="summary"><h3>⚠️ NO SE PUDO CONFIRMAR EL GUARDADO</h3><p><b>Motivo detectado:</b> ${detail}</p><p>Los datos siguen en pantalla. No cierres ni recargues la aplicación. Descarga una copia de seguridad y comprueba que se haya guardado fuera del navegador.</p><button class="btn" onclick="exportData()">Descargar copia de seguridad</button></div>`;
-  alert('⚠️ No se pudo guardar el entrenamiento. Motivo: '+(lastSaveError||'desconocido')+'\nLos datos siguen en pantalla; no recargues la aplicación.');
+  document.getElementById('summary').innerHTML=`<div class="summary"><h3>⚠️ NO SE PUDO CONFIRMAR EL GUARDADO</h3><p>Los datos siguen en pantalla. No cierres ni recargues la aplicación. Descarga una copia de seguridad y vuelve a intentarlo cuando haya espacio disponible.</p><button class="btn" onclick="exportData()">Descargar copia de seguridad</button></div>`;
+  alert('⚠️ El navegador no ha confirmado el guardado. Se mantienen los datos en pantalla; no recargues la aplicación.');
   return;
 }
 
@@ -4703,13 +4690,9 @@ structuredCloneSafe(logs);
 let oldPersonalExerciseBase=
 structuredCloneSafe(personalExerciseBase);
 
-// Salvaguarda de los datos actuales justo antes de restaurar otra copia.
-// Si no se puede escribir esta salvaguarda, se cancela la importación.
+// La copia de seguridad original debe conservarse fuera del almacenamiento local.
+// No duplicamos aquí todos los datos: localStorage puede estar al límite de cuota.
 const oldRemovedExerciseBase=structuredCloneSafe(removedExerciseBase);
-const beforeRestore={app:'Mi Gimnasio Pro',version:'10.11.6',backupType:'pre-restore',created:new Date().toISOString(),routine:oldRoutine,logs:oldLogs,personalExerciseBase:oldPersonalExerciseBase,removedExerciseBase:oldRemovedExerciseBase};
-const beforeRestoreJSON=JSON.stringify(beforeRestore);
-localStorage.setItem(K+'pre_restore_backup',beforeRestoreJSON);
-if(localStorage.getItem(K+'pre_restore_backup')!==beforeRestoreJSON) throw new Error('No se pudo verificar la salvaguarda previa.');
 
 try{
 
@@ -4757,8 +4740,13 @@ location.reload();
 
 }catch(err){
 
+console.error('Error al importar la copia de Mi Gimnasio:',err);
+const detalle=(err && err.message) ? err.message : String(err || 'Error desconocido');
 alert(
-'⚠️ El archivo no es una copia válida de Mi Gimnasio.'
+'⚠️ No se ha podido restaurar la copia.\n\n'+
+'El archivo se ha leído, pero el navegador no ha podido completar la restauración.\n\n'+
+'Detalle: '+detalle+'\n\n'+
+'No cierres ni recargues la aplicación. Si el error indica falta de espacio, libera almacenamiento del navegador y vuelve a intentarlo.'
 );
 
 }
