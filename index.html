@@ -2004,28 +2004,40 @@ m=>({
 
 const num=v=>parseFloat(v)||0;
 
+let lastSaveError='';
+
 function save(){
 
 const keys=[K+'routine',K+'logs',K+'personal_exercise_base',K+'removed_exercise_base'];
-const values=[JSON.stringify(routine),JSON.stringify(logs),JSON.stringify(personalExerciseBase),JSON.stringify(removedExerciseBase)];
-const previous=keys.map(key=>({key,value:localStorage.getItem(key)}));
+let values;
+let previous;
+lastSaveError='';
 
 try{
-  // Preparar los datos antes de escribir y verificar cada clave.
+  // Serializar antes de tocar el almacenamiento: un error de JSON no debe
+  // dejar parte de las claves actualizadas.
+  values=[JSON.stringify(routine),JSON.stringify(logs),JSON.stringify(personalExerciseBase),JSON.stringify(removedExerciseBase)];
+  previous=keys.map(key=>({key,value:localStorage.getItem(key)}));
+  // Escribir y verificar cada bloque de datos.
   keys.forEach((key,i)=>localStorage.setItem(key,values[i]));
   for(let i=0;i<keys.length;i++){
-    if(localStorage.getItem(keys[i])!==values[i]) throw new Error('No se pudo verificar el guardado.');
+    if(localStorage.getItem(keys[i])!==values[i]) throw new Error('La verificación de lectura no coincide.');
   }
   return true;
 }catch(e){
-  // Si una escritura falla, intentar dejar las tres claves como estaban.
-  previous.forEach(item=>{
+  // Intentar restaurar el estado anterior sin eliminar datos por nuestra cuenta.
+  if(previous) previous.forEach(item=>{
     try{
       if(item.value===null) localStorage.removeItem(item.key);
       else localStorage.setItem(item.key,item.value);
-    }catch(rollbackError){ console.error('No se pudo revertir una clave de almacenamiento',rollbackError); }
+    }catch(rollbackError){ console.error('No se pudo restaurar una clave de almacenamiento',rollbackError); }
   });
-  console.error('Error guardando datos',e);
+  const name=String(e?.name||'Error');
+  const message=String(e?.message||e||'Error desconocido');
+  lastSaveError=(name==='QuotaExceededError'||/quota|storage.*full|exceed.*storage/i.test(message))
+    ? 'El almacenamiento del navegador está lleno (límite de espacio).'
+    : `${name}: ${message}`;
+  console.error('Error guardando datos:',lastSaveError,e);
   return false;
 }
 }
@@ -3643,8 +3655,9 @@ totalVol+=data.volume;
 cleanSession(log);
 
 if(!save()){
-  document.getElementById('summary').innerHTML=`<div class="summary"><h3>⚠️ NO SE PUDO CONFIRMAR EL GUARDADO</h3><p>Los datos siguen en pantalla. No cierres ni recargues la aplicación. Descarga una copia de seguridad y vuelve a intentarlo cuando haya espacio disponible.</p><button class="btn" onclick="exportData()">Descargar copia de seguridad</button></div>`;
-  alert('⚠️ El navegador no ha confirmado el guardado. Se mantienen los datos en pantalla; no recargues la aplicación.');
+  const detail=esc(lastSaveError||'El navegador no ha dado un motivo concreto.');
+  document.getElementById('summary').innerHTML=`<div class="summary"><h3>⚠️ NO SE PUDO CONFIRMAR EL GUARDADO</h3><p><b>Motivo detectado:</b> ${detail}</p><p>Los datos siguen en pantalla. No cierres ni recargues la aplicación. Descarga una copia de seguridad y comprueba que se haya guardado fuera del navegador.</p><button class="btn" onclick="exportData()">Descargar copia de seguridad</button></div>`;
+  alert('⚠️ No se pudo guardar el entrenamiento. Motivo: '+(lastSaveError||'desconocido')+'\nLos datos siguen en pantalla; no recargues la aplicación.');
   return;
 }
 
