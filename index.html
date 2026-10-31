@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>MI GIMNASIO PRO v10.29.5 · TRES SUPER</title>
+<title>MI GIMNASIO PRO v10.29.6 · TRES SUPER</title>
 <meta name="theme-color" content="#121212">
 <link rel="manifest" href="./manifest.webmanifest?v=10-11-6">
 
@@ -1079,6 +1079,7 @@ color:#000;
 <style>
 /* Nuevo diseño comparativo EXCLUSIVO de las superseries de Rutina 5 */
 .superPairLayout{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:14px 0 24px;background:var(--card,#fff)}
+.superPairNumber{padding:7px 10px;background:var(--soft);font-weight:800;text-align:center;letter-spacing:.04em;border-bottom:1px solid var(--line)}
 .superPairTitles,.superPairSummaryContent,.superPairMedia,.superPairDayLabels,.superPairData{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
 .superPairTitles>div{padding:14px 8px;text-align:center;font-weight:700;border-bottom:1px solid var(--line);min-width:0}
 .superPairTitles>div+div,.superPairMediaCell+ .superPairMediaCell,.superPairDataCell+ .superPairDataCell{border-left:1px solid var(--line)}
@@ -1134,8 +1135,8 @@ color:#000;
 <div class="days">
 
 <button class="btn out" onclick="selectDay(1)">Rutina 1</button> <button class="btn out" onclick="selectDay(2)">Rutina 2</button> <button class="btn out" onclick="selectDay(3)">Rutina 3</button> <button class="btn out" onclick="selectDay(4)">Rutina 4</button> <button class="btn out" onclick="selectDay(5)">SUPER BRAZOS</button>
-<button class="btn out" onclick="selectDay(6)">SUPER PECTORALES</button>
-<button class="btn out" onclick="selectDay(7)">SUPER DORSALES</button>
+<button class="btn out" onclick="selectDay(6)">SUPER PECHO + ESPALDA</button>
+<button class="btn out" onclick="selectDay(7)">SUPER ANTEBRAZO</button>
 
 </div>
 
@@ -1206,8 +1207,8 @@ La aplicación guarda automáticamente los datos. Además puedes crear una copia
 <option value="3">Rutina 3</option>
 <option value="4">Rutina 4</option>
 <option value="5">SUPER BRAZOS</option>
-<option value="6">SUPER PECTORALES</option>
-<option value="7">SUPER DORSALES</option>
+<option value="6">SUPER PECHO + ESPALDA</option>
+<option value="7">SUPER ANTEBRAZO</option>
 </select>
 
 <div id="editor"></div>
@@ -1235,6 +1236,7 @@ Cada grupo puede tener hasta <b>15 ejercicios en tu base personalizada</b>. Puls
     <option value="BÍCEPS">BÍCEPS</option>
     <option value="PIERNAS">PIERNAS</option>
     <option value="ABDOMINALES">ABDOMINALES</option>
+     <option value="ANTEBRAZO">ANTEBRAZO</option>
   </select>
   <button type="button" class="btn blue" style="margin-top:2px" onclick="searchRemoteExerciseGroup()">🔎 BUSCAR</button>
 </div>
@@ -1459,22 +1461,18 @@ const DEFAULT_ROUTINE={
 {name:'TRÍCEPS',exercises:['C2 · Extensión de tríceps a una mano en polea alta'],images:['https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/cable-one-arm-tricep-pushdown.gif']}
 ]},
 6:{groups:[
-{name:'PECTORALES',exercises:['A1 · Press de pecho en polea','A2 · Cruce de poleas','B1 · Press inclinado en polea','B2 · Aperturas en polea','C1 · Press de pecho en polea (agarre alterno)','C2 · Cruce de poleas bajo a alto'],images:[
+{name:'PECTORALES',exercises:['A1 · Press de pecho en polea','B1 · Press inclinado en polea','C1 · Cruce de poleas'],images:[
 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/v1.1.0/pectorals/cable-bench-press.gif',
-'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/v1.1.0/pectorals/cable-cross-over-variation.gif',
 'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/v1.1.0/pectorals/cable-incline-bench-press.gif',
-'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/v1.1.0/pectorals/cable-cross-over-variation.gif',
-'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/v1.1.0/pectorals/cable-bench-press.gif',
-'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/v1.1.0/pectorals/cable-cross-over-variation.gif']}]},
-7:{groups:[
-{name:'DORSALES',exercises:['A1 · Jalón al pecho en polea','A2 · Remo sentado en polea','B1 · Pullover en polea','B2 · Remo con agarre estrecho en polea','C1 · Jalón al pecho con agarre diferente','C2 · Remo unilateral en polea'],images:[
+'https://raw.githubusercontent.com/JahelCuadrado/ExerciseGymGifsDB/v1.1.0/pectorals/cable-cross-over-variation.gif']},
+{name:'ESPALDA',exercises:['A2 · Jalón al pecho en polea','B2 · Remo sentado en polea','C2 · Remo unilateral en polea'],images:[
 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/cable-bar-lateral-pulldown.gif',
 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/cable-seated-row.gif',
-'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/cable-one-arm-pulldown.gif',
-'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/cable-seated-wide-grip-row.gif',
-'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/cable-bar-lateral-pulldown.gif',
-'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/cable-incline-bench-row.gif'
-]}]}
+'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/cable-incline-bench-row.gif']}]},
+7:{groups:[
+{name:'ANTEBRAZO · FLEXORES',exercises:['A1 · Flexión de muñeca con mancuerna (sentado)','B1 · Flexión de muñeca con mancuerna (unilateral)','C1 · Flexión de muñeca con barra','D1 · Flexión de muñeca con barra (agarre estrecho)','E1 · Flexión de muñeca en polea baja','F1 · Flexión de muñeca en polea baja unilateral','G1 · Flexión de muñeca en polea con barra','H1 · Flexión de muñeca en polea con cuerda'],images:['https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/forearms/barbell-palms-up-wrist-curl-over-a-bench.gif','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/forearms/barbell-wrist-curl.gif','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/forearms/cable-wrist-curl.gif','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/forearms/dumbbell-over-bench-wrist-curl.gif','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/forearms/dumbbell-seated-palms-up-wrist-curl.gif','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/forearms/dumbbell-one-arm-wrist-curl.gif','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/forearms/dumbbell-over-bench-one-arm-wrist-curl.gif','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/forearms/band-wrist-curl.gif']},
+{name:'ANTEBRAZO · EXTENSORES',exercises:['A2 · Extensión de muñeca con mancuerna (sentado)','B2 · Extensión de muñeca con mancuerna (unilateral)','C2 · Extensión de muñeca con barra','D2 · Extensión de muñeca con barra (agarre estrecho)','E2 · Extensión de muñeca en polea baja','F2 · Extensión de muñeca en polea baja unilateral','G2 · Extensión de muñeca en polea con barra','H2 · Extensión de muñeca en polea con cuerda'],images:['https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/forearms/barbell-palms-down-wrist-curl-over-a-bench.gif','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/forearms/barbell-reverse-wrist-curl.gif','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/forearms/cable-reverse-wrist-curl.gif','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/forearms/dumbbell-reverse-wrist-curl.gif','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/forearms/dumbbell-one-arm-reverse-wrist-curl.gif','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/forearms/dumbbell-over-bench-one-arm-reverse-wrist-curl.gif','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/forearms/dumbbell-over-bench-revers-wrist-curl.gif','https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/forearms/band-reverse-wrist-curl.gif']}
+]}
 }
 
 
@@ -1601,8 +1599,14 @@ const EXERCISE_DB={
   ]
 };
 
-function renderExerciseDB(){
+async function renderExerciseDB(){
   const group=(document.getElementById('dbgroup')||{}).value||'PECHO';
+  if(group==='ANTEBRAZO'){
+    const list=document.getElementById('dblist');
+    if(list) list.innerHTML='<div class="empty">⏳ Cargando los GIF originales de antebrazo…</div>';
+    try{await ensureForearmLibrary();}
+    catch(err){if(list)list.innerHTML='<div class="empty">No se pudo cargar la biblioteca de antebrazo. Comprueba la conexión y vuelve a intentarlo.</div>';return;}
+  }
   const q=((document.getElementById('dbsearch')||{}).value||'').trim().toLowerCase();
   const list=document.getElementById('dblist');
   const count=document.getElementById('dbcount');
@@ -2593,7 +2597,7 @@ let loadedmsg=document.getElementById('loadedmsg');
 
 work.style.display='block';
 
-title.innerText=d>=5?'Entrenamiento - '+({5:'SUPER BRAZOS',6:'SUPER PECTORALES',7:'SUPER DORSALES'}[d]||'SUPER'):'Entrenamiento - Rutina '+d;
+title.innerText=d>=5?'Entrenamiento - '+({5:'SUPER BRAZOS',6:'SUPER PECHO + ESPALDA',7:'SUPER ANTEBRAZO'}[d]||'SUPER'):'Entrenamiento - Rutina '+d;
 
 date.value=new Date().toISOString().slice(0,10);
 
@@ -2630,7 +2634,7 @@ let pct=totalExercises?Math.round((completedExercises/totalExercises)*100):0;
 html+=`<div class="trainingHero">
   <div class="trainingHeroTop">
     <div>
-      <div class="trainingHeroTitle">🏋️ ${Number(day)>=5?({5:'SUPER · BRAZOS',6:'SUPER · PECTORALES',7:'SUPER · DORSALES'}[Number(day)]||'SUPER'):'RUTINA '+Number(day)}</div>
+      <div class="trainingHeroTitle">🏋️ ${Number(day)>=5?({5:'SUPER · BRAZOS',6:'SUPER · PECHO + ESPALDA',7:'SUPER · ANTEBRAZO'}[Number(day)]||'SUPER'):'RUTINA '+Number(day)}</div>
       <div class="trainingHeroSub">${totalExercises} ejercicios · ${Number(day)>=5?'10-12 repeticiones · superseries':'3 series por ejercicio'}</div>
     </div>
     <div class="trainingPill">${completedExercises}/${totalExercises} hechos</div>
@@ -2640,8 +2644,8 @@ html+=`<div class="trainingHero">
 if(Number(day)>=5){
   const superGuide={
     5:`<b>⚡ SUPER BRAZOS · CÓMO HACERLA</b><br>A1 (bíceps) → A2 (tríceps), después B1 → B2 y C1 → C2. Completa <b>3 rondas por pareja</b>. Haz 10-12 repeticiones de cada movimiento; descansa <b>15 segundos</b> al cambiar de ejercicio y <b>90 segundos</b> al terminar la pareja. Anota las series y el peso de cada ejercicio por separado. Ajusta la carga individualmente y mantén la técnica.`,
-    6:`<b>⚡ SUPER PECTORALES · CÓMO HACERLA</b><br>Alterna los ejercicios de cada pareja: A1 → A2, B1 → B2 y C1 → C2. Completa <b>3 rondas por pareja</b>, con 10-12 repeticiones por ejercicio. Descansa <b>15 segundos</b> entre movimientos y <b>90 segundos</b> al completar la pareja. Registra cada ejercicio por separado y ajusta la carga para conservar un recorrido controlado y buena técnica.`,
-    7:`<b>⚡ SUPER DORSALES · CÓMO HACERLA</b><br>Alterna los ejercicios de cada pareja: A1 → A2, B1 → B2 y C1 → C2. Completa <b>3 rondas por pareja</b>, con 10-12 repeticiones por ejercicio. Descansa <b>15 segundos</b> entre movimientos y <b>90 segundos</b> al completar la pareja. Registra cada ejercicio por separado; adapta el peso y la posición de la polea al movimiento, sin balancear el cuerpo.`
+    6:`<b>⚡ SUPER PECHO + ESPALDA · CÓMO HACERLA</b><br>Alterna un ejercicio de pecho con uno de espalda: A1 → A2, B1 → B2 y C1 → C2. Completa <b>3 rondas por pareja</b>, con 10-12 repeticiones por ejercicio. Descansa <b>15 segundos</b> entre movimientos y <b>90 segundos</b> al completar la pareja. Registra cada ejercicio por separado y ajusta la carga para conservar un recorrido controlado y buena técnica.`,
+    7:`<b>⚡ SUPER ANTEBRAZO · CÓMO HACERLA</b><br>Alterna flexión y extensión de muñeca en las <b>8 parejas (A–H)</b>: A1 → A2, B1 → B2, C1 → C2, D1 → D2, E1 → E2, F1 → F2, G1 → G2 y H1 → H2. Completa <b>3 rondas por pareja</b>, con 10-12 repeticiones por ejercicio. Descansa <b>15 segundos</b> entre movimientos y <b>90 segundos</b> al completar la pareja. Registra cada ejercicio por separado; adapta el peso y la posición de la polea al movimiento, sin balancear el cuerpo.`
   };
   html+=`<div class="smartRoutine">${superGuide[Number(day)]||''}</div>`;
 }
@@ -2682,7 +2686,7 @@ let prefix=`g${gi}-e${i}`;
 
 html+=`
 
-<div class="ex phase phase-${gi%7}">
+<div class="ex phase phase-${gi%7}" data-group-index="${gi}">
 
 <div class="exhead">
 
@@ -2883,6 +2887,20 @@ onclick="showHistory('${esc(ex)}')">
 
 document.getElementById('form').innerHTML=html;
 
+// En la superserie 6 alternamos pecho/espalda; en la 7 flexores/extensores.
+if(Number(day)===6 || Number(day)===7){
+  const form=document.getElementById('form');
+  const cards=[...form.querySelectorAll('.ex')];
+  const left=cards.filter(c=>Number(c.dataset.groupIndex)===0);
+  const right=cards.filter(c=>Number(c.dataset.groupIndex)===1);
+  const ordered=[];
+  for(let i=0;i<Math.max(left.length,right.length);i++){
+    if(left[i])ordered.push(left[i]);
+    if(right[i])ordered.push(right[i]);
+  }
+  ordered.forEach(card=>form.appendChild(card));
+}
+
 // SUPER: presentación tipo ficha comparativa de dos ejercicios. Solo afecta a Rutina 5.
 if(Number(day)>=5){
   const form=document.getElementById('form');
@@ -2894,6 +2912,10 @@ if(Number(day)>=5){
     const pairIndex=Math.floor(p/2);
     const layout=document.createElement('section');
     layout.className='superPairLayout';
+    const pairNumber=document.createElement('div');
+    pairNumber.className='superPairNumber';
+    pairNumber.textContent='PAREJA '+String.fromCharCode(65+pairIndex);
+    layout.appendChild(pairNumber);
     pairCards[0].parentNode.insertBefore(layout,pairCards[0]);
 
     const titleRow=document.createElement('div');
@@ -3738,7 +3760,9 @@ const MUSCLE_GROUPS=[
   'ESPALDA',
   'BÍCEPS',
   'PIERNAS',
-  'ABDOMINALES'
+  'ABDOMINALES',
+  'ANTEBRAZO · FLEXORES',
+  'ANTEBRAZO · EXTENSORES'
 ];
 
 function getRoutineExerciseGif(groupName, exerciseName, storedUrl){
@@ -4096,6 +4120,10 @@ function removeExerciseFromBase(index){
 
 function renderLibraryV9(){
   const group=String(document.getElementById('libraryMuscleV9')?.value||'PECHO').trim().toUpperCase();
+  if(group==='ANTEBRAZO' && !EXERCISE_DB['ANTEBRAZO']?.some(x=>String(x[1]||'').includes('ExerciseGymGifsDB'))){
+    ensureForearmLibrary().then(()=>{if(String(document.getElementById('libraryMuscleV9')?.value||'').trim().toUpperCase()==='ANTEBRAZO')renderLibraryV9();})
+      .catch(err=>console.warn('No se pudo cargar la base original de antebrazo:',err));
+  }
   const box=document.getElementById('libraryGridV9');
   const status=document.getElementById('libraryStatusV9');
   if(!box)return;
@@ -4213,6 +4241,55 @@ const REMOTE_GROUPS={
 };
 
 const remoteExerciseCache={};
+let forearmLibraryPromise=null;
+
+async function ensureForearmLibrary(){
+  if(forearmLibraryPromise) return forearmLibraryPromise;
+  forearmLibraryPromise=(async()=>{
+    const items=await fetchRemoteMuscleExercises('forearms');
+    const rows=items.filter(x=>x && x.name && x.gifUrl).map(x=>[
+      String(x.name).trim(), String(x.gifUrl).trim(), String(x.equipment||'')
+    ]);
+    if(rows.length){
+      // La biblioteca original es la única fuente: cada ejercicio conserva su gifUrl real.
+      EXERCISE_DB['ANTEBRAZO']=rows;
+
+      // Actualiza la rutina guardada (no solo DEFAULT_ROUTINE), que es la que pinta Entreno.
+      const dayRoutine=routine?.[7];
+      const groups=dayRoutine?.groups||[];
+      if(groups.length>=2){
+        groups.forEach((group,gi)=>{
+          const offset=gi===0?0:Math.ceil(rows.length/2);
+          group.images=(group.exercises||[]).map((_,i)=>rows[(offset+i)%rows.length][1]);
+        });
+        if(typeof save==='function') save();
+      }
+      // Mantiene también los defaults para nuevas instalaciones/restauraciones.
+      const flex=DEFAULT_ROUTINE[7]?.groups?.[0];
+      const ext=DEFAULT_ROUTINE[7]?.groups?.[1];
+      if(flex) flex.images=flex.exercises.map((_,i)=>rows[i%rows.length][1]);
+      if(ext) ext.images=ext.exercises.map((_,i)=>rows[(Math.ceil(rows.length/2)+i)%rows.length][1]);
+
+      // La cuadrícula de MI BASE se refresca al acabar la carga asíncrona.
+      const selected=String(document.getElementById('libraryMuscleV9')?.value||'').trim().toUpperCase();
+      if(selected==='ANTEBRAZO' && typeof renderLibraryV9==='function') renderLibraryV9();
+
+      // Si SUPER ANTEBRAZO está visible, cambia directamente las imágenes renderizadas.
+      if(Number(document.getElementById('cfgday')?.value)===7){
+        const imgs=document.querySelectorAll('.superPairMedia img.gifPreview, .superPairLayout img.gifPreview');
+        imgs.forEach((img,i)=>{
+          const groupIndex=i%2===0?0:1;
+          const exIndex=Math.floor(i/2);
+          const group=groups[groupIndex];
+          const url=group?.images?.[exIndex];
+          if(url && img.src!==url) img.src=url;
+        });
+      }
+    }
+    return rows;
+  })().catch(err=>{forearmLibraryPromise=null;throw err;});
+  return forearmLibraryPromise;
+}
 
 async function fetchRemoteMuscleExercises(muscle){
   muscle=String(muscle||'').trim().toLowerCase();
@@ -5084,7 +5161,7 @@ let prefix=`g${gi}-e${i}`;
 
 html+=`
 
-<div class="ex phase phase-${gi%7}">
+<div class="ex phase phase-${gi%7}" data-group-index="${gi}">
 
 <div class="exhead">
 <span>${esc(ex)}</span>
@@ -5357,10 +5434,10 @@ window.monitorSelectedRoutine = 1;
 function renderMonitorRoutine(day){
   const d=Number(day)||1;
   window.monitorSelectedRoutine=d;
-  const routineNames={1:'Rutina 1 · Pecho, hombros, tríceps y abdominales',2:'Rutina 2 · Espalda, bíceps y abdominales',3:'Rutina 3 · Piernas',4:'Rutina 4 · Pecho, hombros, tríceps y abdominales',5:'SUPER BRAZOS',6:'SUPER PECTORALES',7:'SUPER DORSALES'};
+  const routineNames={1:'Rutina 1 · Pecho, hombros, tríceps y abdominales',2:'Rutina 2 · Espalda, bíceps y abdominales',3:'Rutina 3 · Piernas',4:'Rutina 4 · Pecho, hombros, tríceps y abdominales',5:'SUPER BRAZOS',6:'SUPER PECHO + ESPALDA',7:'SUPER ANTEBRAZO'};
   const buttons=document.getElementById('monitorRoutineButtons');
   if(buttons){
-    buttons.innerHTML=[1,2,3,4,5,6,7].map(n=>`<button type="button" class="btn ${n===d?'':'out'}" style="min-height:48px;white-space:normal" onclick="renderMonitorRoutine(${n})">${n>=5?({5:'⚡ SUPER BRAZOS',6:'⚡ SUPER PECTORALES',7:'⚡ SUPER DORSALES'}[n]):`💪 Rutina ${n}`}${n===d?' ✓':''}</button>`).join('');
+    buttons.innerHTML=[1,2,3,4,5,6,7].map(n=>`<button type="button" class="btn ${n===d?'':'out'}" style="min-height:48px;white-space:normal" onclick="renderMonitorRoutine(${n})">${n>=5?({5:'⚡ SUPER BRAZOS',6:'⚡ SUPER PECHO + ESPALDA',7:'⚡ SUPER ANTEBRAZO'}[n]):`💪 Rutina ${n}`}${n===d?' ✓':''}</button>`).join('');
   }
   const title=document.getElementById('monitorRoutineTitle');
   const out=document.getElementById('monitorRoutineAdvice');
@@ -5418,7 +5495,7 @@ function emailMonitorWorkoutReport(){
     return;
   }
   const day=Number(window.monitorSelectedRoutine)||1;
-  const names={1:'Rutina 1 · Pecho, hombros, tríceps y abdominales',2:'Rutina 2 · Espalda, bíceps y abdominales',3:'Rutina 3 · Piernas',4:'Rutina 4 · Pecho, hombros, tríceps y abdominales',5:'SUPER BRAZOS',6:'SUPER PECTORALES',7:'SUPER DORSALES'};
+  const names={1:'Rutina 1 · Pecho, hombros, tríceps y abdominales',2:'Rutina 2 · Espalda, bíceps y abdominales',3:'Rutina 3 · Piernas',4:'Rutina 4 · Pecho, hombros, tríceps y abdominales',5:'SUPER BRAZOS',6:'SUPER PECHO + ESPALDA',7:'SUPER ANTEBRAZO'};
   const today=dateKey(new Date());
   const session=uniqueSessions(logs).filter(l=>Number(l.day)===day&&dateKey(l.date)===today&&sessionHasResults(l)).sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
   if(!session){
@@ -6321,13 +6398,24 @@ c.currentTime+.18
 
 }
 
-// Migración única: sustituye la antigua Rutina 5 por la nueva SUPER de brazos.
-// Se conserva el resto de rutinas, la base de ejercicios y el historial.
-if(localStorage.getItem(K+'super_routine_migrated_v2')!=='1'){
+// Migración única de superseries: conserva el historial y la base, renueva la estructura de días 5-7.
+if(localStorage.getItem(K+'super_routine_migrated_v3')!=='1'){
   routine[5]=structuredCloneSafe(DEFAULT_ROUTINE[5]);
+  routine[6]=structuredCloneSafe(DEFAULT_ROUTINE[6]);
+  routine[7]=structuredCloneSafe(DEFAULT_ROUTINE[7]);
   normalizeRoutine();
-  if(save()) localStorage.setItem(K+'super_routine_migrated_v2','1');
+  if(save()) localStorage.setItem(K+'super_routine_migrated_v3','1');
 }
+
+// Corrige una vez las rutinas de antebrazo guardadas con el formato corto anterior.
+// Se actualiza la configuración del día 7; los registros de entrenamientos se conservan.
+if(localStorage.getItem(K+'forearm_pairs_migrated_v4')!=='1'){
+  routine[7]=structuredCloneSafe(DEFAULT_ROUTINE[7]);
+  normalizeRoutine();
+  if(save()) localStorage.setItem(K+'forearm_pairs_migrated_v4','1');
+}
+
+;
 
 loadBackupEmail();
 
@@ -6340,6 +6428,9 @@ updateBackupStatus();
 renderCalendar();
 
 loadConfig();
+
+// Carga la biblioteca original de antebrazo; alimenta Rutina y los GIF de las parejas A–H.
+ensureForearmLibrary().catch(err=>console.warn('No se pudieron cargar los GIF originales de antebrazo:',err));
 
 </script>
 
