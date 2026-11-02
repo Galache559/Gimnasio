@@ -146,6 +146,10 @@ color:var(--blue);
 border:1px solid var(--blue);
 }
 
+.days button{
+text-transform:uppercase;
+}
+
 .days{
 display:grid;
 grid-template-columns:1fr 1fr;
@@ -168,10 +172,18 @@ margin-bottom:8px;
 
 .exhead{
 display:flex;
-justify-content:space-between;
+justify-content:flex-start;
 align-items:center;
 font-weight:bold;
 margin-bottom:6px;
+text-align:left;
+}
+.exhead .exerciseName{
+font-size:1.08rem;
+text-align:left;
+}
+.exhead .badge{
+margin-left:auto;
 }
 
 .badge{
@@ -1163,27 +1175,22 @@ color:#000;
 </div>
 </div>
 
-<div class="card">
+<div class="card" id="backupCard">
 <h2>💾 Seguridad de datos</h2>
-<div style="font-size:.72rem;color:var(--sub);line-height:1.5;margin-bottom:10px">
-La aplicación guarda automáticamente los datos. Además puedes crear una copia JSON externa para conservarla fuera del navegador y recuperarla cuando quieras.
-</div>
-<button class="btn out" onclick="exportData()">📦 Crear copia de seguridad en el móvil</button>
+<button class="btn out" onclick="exportData()">Crear copia de seguridad</button>
 
-<div style="margin-top:14px;padding:12px;border:1px solid var(--bor);border-radius:10px">
-  <h3 style="font-size:.95rem;margin-bottom:8px">📧 Copia de seguridad por email</h3>
-  <label for="backupEmail" style="display:block;font-size:.82rem;color:var(--sub);margin-bottom:6px">Tu correo electrónico (se guarda en este navegador)</label>
-  <input id="backupEmail" type="email" inputmode="email" autocomplete="email" placeholder="Escribe tu correo electrónico" style="width:100%;padding:11px;border:1px solid var(--bor);border-radius:8px;background:var(--input);color:var(--txt);font-size:1rem;margin-bottom:8px">
-  <button type="button" class="btn out" onclick="saveBackupEmail()">💾 Guardar mi correo</button>
-  <button type="button" class="btn" style="margin-top:8px" onclick="exportAndEmail()">📧 Crear copia y abrir Gmail</button>
-  <div id="backupEmailStatus" aria-live="polite" style="font-size:.78rem;color:var(--sub);line-height:1.45;margin-top:8px">Guarda tu dirección una sola vez. Al preparar el correo, tendrás que adjuntar el archivo JSON descargado y pulsar Enviar.</div>
+<div style="display:grid;grid-template-columns:auto minmax(0,1fr) 48px;align-items:center;gap:8px;margin-top:10px;width:100%;box-sizing:border-box">
+  <label for="backupEmail" style="white-space:nowrap;margin:0">Email:</label>
+  <input id="backupEmail" type="email" inputmode="email" autocomplete="email" placeholder="Escribe tu correo electrónico" style="display:block;width:100%;min-width:0;box-sizing:border-box;padding:11px;border:1px solid var(--bor);border-radius:8px;background:var(--input);color:var(--txt);font-size:1rem;margin:0">
+  <button type="button" class="btn out" aria-label="Guardar email" title="Guardar email" onclick="saveBackupEmail()" style="display:flex;align-items:center;justify-content:center;width:48px;min-width:48px;height:42px;box-sizing:border-box;padding:0;margin:0">💾</button>
 </div>
 
-<button class="btn out" style="margin-top:10px" onclick="document.getElementById('file').click()">📥 Cargar copia de seguridad</button>
+<button type="button" class="btn" style="margin-top:10px" onclick="exportAndEmail()">Crear copia y abrir Gmail</button>
+<button class="btn out" style="margin-top:10px" onclick="document.getElementById('file').click()">Cargar copia de seguridad</button>
 <input id="file" type="file" accept=".json" style="display:none" onchange="importData(event)">
-<div id="backupStatus" class="backupBox"><span class="backupWarn">⚠️ Todavía no se ha comprobado una copia externa.</span></div>
+<div id="backupEmailStatus" aria-live="polite" style="display:none"></div>
+<div id="backupStatus" class="backupBox" style="display:none"></div>
 </div>
-
 
 <div class="card exitBox">
 
@@ -1284,49 +1291,22 @@ Cada grupo puede tener hasta <b>15 ejercicios en tu base personalizada</b>. Puls
 </section>
 
 <section id="tab-informes" class="tab">
-
 <div class="card">
-
-<h2>📊 Resumen</h2>
-
-<div id="stats" class="statgrid"></div>
-
+<h2>📋 INFORMES POR RUTINA</h2>
+<div class="days" id="reportRoutineButtons">
+<button class="btn out" onclick="reportRoutine(1)">💪 RUTINA 1</button>
+<button class="btn out" onclick="reportRoutine(2)">💪 RUTINA 2</button>
+<button class="btn out" onclick="reportRoutine(3)">💪 RUTINA 3</button>
+<button class="btn out" onclick="reportRoutine(4)">💪 RUTINA 4</button>
+<button class="btn out" onclick="reportRoutine(5)">⚡ SUPER BRAZOS</button>
+<button class="btn out" onclick="reportRoutine(6)">⚡ SUPER PECHO + ESPALDA</button>
+<button class="btn out" onclick="reportRoutine(7)">⚡ SUPER ANTEBRAZO</button>
 </div>
-
-<div class="card">
-
-<h2>📋 Historial por grupos</h2>
-
-<div style="display:flex;gap:5px;flex-wrap:wrap">
-
-<button class="btn out sm" onclick="report(15)">
-15 días
-</button>
-
-<button class="btn out sm" onclick="report(30)">
-Mensual
-</button>
-
-<button class="btn out sm" onclick="window.print()">
-PDF
-</button>
-
+<div id="reports" style="margin-top:12px"></div>
 </div>
-
-<div id="reports" class="empty">
-Selecciona un periodo.
-</div>
-
-</div>
-
 <div class="card exitBox">
-
-<button class="exitBtn" onclick="exitApp()">
-🚪 SALIR Y GUARDAR
-</button>
-
+<button class="exitBtn" onclick="exitApp()">🚪 SALIR Y GUARDAR</button>
 </div>
-
 </section>
 
 <section id="tab-monitor" class="tab">
@@ -1341,7 +1321,7 @@ Selecciona un periodo.
     <div id="monitorEmailStatus" style="font-size:.82rem;color:var(--sub);margin-top:6px"></div>
   </div>
   <div class="card" style="padding:10px">
-    <div id="monitorSubTabs" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <button type="button" id="monitorTabNextBtn" class="btn" onclick="showMonitorSubtab('next')">🎯 PRÓXIMO ENTRENAMIENTO</button>
       <button type="button" id="monitorTabProgressBtn" class="btn out" onclick="showMonitorSubtab('progress')">📈 PROGRESO</button>
     </div>
@@ -1349,20 +1329,12 @@ Selecciona un periodo.
   <div class="card" id="monitorRoutineAdviceCard">
     <h2 id="monitorRoutineTitle">🎯 Qué hacer la próxima vez</h2>
     <div id="monitorRoutineAdvice">Selecciona una rutina para ver las recomendaciones.</div>
-    <button class="btn" style="margin-top:12px" onclick="renderMonitor();renderMonitorRoutine(window.monitorSelectedRoutine||1)">🔄 Actualizar recomendaciones</button>
+    <button class="btn" style="margin-top:12px" onclick="renderMonitorRoutine(window.monitorSelectedRoutine||1)">🔄 Actualizar recomendaciones</button>
   </div>
-  <div id="monitorProgressPanel" style="display:none">
-    <div class="card">
-      <h2>📈 PROGRESO Y EVOLUCIÓN</h2>
-      <p style="color:var(--sub);margin-top:0">Informe para consultar en casa: evolución, tendencias y resultados de los ejercicios registrados. Para el historial completo, consulta también INFORMES.</p>
-      <div id="monitorSummary"></div>
-      <div id="monitorSessionReview"></div>
-      <div id="monitorDetailedReports"></div>
-      <div id="monitorCharts"></div>
-      <div id="monitorGroups"></div>
-      <div id="monitorWeek"></div>
-      <div id="monitorExercises" style="display:none"></div><div id="monitorNextPlan" style="display:none"></div>
-    </div>
+  <div class="card" id="monitorProgressPanel" style="display:none">
+    <h2>📈 PROGRESO</h2>
+    <p style="color:var(--sub);margin-top:0">Seguimiento limitado a la rutina seleccionada arriba. Cada ejercicio se compara únicamente con su propio historial.</p>
+    <div id="monitorProgressContent"></div>
   </div>
 </section>
 
@@ -2363,8 +2335,10 @@ renderCalendar();
 if(x==='informes')
 stats();
 
-if(x==='monitor')
-renderMonitor();
+if(x==='monitor'){
+renderMonitorRoutine(window.monitorSelectedRoutine||1);
+if(window.monitorSubtab==='progress')renderMonitorProgress();
+}
 
 }
 
@@ -2605,11 +2579,7 @@ summary.innerHTML='';
 
 let previous=previousDayLog(d);
 
-loadedmsg.innerHTML=
-previous
-?
-'<div class="loaded">📋 Último entrenamiento disponible. Las nuevas celdas empiezan vacías.</div>'
-:'';
+loadedmsg.innerHTML='';
 
 renderWorkout(previous);
 
@@ -2690,8 +2660,7 @@ html+=`
 
 <div class="exhead">
 
-<span class="exerciseNo">EJERCICIO ${exerciseCounter}</span>
-<span>${esc(ex)}</span>
+<span class="exerciseName">${esc(ex)}</span>
 
 <span
 id="pr-${gi}-${i}"
@@ -2709,8 +2678,7 @@ style="display:none">
   <button type="button" class="btn out sm" onclick="increaseExerciseWeights('${prefix}',-0.5)">－ 0,5 KG</button>
 </div>
 <div class="adaptiveTarget" id="target-${gi}-${i}" style="margin:8px 0;padding:9px;border:1px solid var(--line);border-radius:10px;background:var(--soft)">
-  <b>🎯 Objetivo propuesto:</b> ${adaptiveTargetData(ex,document.getElementById('date')?.value||'').sets.map((st,idx)=>`S${idx+1}: ${st.reps} reps${st.weight!==null&&st.weight>0?` · ${st.weight} kg`:''}`).join(' · ')}<br>
-  <small>${esc(adaptiveTargetData(ex,document.getElementById('date')?.value||'').note)}</small>
+  <b>OBJETIVO:</b> ${adaptiveTargetData(ex,document.getElementById('date')?.value||'').sets.map((st,idx)=>`S${idx+1}: ${st.reps} reps${st.weight!==null&&st.weight>0?` · ${st.weight} kg`:''}`).join(' · ')}
 </div>
 ${img?`
 
@@ -2868,15 +2836,7 @@ onclick="goNextExercise(this)">
 ➡️ SIGUIENTE EJERCICIO
 </button>`:''}
 
-<div class="row">
 
-<button
-class="finish"
-onclick="showHistory('${esc(ex)}')">
-📜 Historial
-</button>
-
-</div>
 
 </div>
 `;
@@ -3071,7 +3031,7 @@ if(Number(day)>=5){
       </div>
       <button type="button" class="save-ex" onclick="saveSuperPair(${pairIndex})">💾 GUARDAR SUPERSERIE</button>
       ${p+2<cards.length?`<button type="button" class="nextExercise" onclick="goNextSuperPair(this)">➡️ SIGUIENTE SUPERSERIE</button>`:''}
-      <div class="row"><button type="button" class="finish" onclick="showHistory('${esc(pairCards[0].querySelector('.exhead span:nth-child(2)')?.textContent||'')}')">📜 Historial</button></div>`;
+`;
     layout.appendChild(shared);
 
   }
@@ -5424,9 +5384,10 @@ function showMonitorSubtab(which){
   const progressBtn=document.getElementById('monitorTabProgressBtn');
   if(advice)advice.style.display=progress?'none':'';
   if(panel)panel.style.display=progress?'block':'none';
-  if(nextBtn){nextBtn.classList.toggle('out',progress);}
-  if(progressBtn){progressBtn.classList.toggle('out',!progress);}
+  if(nextBtn)nextBtn.classList.toggle('out',progress);
+  if(progressBtn)progressBtn.classList.toggle('out',!progress);
   window.monitorSubtab=progress?'progress':'next';
+  if(progress)renderMonitorProgress();
 }
 
 window.monitorSelectedRoutine = 1;
@@ -5434,6 +5395,7 @@ window.monitorSelectedRoutine = 1;
 function renderMonitorRoutine(day){
   const d=Number(day)||1;
   window.monitorSelectedRoutine=d;
+  if(window.monitorSubtab==='progress')renderMonitorProgress();
   const routineNames={1:'Rutina 1 · Pecho, hombros, tríceps y abdominales',2:'Rutina 2 · Espalda, bíceps y abdominales',3:'Rutina 3 · Piernas',4:'Rutina 4 · Pecho, hombros, tríceps y abdominales',5:'SUPER BRAZOS',6:'SUPER PECHO + ESPALDA',7:'SUPER ANTEBRAZO'};
   const buttons=document.getElementById('monitorRoutineButtons');
   if(buttons){
@@ -5450,8 +5412,16 @@ function renderMonitorRoutine(day){
     out.innerHTML=`<div class="summary"><b>ℹ️ Todavía no hay un entrenamiento registrado para esta rutina.</b><p>Cuando la termines y guardes los resultados, el Monitor preparará aquí las indicaciones para la próxima vez.</p>${configured.length?`<p>Ejercicios configurados: ${configured.map(esc).join(' · ')}</p>`:''}</div>`;
     return;
   }
+  // Restrict next-session recommendations to exercises configured in the selected routine.
+  // This is deliberately a display-only filter: it does not alter Entreno or saved logs.
+  const configuredKeys=new Set((routine[d]?.groups||[])
+    .flatMap(g=>(g.exercises||[]).map(raw=>typeof raw==='string'?raw:(raw?.name||raw?.exercise||'')))
+    .map(name=>exerciseNameKey(name))
+    .filter(Boolean));
   const recommendations=[];
   (last.groups||[]).forEach(g=>(g.exercises||[]).forEach(e=>{
+    const exerciseKey=exerciseNameKey(e.name||e.exercise||'');
+    if(!exerciseKey||!configuredKeys.has(exerciseKey))return;
     const sets=(e.sets||[]).filter(st=>num(st.reps)>0).slice(0,3);
     if(!sets.length)return;
     const fb=e.feedback||{};
@@ -5483,7 +5453,14 @@ function renderMonitorRoutine(day){
     const img=gif?`<img src="${esc(gif)}" alt="GIF ${esc(e.name||'ejercicio')}" loading="lazy" onerror="this.style.display='none'" style="width:68px;height:68px;object-fit:contain;background:#fff;border-radius:8px;flex:0 0 68px">`:'';
     recommendations.push(`<div style="display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line, #333)">${img}<div style="flex:1;min-width:0"><b>${esc(e.name||'Ejercicio')}</b><div style="font-weight:700;margin:4px 0">${esc(status)}</div><div>${esc(advice)}</div><small style="color:var(--sub)">Referencia: ${reps.join(' / ')} repeticiones · ${weights.join(' / ')} kg por serie</small></div></div>`);
   }));
-  out.innerHTML=`<p style="font-size:.85rem;color:var(--sub)">Última sesión de esta rutina: <b>${esc(dateKey(last.date))}</b>. Recomendaciones para la próxima vez; el historial completo sigue en INFORMES.</p>`+(recommendations.length?recommendations.join(''):'<div class="empty">La última sesión de esta rutina no contiene series con repeticiones registradas.</div>');
+  if(!recommendations.length){
+    const configured=(routine[d]?.groups||[])
+      .flatMap(g=>(g.exercises||[]).map(raw=>typeof raw==='string'?raw:(raw?.name||raw?.exercise||'')))
+      .filter(Boolean);
+    out.innerHTML=`<div class="summary"><b>ℹ️ Todavía no hay un entrenamiento registrado para esta rutina.</b><p>Cuando la termines y guardes los resultados, el Monitor preparará aquí las indicaciones para la próxima vez.</p>${configured.length?`<p>Ejercicios configurados: ${configured.map(esc).join(' · ')}</p>`:''}</div>`;
+    return;
+  }
+  out.innerHTML=`<p style="font-size:.85rem;color:var(--sub)">Última sesión de esta rutina: <b>${esc(dateKey(last.date))}</b>. Recomendaciones para la próxima vez; el historial completo sigue en INFORMES.</p>`+recommendations.join('');
 }
 
 function emailMonitorWorkoutReport(){
@@ -5580,233 +5557,69 @@ function emailMonitorWorkoutReport(){
   if(status)status.textContent='✓ Informe preparado para '+email+'. Revisa el contenido del borrador y pulsa Enviar.';
 }
 
-function renderMonitor(){
-  const sessions=uniqueSessions(logs)
-    .filter(sessionHasResults)
-    .sort((a,b)=>new Date(a.date)-new Date(b.date));
-  const now=new Date();
-  const todayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate());
-  const cutoff=new Date(now.getFullYear(),now.getMonth(),now.getDate()-6);
-  const week=sessions.filter(l=>new Date(l.date)>=cutoff && new Date(l.date)<new Date(todayStart.getTime()+86400000));
-  const allWeekSets=week.flatMap(l=>(l.groups||[]).flatMap(g=>(g.exercises||[]).flatMap(e=>(e.sets||[]).filter(s=>num(s.reps)>0))));
-  const totalSets=allWeekSets.length;
-  const totalVol=allWeekSets.reduce((n,set)=>n+num(set.reps)*num(set.weight),0);
-  document.getElementById('monitorSummary').innerHTML=sessions.length
-    ?`<div class="summary"><h3>${week.length?'📈':'📋'} ${week.length} sesiones en los últimos 7 días</h3><p><b>${totalSets}</b> series registradas · <b>${Math.round(totalVol).toLocaleString('es-ES')} kg</b> de volumen acumulado en esos 7 días.</p><p>Historial disponible: ${sessions.length} sesiones con ejercicios registrados.</p><p>El análisis de cada ejercicio reúne sus sesiones aunque se haya realizado en distintos días o rutinas.</p></div>`
-    :`<div class="empty">Todavía no hay entrenamientos guardados para evaluar. Guarda una sesión con repeticiones y peso para que pueda comparar resultados.</div>`;
+function renderMonitorProgress(){
+  const root=document.getElementById('monitorProgressContent');
+  if(!root)return;
 
-  // El historial se agrupa por nombre normalizado del ejercicio, no por día, grupo ni rutina.
-  const exerciseKeys=new Map();
-  sessions.forEach(l=>(l.groups||[]).forEach(g=>(g.exercises||[]).forEach(e=>{
-    const key=exerciseNameKey(e.name);
-    if(key && !exerciseKeys.has(key)) exerciseKeys.set(key,{key,name:e.name});
-  })));
-  const cards=[];
-  for(const item of exerciseKeys.values()){
+  // PROGRESO is scoped to the routine currently selected in the selector above.
+  // Its history is only used to populate those exercises; other routines are omitted.
+  const day=Number(window.monitorSelectedRoutine)||1;
+  const dayData=(routine||{})[day]||{};
+  const routineLabels={1:'Rutina 1',2:'Rutina 2',3:'Rutina 3',4:'Rutina 4',5:'SUPER BRAZOS',6:'SUPER PECHO + ESPALDA',7:'SUPER ANTEBRAZO'};
+  const dayLabel=routineLabels[day]||`Rutina ${day}`;
+  const active=[];
+  (dayData.groups||[]).forEach(group=>{
+    (group.exercises||[]).forEach((raw,index)=>{
+      const name=typeof raw==='string'?raw:(raw?.name||raw?.exercise||'');
+      const key=exerciseNameKey(name);
+      if(!key)return;
+      // GIFs are stored alongside the exercise names in each routine group's images array.
+      const image=(Array.isArray(group.images)?group.images[index]:'') ||
+        (typeof raw==='object'?(raw?.image||raw?.gif||raw?.url||''):'');
+      active.push({day,dayLabel,group:group.name||'Grupo sin nombre',name:String(name).trim(),key,image});
+    });
+  });
+
+  if(!active.length){
+    root.innerHTML=`<div class="empty">${esc(dayLabel)} no tiene ejercicios configurados. Selecciona otra rutina arriba o añade ejercicios desde RUTINA.</div>`;
+    return;
+  }
+
+  // One card per active routine placement; history is matched by normalized exercise
+  // name, independently from its historical day/group, while active placements remain distinct.
+  const cards=active.map(item=>{
     const history=getExerciseHistory(item.name);
-    if(!history.length)continue;
+    const gif=item.image?`<img src="${esc(item.image)}" alt="GIF de ${esc(item.name)}" loading="lazy" style="display:block;width:100%;max-width:220px;height:145px;object-fit:contain;background:#111;border:1px solid var(--bor);border-radius:8px;margin:9px auto">`:'';
+    if(!history.length){
+      return `<article class="card" style="margin:8px 0"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><div style="flex:1;min-width:140px"><b>${esc(item.name)}</b><small style="display:block;color:var(--sub);margin-top:4px">${esc(item.dayLabel)} · ${esc(item.group)}</small></div></div>${gif}<p style="margin:8px 0 0;color:var(--sub)">Sin historial registrado para este ejercicio.</p></article>`;
+    }
     const latest=history[history.length-1];
-    const sets=(latest.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
-    if(!sets.length)continue;
-    const reps=sets.map(s=>num(s.reps));
-    const weights=sets.map(s=>num(s.weight));
-    const currReps=reps.reduce((a,b)=>a+b,0);
-    const currVol=sets.reduce((a,s)=>a+num(s.reps)*num(s.weight),0);
-    const currMax=sets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
-    const prev=history.length>1?history[history.length-2]:null;
-    // Monitor 10.14: analiza hasta cuatro sesiones reales del mismo ejercicio.
-    const recentHistory=history.slice(-4);
-    const recentMetrics=recentHistory.map(rec=>{
-      const valid=(rec.e.sets||[]).filter(st=>num(st.reps)>0).slice(0,3);
-      const fbRec=rec.e.feedback||{};
-      return {date:rec.l.date, sets:valid, reps:valid.map(st=>num(st.reps)), weights:valid.map(st=>num(st.weight)), totalReps:valid.reduce((n,st)=>n+num(st.reps),0), volume:valid.reduce((n,st)=>n+num(st.reps)*num(st.weight),0), maxWeight:valid.reduce((m,st)=>Math.max(m,num(st.weight)),0), feedback:fbRec};
-    });
-    const prevSets=prev?(prev.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3):[];
-    const prevReps=prevSets.reduce((a,s)=>a+num(s.reps),0);
-    const prevVol=prevSets.reduce((a,s)=>a+num(s.reps)*num(s.weight),0);
-    const prevMax=prevSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
-    const fb=latest.e.feedback||{};
-    const progressionAllowed=fb.technique==='good'&&['easy','moderate'].includes(fb.effort)&&fb.pain==='no'&&['good','regular'].includes(fb.recovery);
-    const safetyHold=!progressionAllowed||fb.pain==='yes'||fb.technique==='poor'||fb.effort==='hard'||fb.recovery==='poor';
-    const feedbackKnown=!!(fb.technique||fb.effort||fb.pain||fb.recovery);
-    const positiveFeedbackCount=recentMetrics.filter(m=>m.feedback.technique==='good'&&['easy','moderate'].includes(m.feedback.effort)&&m.feedback.pain==='no'&&['good','regular'].includes(m.feedback.recovery)).length;
-    const painRecent=recentMetrics.some(m=>m.feedback.pain==='yes');
-    const decliningRecent=recentMetrics.length>=3&&recentMetrics.slice(-3).every((m,i,a)=>i===0||m.totalReps<a[i-1].totalReps);
-    const consistentTopRange=recentMetrics.length>=2&&recentMetrics.slice(-2).every(m=>m.sets.length>=3&&m.reps.every(r=>r>=12)&&m.weights.every(w=>w>0));
-    let icon='🟡',title='MANTÉN Y CONSOLIDA',advice='Intenta sumar una repetición total manteniendo el mismo peso y una técnica limpia.';
-    if(safetyHold){
-      icon=fb.pain==='yes'?'🔴':'🟠';
-      if(fb.pain==='yes'){title='REVISA LAS MOLESTIAS';advice='Indicaste dolor o molestias en la última sesión. No fuerces el movimiento; detén o adapta el ejercicio si reaparece.';}
-      else if(fb.technique==='poor'){title='NO AUMENTES TODAVÍA';advice='La técnica fue mejorable: mantén o reduce la carga hasta controlar el movimiento.';}
-      else if(fb.effort==='hard'||fb.recovery==='poor'){title='PRIORIZA LA RECUPERACIÓN';advice='El esfuerzo fue muy alto o la recuperación fue mala. Mantén o reduce la exigencia y valora cómo te encuentras.';}
-      else {title='MANTÉN HASTA VALORAR';advice='No hay una valoración favorable completa de técnica, esfuerzo, molestias y recuperación. Mantén la carga; no se recomienda subir peso todavía.';}
-    }
-    else if(consistentTopRange && positiveFeedbackCount>=2 && !painRecent){icon='🟢';title='PROGRESIÓN RESPALDADA POR DOS SESIONES';advice='Has alcanzado 12 repeticiones en las tres series en dos sesiones recientes y las valoraciones han sido favorables. Si la técnica sigue limpia, prueba solo el incremento mínimo disponible y vuelve a un rango cómodo de repeticiones.';}
-    else if(sets.length>=3 && reps.every(r=>r>=12) && weights.every(w=>w>0) && progressionAllowed){icon='🟢';title='VALORA UNA SUBIDA PEQUEÑA';advice='Has alcanzado 12 repeticiones en las tres series. Es una señal favorable; valora el incremento mínimo disponible, pero confirma que la técnica y las sensaciones sigan siendo buenas.';}
-    else if(reps.some(r=>r<8)){icon='🟠';title='NO SUBAS TODAVÍA';advice='Mantén o reduce ligeramente la carga si pierdes la técnica; busca un rango controlado de 8–12 repeticiones.';}
-    if(!feedbackKnown && history.length>=2 && !painRecent && title!=='REVISA FATIGA Y RECUPERACIÓN'){
-      if(decliningRecent){icon='🟠';title='TENDENCIA A LA BAJA';advice='Las últimas sesiones muestran menos repeticiones. No aumentes la carga todavía; revisa descanso, técnica y recuperación, y registra tus sensaciones para afinar la recomendación.';}
-      else if(recentMetrics.length>=3 && recentMetrics[recentMetrics.length-1].totalReps>=Math.max(...recentMetrics.slice(0,-1).map(m=>m.totalReps))){icon='🔵';title='PROGRESO OBSERVADO; FALTAN SENSACIONES';advice='Tus repeticiones igualan o superan las sesiones recientes. Mantén por ahora la carga y registra técnica, esfuerzo, molestias y recuperación antes de plantear una subida.';}
-    }
-    if(prev){
-      if(!safetyHold && (currReps>prevReps || currVol>prevVol || currMax>prevMax)){icon='🟢';if(title==='MANTÉN Y CONSOLIDA')title='PROGRESO REGISTRADO';advice+=' La última sesión mejoró respecto a la sesión anterior de este ejercicio, independientemente de la rutina.';}
-      else if(!safetyHold && currReps<prevReps && currVol<prevVol && currMax<=prevMax){icon='🟠';title='REVISA FATIGA Y RECUPERACIÓN';advice='El resultado bajó respecto a la sesión anterior. No fuerces la subida; revisa descanso, molestias y técnica.';}
-    }
-    // Tendencia semanal: agrupa por semana natural y compara el rendimiento medio por sesión.
-    const weekKeyFor=value=>{const d=new Date(value);const dayNum=d.getDay()||7;d.setHours(0,0,0,0);d.setDate(d.getDate()-dayNum+1);return dateKey(d);};
-    const byWeek=new Map();
-    history.forEach(rec=>{
-      const key=weekKeyFor(rec.l.date);
-      if(!byWeek.has(key))byWeek.set(key,[]);
-      byWeek.get(key).push(rec);
-    });
-    const weeklyTrend=[...byWeek.entries()].sort((a,b)=>a[0].localeCompare(b[0])).slice(-4).map(([weekStart,records])=>{
-      const metrics=records.map(rec=>{const valid=(rec.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);return {reps:valid.reduce((a,s)=>a+num(s.reps),0),vol:valid.reduce((a,s)=>a+num(s.reps)*num(s.weight),0),max:valid.reduce((m,s)=>Math.max(m,num(s.weight)),0)};});
-      return {weekStart,sessions:records.length,reps:metrics.reduce((a,m)=>a+m.reps,0)/metrics.length,vol:metrics.reduce((a,m)=>a+m.vol,0)/metrics.length,max:Math.max(...metrics.map(m=>m.max))};
-    });
-    let trendText='Aún faltan semanas con registros para comparar la progresión semanal.';
-    if(weeklyTrend.length>=2){
-      const first=weeklyTrend[0],last=weeklyTrend[weeklyTrend.length-1];
-      const delta=(a,b)=>a===0?(b===0?'0%':`+${b.toFixed(0)}`):`${b>a?'+':''}${(((b-a)/Math.abs(a))*100).toFixed(0)}%`;
-      trendText=`Tendencia de ${weeklyTrend.length} semanas: repeticiones medias por sesión ${delta(first.reps,last.reps)} · volumen medio ${delta(first.vol,last.vol)} · carga máxima ${first.max} → ${last.max} kg.`;
-    }
-    let plateau=false;
-    if(history.length>=4){
-      const last4=history.slice(-4).map(rec=>{const v=(rec.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);return {reps:v.reduce((a,s)=>a+num(s.reps),0),vol:v.reduce((a,s)=>a+num(s.reps)*num(s.weight),0),max:v.reduce((m,s)=>Math.max(m,num(s.weight)),0)};});
-      plateau=last4.slice(1).every((v,i)=>v.reps<=last4[i].reps && v.vol<=last4[i].vol && v.max<=last4[i].max);
-      if(plateau){icon='🟡';title='POSIBLE ESTANCAMIENTO';advice='En las últimas cuatro sesiones no se observa mejora sostenida en repeticiones, volumen ni carga máxima. Revisa recuperación, técnica y regularidad; prueba cambiar una sola variable cuando te encuentres recuperado.';}
-    }
-    const groupLabel=latest.groups?.join(' / ')||latest.group||'grupo no identificado';
-    const objective=latest.e.objective;
-    let objectiveComparison='';
-    if(objective && Array.isArray(objective.sets) && objective.sets.length){
-      const targetReps=objective.sets.map(st=>num(st.reps));
-      const achievedReps=(latest.e.sets||[]).filter(st=>num(st.reps)>0).slice(0,3).map(st=>num(st.reps));
-      const targetTotal=targetReps.reduce((a,b)=>a+b,0), achievedTotal=achievedReps.reduce((a,b)=>a+b,0);
-      objectiveComparison=`<p style="margin:6px 0"><small>🎯 Objetivo guardado: ${targetReps.join(' / ')} reps${objective.sourceDate?` (basado en ${esc(objective.sourceDate)})`:' (objetivo inicial)'}. Resultado real: ${achievedReps.join(' / ')||'sin reps'} reps. ${achievedTotal>=targetTotal?'Objetivo de repeticiones alcanzado o superado.':'Objetivo de repeticiones no alcanzado; ajusta sin forzar.'}</small></p>`;
-    }
-    const recommendationGif=getMonitorExerciseGif(item.name,latest.l);
-    const recommendationVisual=recommendationGif?`<img src="${esc(recommendationGif)}" alt="GIF de ${esc(item.name)}" loading="lazy" onerror="this.style.display='none'" style="width:96px;height:96px;object-fit:contain;border-radius:9px;border:1px solid var(--line, #ddd);background:#fff;flex:0 0 96px">`:'';
-    cards.push(`<div class="card" style="margin:8px 0"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">${recommendationVisual}<div style="flex:1;min-width:180px"><b>${icon} ${esc(item.name)}</b><div><small>Historial global · última vez: rutina ${Number(latest.l.day)} · ${esc(groupLabel)}</small></div></div></div><p style="margin:6px 0"><b>${title}</b></p><p>${advice}</p><small>Última sesión: ${dateKey(latest.l.date)} · ${reps.join(' / ')} repeticiones · ${weights.join(' / ')} kg</small>${objectiveComparison}<p style="margin:7px 0 0"><small>📊 ${trendText}</small></p>${weeklyTrend.length?`<small>Semanas (inicio): ${weeklyTrend.map(w=>`${w.weekStart}: ${w.reps.toFixed(0)} reps medias, ${Math.round(w.vol)} kg de volumen medio`).join(' · ')}</small><br>`:''}<small>Sesiones registradas para este ejercicio: ${history.length} · analizadas para tendencia: ${recentMetrics.length}</small></div>`);
-  }
-  document.getElementById('monitorExercises').innerHTML=cards.length?cards.join(''):'No hay ejercicios con datos suficientes.';
-
-  // Informe detallado: comparativa objetiva de hasta cuatro sesiones por ejercicio.
-  const reportCardsByGroup=new Map();
-  for(const item of exerciseKeys.values()){
-    const history=getExerciseHistory(item.name);
-    if(!history.length) continue;
-    const rows=history.slice(-4).map(rec=>{
-      const valid=(rec.e.sets||[]).filter(st=>num(st.reps)>0).slice(0,3);
-      const reps=valid.reduce((n,st)=>n+num(st.reps),0);
-      const vol=valid.reduce((n,st)=>n+num(st.reps)*num(st.weight),0);
-      const max=valid.reduce((m,st)=>Math.max(m,num(st.weight)),0);
-      const feedback=rec.e.feedback||{};
-      const feeling=[feedback.effort?({easy:'Fácil',moderate:'Moderado',hard:'Muy duro'}[feedback.effort]||''):'',feedback.technique?({good:'Buena técnica',poor:'Técnica mejorable'}[feedback.technique]||''):'',feedback.pain==='yes'?'Dolor registrado':feedback.pain==='no'?'Sin dolor registrado':'',feedback.recovery?({good:'Buena recuperación',regular:'Recuperación regular',poor:'Mala recuperación'}[feedback.recovery]||''):''].filter(Boolean).join(' · ');
-      const perSet=valid.map((st,idx)=>`S${idx+1}: ${num(st.reps)} reps × ${num(st.weight)} kg`).join(' · ');
-      return {date:dateKey(rec.l.date),sets:valid.length,reps,vol,max,feeling,perSet};
-    });
-    const latest=rows[rows.length-1], previous=rows.length>1?rows[rows.length-2]:null;
-    const change=(a,b)=>{if(!b)return '—';const d=a-b;return `${d>0?'+':''}${d}`;};
-    const diff=(a,b)=>{if(!b)return 'Sin comparación';const d=a-b;const pct=b?`${d>0?'+':''}${Math.round(d/b*100)}%`:d?'nuevo':'0%';return `${d>0?'+':''}${Math.round(d).toLocaleString('es-ES')} (${pct})`;};
-    const tableRows=rows.map((r,i)=>`<tr><td>${esc(r.date)}</td><td>${r.sets}</td><td>${r.reps}</td><td>${Math.round(r.vol).toLocaleString('es-ES')} kg</td><td>${r.max.toLocaleString('es-ES')} kg</td><td>${esc(r.perSet||'Sin series registradas')}</td><td>${esc(r.feeling||'Sin valoración guardada')}</td></tr>`).join('');
-    let conclusion='Solo hay una sesión: todavía no se puede confirmar una tendencia.';
+    const previous=history.length>1?history[history.length-2]:null;
+    const metrics=record=>{
+      const sets=(record?.e?.sets||[]).filter(set=>num(set.reps)>0);
+      return {
+        sets:sets.length,
+        reps:sets.reduce((total,set)=>total+num(set.reps),0),
+        volume:sets.reduce((total,set)=>total+num(set.reps)*num(set.weight),0),
+        maxWeight:sets.reduce((max,set)=>Math.max(max,num(set.weight)),0),
+        perSet:sets.map(set=>`${num(set.reps)} × ${num(set.weight)} kg`).join(' · ')
+      };
+    };
+    const current=metrics(latest),prior=metrics(previous);
+    let delta='Primera sesión registrada';
     if(previous){
-      const improved=latest.reps>previous.reps || latest.vol>previous.vol || latest.max>previous.max;
-      const declined=latest.reps<previous.reps && latest.vol<previous.vol && latest.max<=previous.max;
-      conclusion=declined?'La última sesión bajó en repeticiones y volumen frente a la anterior. Conviene revisar descanso, técnica y sensaciones antes de progresar.':improved?'La última sesión mejoró en al menos una métrica frente a la anterior. Comprueba también la técnica y el esfuerzo antes de aumentar la carga.':'Resultado similar a la sesión anterior; mantener y consolidar es una opción razonable.';
+      const repDelta=current.reps-prior.reps;
+      const volumeDelta=Math.round(current.volume-prior.volume);
+      const weightDelta=Number((current.maxWeight-prior.maxWeight).toFixed(2));
+      delta=`${repDelta>0?'+':''}${repDelta} reps · ${volumeDelta>0?'+':''}${volumeDelta} kg volumen · ${weightDelta>0?'+':''}${weightDelta} kg carga máxima`;
     }
-    const reportGif=getMonitorExerciseGif(item.name,history[history.length-1]);
-    const reportVisual=reportGif?`<img src="${esc(reportGif)}" alt="GIF de ${esc(item.name)}" loading="lazy" onerror="this.style.display='none'" style="width:124px;height:124px;object-fit:contain;border-radius:10px;border:1px solid var(--line, #ddd);background:#fff;flex:0 0 124px">`:'';
-    const latestRecord=history[history.length-1];
-    const rawGroups=latestRecord?.l?.groups;
-    const groupName=(Array.isArray(rawGroups)&&rawGroups.length?rawGroups.join(' / '):(latestRecord?.l?.group||latestRecord?.e?.group||'Grupo no identificado')).toString().trim()||'Grupo no identificado';
-    if(!reportCardsByGroup.has(groupName)) reportCardsByGroup.set(groupName,[]);
-    const reportHtml=`<div class="card" style="margin:8px 0"><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px">${reportVisual}<div style="flex:1;min-width:180px"><h3 style="margin:0 0 6px">${esc(item.name)}</h3><p style="margin:0"><b>Última sesión:</b> ${esc(latest.date)} · ${latest.sets} series con repeticiones</p></div></div><p><b>Cambio respecto a la sesión anterior:</b> Reps ${change(latest.reps,previous?.reps)} · Volumen ${diff(latest.vol,previous?.vol)} · Carga máxima ${diff(latest.max,previous?.max)}</p><p>${esc(conclusion)}</p><div style="overflow-x:auto"><table class="data-table" style="width:100%;font-size:.82rem"><thead><tr><th>Fecha</th><th>Series</th><th>Reps totales</th><th>Volumen</th><th>Carga máx.</th><th>Detalle por serie</th><th>Sensaciones registradas</th></tr></thead><tbody>${tableRows}</tbody></table></div><small>Sesiones incluidas: ${rows.length} de ${history.length} disponibles. Volumen calculado como repeticiones × peso; no sustituye la valoración de técnica.</small></div>`;
-    reportCardsByGroup.get(groupName).push({date:latest.date,html:reportHtml});
-  }
-  const reportGroupHtml=[...reportCardsByGroup.entries()].sort((a,b)=>a[0].localeCompare(b[0],'es')).map(([groupName,items])=>`<section style="margin:14px 0 20px"><h3 style="padding:10px 12px;border-left:4px solid var(--accent, #00e676);background:var(--panel2, rgba(0,230,118,.08));border-radius:6px;margin:12px 0">💪 ${esc(groupName)} <small style="font-weight:normal">(${items.length} ejercicios)</small></h3>${items.sort((a,b)=>b.date.localeCompare(a.date)).map(x=>x.html).join('')}</section>`).join('');
-  document.getElementById('monitorDetailedReports').innerHTML=reportGroupHtml||'No hay ejercicios con resultados suficientes para elaborar informes. Registra series con repeticiones y peso, y vuelve a evaluar.';
-
-  // Plan accionable para la siguiente sesión, sin asumir que una mejora aislada justifica subir peso.
-  const nextPlanCards=[];
-  const chartCards=[];
-  const latestSession=sessions[sessions.length-1]||null;
-  let sessionExerciseCount=0,sessionSetCount=0,sessionRepCount=0,sessionVolume=0,sessionFeedbackCount=0;
-  if(latestSession){
-    (latestSession.groups||[]).forEach(g=>(g.exercises||[]).forEach(e=>{
-      const valid=(e.sets||[]).filter(st=>num(st.reps)>0).slice(0,3);
-      if(!valid.length)return;
-      sessionExerciseCount++;sessionSetCount+=valid.length;sessionRepCount+=valid.reduce((n,st)=>n+num(st.reps),0);sessionVolume+=valid.reduce((n,st)=>n+num(st.reps)*num(st.weight),0);
-      const fb=e.feedback||{};if(fb.technique||fb.effort||fb.pain||fb.recovery)sessionFeedbackCount++;
-    }));
-  }
-  for(const item of exerciseKeys.values()){
-    const history=getExerciseHistory(item.name);if(!history.length)continue;
-    const latest=history[history.length-1], prev=history.length>1?history[history.length-2]:null;
-    const sets=(latest.e.sets||[]).filter(st=>num(st.reps)>0).slice(0,3);if(!sets.length)continue;
-    const fb=latest.e.feedback||{};
-    const totalReps=sets.reduce((n,st)=>n+num(st.reps),0),vol=sets.reduce((n,st)=>n+num(st.reps)*num(st.weight),0),max=sets.reduce((m,st)=>Math.max(m,num(st.weight)),0);
-    const positive=fb.technique==='good'&&['easy','moderate'].includes(fb.effort)&&fb.pain==='no'&&['good','regular'].includes(fb.recovery);
-    const pain=fb.pain==='yes';
-    let status='MANTENER',advice='Repite una ejecución controlada e intenta igualar o mejorar ligeramente las repeticiones sin sacrificar técnica.',target=sets.map(st=>num(st.reps));
-    if(pain){status='NO PROGRESAR';advice='Registraste dolor. No aumentes la carga; detén o adapta el ejercicio si reaparece y busca valoración profesional si persiste.';}
-    else if(fb.technique==='poor'){status='PRIORIZAR TÉCNICA';advice='Mantén o reduce la carga hasta controlar el recorrido y la técnica.';}
-    else if(fb.effort==='hard'||fb.recovery==='poor'){status='CONSOLIDAR / RECUPERAR';advice='El esfuerzo fue muy alto o la recuperación fue mala. Repite con prudencia o reduce la exigencia según tus sensaciones.';}
-    else if(positive&&sets.length>=3&&sets.every(st=>num(st.reps)>=12)&&sets.every(st=>num(st.weight)>0)){status='VALORAR INCREMENTO MÍNIMO';advice='Si la técnica sigue limpia y el esfuerzo es controlado, puedes probar el menor incremento disponible y volver a un rango cómodo de repeticiones.';}
-    else if(prev){const ps=(prev.e.sets||[]).filter(st=>num(st.reps)>0).slice(0,3),pr=ps.reduce((n,st)=>n+num(st.reps),0);if(totalReps<pr){status='CONSOLIDAR';advice='El total de repeticiones bajó frente a la sesión anterior. No subas peso; revisa descanso, técnica y sensaciones.';}else if(!positive){status='FALTAN SENSACIONES';advice='Los datos muestran el resultado, pero falta una valoración completa de técnica, esfuerzo, molestias y recuperación. Mantén por ahora la carga.';}}
-    const date=dateKey(latest.l.date);
-    nextPlanCards.push(`<div class="card" style="margin:7px 0"><b>${esc(item.name)}</b><p><b>${status}</b> · Último registro: ${date}</p><p>${advice}</p><small>Referencia actual: ${target.join(' / ')} reps · ${sets.map(st=>num(st.weight)).join(' / ')} kg · ${Math.round(vol).toLocaleString('es-ES')} kg de volumen.</small></div>`);
-    const recent=history.slice(-4).map(rec=>{const v=(rec.e.sets||[]).filter(st=>num(st.reps)>0).slice(0,3);return {date:dateKey(rec.l.date),reps:v.reduce((n,st)=>n+num(st.reps),0),vol:v.reduce((n,st)=>n+num(st.reps)*num(st.weight),0)};});
-    const maxReps=Math.max(1,...recent.map(r=>r.reps));
-    chartCards.push(`<div style="margin:12px 0;padding:10px;border:1px solid var(--border);border-radius:10px"><b>${esc(item.name)}</b>${recent.map(r=>`<div style="display:grid;grid-template-columns:88px 1fr 48px;gap:7px;align-items:center;margin:6px 0;font-size:.8rem"><span>${esc(r.date)}</span><div style="height:12px;background:var(--panel2,#eee);border-radius:8px;overflow:hidden"><div style="height:12px;width:${Math.max(2,Math.round(r.reps/maxReps*100))}%;background:var(--accent,var(--primary,#398));border-radius:8px"></div></div><b>${r.reps} reps</b></div>`).join('')}<small>Volumen por sesión: ${recent.map(r=>`${esc(r.date)}: ${Math.round(r.vol).toLocaleString('es-ES')} kg`).join(' · ')}</small></div>`);
-  }
-  document.getElementById('monitorNextPlan').innerHTML=nextPlanCards.length?nextPlanCards.join(''):'No hay ejercicios con series registradas para preparar objetivos. Guarda una sesión y vuelve a evaluar.';
-  document.getElementById('monitorCharts').innerHTML=chartCards.length?chartCards.join(''):'Aún no hay datos suficientes para representar la evolución.';
-  document.getElementById('monitorSessionReview').innerHTML=latestSession?`<div class="summary"><h3>Última sesión registrada · ${esc(dateKey(latestSession.date))}</h3><p><b>${sessionExerciseCount}</b> ejercicios · <b>${sessionSetCount}</b> series con repeticiones · <b>${sessionRepCount}</b> repeticiones totales</p><p><b>${Math.round(sessionVolume).toLocaleString('es-ES')} kg</b> de volumen estimado (repeticiones × peso)</p><p>Valoraciones de sensaciones disponibles en <b>${sessionFeedbackCount} de ${sessionExerciseCount}</b> ejercicios.</p><small>El volumen suma los pesos registrados por serie; no equivale a una medida de esfuerzo ni permite comparar directamente ejercicios distintos.</small></div>`:'No hay ninguna sesión guardada con resultados para resumir.';
-
-  // Equilibrio orientativo: compara el trabajo registrado con la distribución de ejercicios
-  // configurada por el usuario; no impone un número universal de series por músculo.
-  const normalizeGroup=name=>exerciseNameKey(name||'Sin grupo');
-  const planned={};
-  let plannedTotal=0;
-  Object.values(routine||{}).forEach(d=>(d.groups||[]).forEach(g=>{
-    const key=normalizeGroup(g.name); const count=(g.exercises||[]).length;
-    if(!planned[key])planned[key]={name:g.name||'Sin grupo',exercises:0,days:new Set()};
-    planned[key].exercises+=count;
-    if(count)planned[key].days.add(String(Object.keys(routine).find(k=>routine[k]===d)||''));
-    plannedTotal+=count;
-  }));
-  const actual={};
-  week.forEach(l=>(l.groups||[]).forEach(g=>{
-    const key=normalizeGroup(g.name);if(!actual[key])actual[key]={name:g.name||'Sin grupo',sets:0,ex:new Set(),sessions:new Set()};
-    (g.exercises||[]).forEach(e=>{const valid=(e.sets||[]).filter(s=>num(s.reps)>0);if(valid.length){actual[key].sets+=valid.length;actual[key].ex.add(exerciseNameKey(e.name));actual[key].sessions.add(dateKey(l.date));}});
-  }));
-  const allKeys=new Set([...Object.keys(planned),...Object.keys(actual)]);
-  const actualTotal=Object.values(actual).reduce((n,v)=>n+v.sets,0);
-  const groupRows=[...allKeys].map(key=>{
-    const p=planned[key]||{name:actual[key]?.name||key,exercises:0,days:new Set()};
-    const a=actual[key]||{name:p.name,sets:0,ex:new Set(),sessions:new Set()};
-    const expectedShare=plannedTotal?p.exercises/plannedTotal:0;
-    const actualShare=actualTotal?a.sets/actualTotal:0;
-    let note='';
-    if(week.length && p.exercises>0 && a.sets===0)note=' · <span style="color:var(--gold)">Sin trabajo registrado en los últimos 7 días</span>';
-    else if(week.length>=3 && expectedShare>0 && actualShare>expectedShare*1.8 && a.sets>=9 && a.sessions.size>=2)note=' · <span style="color:var(--gold)">Más trabajo relativo que el previsto en la rutina</span>';
-    else if(week.length>=3 && expectedShare>0 && actualShare<expectedShare*0.4 && a.sets>0)note=' · <span style="color:var(--gold)">Menos presencia relativa que en la rutina configurada</span>';
-    const plannedInfo=p.exercises?`${p.exercises} ejercicios configurados en la rutina`:'No aparece en la rutina configurada';
-    return `<div class="card" style="margin:7px 0"><b>${esc(p.name)}</b><p>${a.sets} series · ${a.ex.size} ejercicios · ${a.sessions.size} sesiones esta semana</p><small>${plannedInfo}${note}</small></div>`;
-  }).join('');
-  document.getElementById('monitorGroups').innerHTML=groupRows||'Aún no hay grupos musculares configurados.';
-
-  let plan='Prioriza la regularidad, registra todas las series y evita aumentar peso si la técnica se deteriora.';
-  if(!sessions.length)plan='Empieza registrando tu próxima sesión completa. Con dos o más sesiones del mismo ejercicio podré comparar tu evolución.';
-  else if(!week.length)plan='No hay sesiones registradas en los últimos 7 días. Retoma tu rutina habitual cuando estés recuperado y registra los resultados.';
-  else if(cards.some(x=>x.includes('POSIBLE ESTANCAMIENTO')))plan='En los ejercicios con posible estancamiento, revisa primero recuperación, técnica y consistencia. No aumentes todas las variables a la vez.';
-  else if(cards.some(x=>x.includes('REVISA FATIGA Y RECUPERACIÓN')))plan='En los ejercicios cuyo rendimiento bajó, mantén o reduce la carga y revisa sueño, descanso y molestias antes de progresar.';
-  else if(cards.some(x=>x.includes('VALORA SUBIR UN POCO EL PESO')))plan='En los ejercicios que alcanzaron 3 series de 12 repeticiones, valora solo el incremento mínimo si la técnica y el esfuerzo lo permiten. En los demás, intenta mejorar poco a poco las repeticiones.';
-  document.getElementById('monitorWeek').innerHTML=`<p>${plan}</p><small>La tendencia compara hasta cuatro sesiones del mismo ejercicio, aunque se haya realizado en diferentes rutinas. El equilibrio muscular es una orientación relativa a tu configuración, no una prescripción médica ni un objetivo universal de series.</small>`;
-  renderMonitorRoutine(window.monitorSelectedRoutine||1);
-  showMonitorSubtab(window.monitorSubtab||'next');
+    const historyRows=history.slice(-5).reverse().map(record=>{
+      const m=metrics(record);
+      return `<tr><td>${esc(dateKey(record.l.date))}</td><td>${m.sets}</td><td>${m.reps}</td><td>${Math.round(m.volume).toLocaleString('es-ES')} kg</td><td>${m.maxWeight.toLocaleString('es-ES')} kg</td><td>${esc(m.perSet||'—')}</td></tr>`;
+    }).join('');
+    return `<article class="card" style="margin:8px 0"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><div style="flex:1;min-width:140px"><b>${esc(item.name)}</b><small style="display:block;color:var(--sub);margin-top:4px">${esc(item.dayLabel)} · ${esc(item.group)}</small></div></div>${gif}<p style="margin:8px 0"><b>Último registro:</b> ${esc(dateKey(latest.l.date))} · ${current.reps} reps · ${Math.round(current.volume).toLocaleString('es-ES')} kg de volumen · carga máxima ${current.maxWeight.toLocaleString('es-ES')} kg</p><p style="margin:5px 0"><b>Comparación:</b> ${esc(delta)}</p><details><summary>Ver últimas ${Math.min(5,history.length)} sesiones</summary><div style="overflow-x:auto;margin-top:8px"><table class="data-table" style="width:100%;font-size:.82rem"><thead><tr><th>Fecha</th><th>Series</th><th>Reps</th><th>Volumen</th><th>Carga máx.</th><th>Detalle</th></tr></thead><tbody>${historyRows}</tbody></table></div></details></article>`;
+  });
+  root.innerHTML=cards.join('');
 }
 
 function stats(){
@@ -5918,350 +5731,87 @@ return /abdominal|abdomen|\babs\b/.test(n);
 
 }
 
-function report(days){
-
-let today=new Date();
-let todayKey=dateKey(today);
-
-let start=new Date(
-today.getFullYear(),
-today.getMonth(),
-today.getDate()-(days-1)
-);
-
-let cutKey=dateKey(start);
-
-let a=
-uniqueSessions(logs)
-.filter(l=>{
-
-let key=dateKey(l.date);
-
-return key>=cutKey && key<=todayKey;
-
-})
-.sort(
-(x,y)=>dateKey(x.date).localeCompare(dateKey(y.date))
-);
-
-if(!a.length){
-
-document.getElementById(
-'reports'
-).innerHTML=
-`
-
-<div class="empty">
-Sin entrenamientos realizados en ${days} días.
-</div>
-
-`;
-
-return;
-
-}
-
-let groups={};
-
-a.forEach(l=>
-
-(l.groups||[]).forEach(g=>{
-
-let key=
-g.name||'Sin grupo';
-
-if(!groups[key]){
-
-groups[key]={
-volume:0,
-sets:0,
-exercises:new Set(),
-sessions:new Set(),
-exercisesData:[]
-};
-
-}
-
-let z=groups[key];
-
-let groupHasRealData=false;
-
-(g.exercises||[]).forEach(e=>{
-
-let effective=
-(e.sets||[]).filter(
-s=>num(s.reps)>0
-);
-
-if(!effective.length)return;
-
-groupHasRealData=true;
-
-z.exercises.add(e.name);
-
-z.sets+=effective.length;
-
-if(!isAbsGroup(g.name)){
-
-z.volume+=volume(effective);
-
-}
-
-let existing=
-z.exercisesData.find(
-x=>x.name===e.name
-);
-
-if(existing){
-
-existing.sets.push({
-date:dateKey(l.date),
-sets:effective
-});
-
-}else{
-
-z.exercisesData.push({
-name:e.name,
-sets:[
-{
-date:dateKey(l.date),
-sets:effective
-}
-]
-});
-
-}
-
-});
-
-if(groupHasRealData){
-
-z.sessions.add(
-Number(l.day)+'|'+dateKey(l.date)
-);
-
-}
-
-})
-);
-
-let totalVol=0;
-let totalSets=0;
-
-let h=`
-
-<div class="report">
-
-<b>
-📊 ${
-days===15
-?'HISTORIAL DE 15 DÍAS'
-:'HISTORIAL MENSUAL (30 DÍAS)'
-}
-</b>
-
-<br>
-
-<span style="color:var(--sub)">
-Datos de ejercicios realmente realizados.
-</span>
-
-</div>
-
-`;
-
-let entries=
-Object.entries(groups)
-.sort(
-(a,b)=>
-a[0].localeCompare(
-b[0],
-'es'
-)
-);
-
-if(!entries.length){
-
-document.getElementById(
-'reports'
-).innerHTML=
-h+
-'<div class="empty">No hay ejercicios realizados en este periodo.</div>';
-
-return;
-
-}
-
-entries.forEach(
-([name,z])=>{
-
-totalVol+=z.volume;
-totalSets+=z.sets;
-
-h+=`
-
-<div class="muscleReport">
-
-<h3>
-💪 ${esc(name)}
-</h3>
-
-<div class="muscleStats">
-
-<div class="muscleStat">
-
-<b>
-${Math.round(z.volume)} kg
-</b>
-
-<span>
-Volumen realizado
-</span>
-
-</div>
-
-<div class="muscleStat">
-
-<b>
-${z.sets}
-</b>
-
-<span>
-Series realizadas
-</span>
-
-</div>
-
-<div class="muscleStat">
-
-<b>
-${z.exercises.size}
-</b>
-
-<span>
-Ejercicios realizados
-</span>
-
-</div>
-
-</div>
-
-<div
-style="font-size:.65rem;color:var(--sub);margin-top:6px">
-
-Sesiones realizadas: ${z.sessions.size}
-
-</div>
-
-`;
-
-z.exercisesData.forEach(ex=>{
-
-h+=`
-
-<div
-style="
-margin-top:9px;
-padding-top:7px;
-border-top:1px solid var(--bor);
-">
-
-<div
-style="
-font-weight:bold;
-font-size:.75rem;
-color:#fff;
-margin-bottom:4px;
-">
-
-${esc(ex.name)}
-
-</div>
-
-`;
-
-ex.sets.forEach(record=>{
-
-h+=`
-
-<div
-style="
-font-size:.68rem;
-color:var(--sub);
-margin-bottom:3px;
-">
-
-${new Date(record.date+'T12:00:00')
-.toLocaleDateString('es-ES')}
-
-&nbsp;→&nbsp;
-
-${record.sets.map(
-(s,i)=>
-`S${i+1} ${num(s.reps)}×${num(s.weight)} kg`
-).join(' · ')}
-
-</div>
-
-`;
-
-});
-
-h+=`
-
-</div>
-
-`;
-
-});
-
-h+=`
-
-</div>
-
-`;
-
-}
-);
-
-h+=`
-
-<div class="summary">
-
-<h3>
-📈 TOTAL DEL PERIODO
-</h3>
-
-<div>
-📦 <b>
-${Math.round(totalVol)} kg
-</b>
-de volumen realizado
-</div>
-
-<div>
-🔢 <b>
-${totalSets}
-</b>
-series realizadas
-</div>
-
-<div
-style="font-size:.68rem;color:var(--sub);margin-top:5px">
-
-Los abdominales no se incluyen en el volumen en kg.
-
-</div>
-
-</div>
-
-`;
-
-document.getElementById(
-'reports'
-).innerHTML=h;
-
+function reportRoutine(day){
+  const labels={
+    1:'RUTINA 1',2:'RUTINA 2',3:'RUTINA 3',4:'RUTINA 4',
+    5:'SUPER BRAZOS',6:'SUPER PECHO + ESPALDA',7:'SUPER ANTEBRAZO'
+  };
+  // Informes muestra solo los ejercicios que pertenecen a la rutina seleccionada.
+  // Esto evita que registros contaminados/mezclados de otro grupo muscular se cuelen
+  // en SUPER ANTEBRAZO (o en cualquier otra rutina).
+  const allowedNames=new Set(
+    ((routine&&routine[day]&&routine[day].groups)||[])
+      .flatMap(group=>(group.exercises||[]).map(name=>
+        (typeof exerciseNameKey==='function'
+          ? exerciseNameKey(name)
+          : String(name||'').trim().toLowerCase()
+        )
+      ))
+      .filter(Boolean)
+  );
+  const records=[];
+  (logs||[]).forEach(log=>{
+    if(Number(log.day)!==Number(day)) return;
+    const date=dateKey(log.date);
+    (log.groups||[]).forEach(group=>{
+      (group.exercises||[]).forEach(ex=>{
+        const name=String(ex.name||'Ejercicio');
+        const key=typeof exerciseNameKey==='function'
+          ? exerciseNameKey(name)
+          : name.trim().toLowerCase();
+        if(!allowedNames.has(key)) return;
+        const sets=(ex.sets||[]).map(set=>({
+          reps:num(set.reps),
+          weight:num(set.weight)
+        })).filter(set=>set.reps>0).slice(0,3);
+        if(sets.length) records.push({date,name,sets});
+      });
+    });
+  });
+  records.sort((a,b)=>b.date.localeCompare(a.date));
+  const root=document.getElementById('reports');
+  if(!records.length){
+    root.innerHTML=`<h3>${esc(labels[day]||'RUTINA')}</h3><div class="empty">Todavía no hay ejercicios registrados para esta rutina.</div>`;
+    return;
+  }
+  const dateGroups=[];
+  records.forEach(record=>{
+    let bucket=dateGroups.find(item=>item.date===record.date);
+    if(!bucket){bucket={date:record.date,records:[]};dateGroups.push(bucket);}
+    bucket.records.push(record);
+  });
+  let html=`<h3 style="margin:6px 0 10px;color:var(--green)">${esc(labels[day]||'RUTINA')}</h3>
+  <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.82rem">
+  <thead><tr>
+  <th style="text-align:left;padding:8px;border-bottom:1px solid var(--bor)">Fecha</th>
+  <th style="text-align:left;padding:8px;border-bottom:1px solid var(--bor)">Ejercicio</th>
+  <th style="text-align:center;padding:8px;border-bottom:1px solid var(--bor)">Series</th>
+  </tr></thead><tbody>`;
+  dateGroups.forEach(bucket=>{
+    bucket.records.forEach((record,index)=>{
+      const dateText=new Date(bucket.date+'T12:00:00').toLocaleDateString('es-ES');
+      let setTable=`<div style="display:flex;justify-content:flex-end">
+        <table style="border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid var(--bor);border-radius:9px;background:var(--soft);font-size:.8rem;min-width:138px">
+        <thead><tr><th style="text-align:right;padding:5px 10px;color:#173B24;font-size:.72rem;font-weight:700;background:#9BE7B0;border-bottom:1px solid var(--bor)">Rep</th><th style="text-align:right;padding:5px 10px;color:#173B24;font-size:.72rem;font-weight:700;background:#9BE7B0;border-bottom:1px solid var(--bor)">kg</th></tr></thead><tbody>`;
+      for(let idx=0;idx<3;idx++){
+        const set=record.sets[idx];
+        setTable+=`<tr style="background:${idx%2===0?'var(--soft)':'var(--panel)'}"><td style="text-align:right;padding:5px 10px;border-bottom:${idx<2?'1px solid var(--bor)':'0'};font-variant-numeric:tabular-nums">${set?set.reps:'—'}</td><td style="text-align:right;padding:5px 10px;border-bottom:${idx<2?'1px solid var(--bor)':'0'};font-variant-numeric:tabular-nums">${set?set.weight:'—'}</td></tr>`;
+      }
+      setTable+='</tbody></table></div>';
+      html+=`<tr>
+        ${index===0?`<td rowspan="${bucket.records.length}" style="padding:8px;border-bottom:1px solid var(--bor);white-space:nowrap;vertical-align:middle">${dateText}</td>`:''}
+        <td style="padding:8px;border-bottom:1px solid var(--bor);vertical-align:middle">
+          <div style="display:flex;align-items:center;gap:9px;min-width:0">
+            ${(()=>{const gif=getMonitorExerciseGif(record.name);return gif?`<img src="${esc(gif)}" alt="" loading="lazy" style="width:72px;height:66px;object-fit:contain;flex:0 0 72px;border:1px solid var(--bor);border-radius:6px;background:#111" onerror="this.style.display='none'">`:''})()}
+            <span>${esc(record.name)}</span>
+          </div>
+        </td>
+        <td style="padding:5px 8px;border-bottom:1px solid var(--bor);vertical-align:middle">${setTable}</td>
+      </tr>`;
+    });
+  });
+  html+='</tbody></table></div>';
+  root.innerHTML=html;
 }
 
 function startTimer(seconds=120){
@@ -6414,6 +5964,42 @@ if(localStorage.getItem(K+'forearm_pairs_migrated_v4')!=='1'){
   normalizeRoutine();
   if(save()) localStorage.setItem(K+'forearm_pairs_migrated_v4','1');
 }
+
+// Reparación de SUPER ANTEBRAZO: si su configuración guardada contiene ejercicios/grupos
+// de espalda, restaurar solo la configuración del día 7. No se modifican entrenamientos guardados.
+{
+  const forearmDay=routine[7]||{};
+  const forearmGroups=forearmDay.groups||[];
+  const forearmNames=forearmGroups.flatMap(g=>(g.exercises||[]).map(e=>
+    String(typeof e==='string'?e:(e?.name||e?.exercise||'')).toLowerCase()
+  ));
+  const hasBackLabel=forearmGroups.some(g=>/espalda|dorsal/i.test(String(g.name||'')));
+  const hasBackExercise=forearmNames.some(name=>/remo sentado con polea|jal[oó]n al pecho|jal[oó]n.*barra en v/i.test(name));
+  const hasForearmExercises=forearmNames.some(name=>/muñeca|antebrazo|wrist curl/i.test(name));
+  if((hasBackLabel||hasBackExercise)&&!hasForearmExercises){
+    routine[7]=structuredCloneSafe(DEFAULT_ROUTINE[7]);
+    normalizeRoutine();
+    save();
+  }
+}
+// Reparación de SUPER PECHO + ESPALDA: recuperar la pareja de grupos completa si
+// la configuración guardada se quedó únicamente con ejercicios de pecho. El historial se conserva.
+{
+  const pairDay=routine[6]||{};
+  const pairGroups=pairDay.groups||[];
+  const pairNames=pairGroups.flatMap(g=>(g.exercises||[]).map(e=>
+    String(typeof e==='string'?e:(e?.name||e?.exercise||'')).toLowerCase()
+  ));
+  const hasBackGroup=pairGroups.some(g=>/espalda|dorsal/i.test(String(g.name||'')));
+  const hasBackExercise=pairNames.some(name=>/jal[oó]n|remo|dorsal/i.test(name));
+  const hasChestExercise=pairNames.some(name=>/press de pecho|cruce|apertura|pectoral/i.test(name));
+  if(hasChestExercise&&!hasBackGroup&&!hasBackExercise){
+    routine[6]=structuredCloneSafe(DEFAULT_ROUTINE[6]);
+    normalizeRoutine();
+    save();
+  }
+}
+
 
 ;
 
