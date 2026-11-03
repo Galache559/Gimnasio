@@ -158,7 +158,8 @@ gap:7px;
 
 .group{
 color:var(--sub);
-font-size:.73rem;
+font-size:.82rem;
+font-weight:700;
 text-transform:uppercase;
 margin:12px 0 6px;
 }
@@ -2479,37 +2480,9 @@ function adaptiveTargetData(name, excludeDate=''){
 }
 
 function routineInsightHTML(d, ex){
-  // Este recuadro resume únicamente la última sesión y su comparación.
-  // El objetivo concreto para la próxima sesión se muestra en el bloque inferior.
-  const selectedDate=document.getElementById('date')?.value||'';
-  const history=getExerciseHistory(ex, selectedDate);
-  const recent=history.slice(-4);
-  if(!recent.length) return '📌 <b>Sin historial anterior:</b> registra este ejercicio para que el Monitor pueda comparar resultados y proponer objetivos personalizados.';
-  const latest=recent[recent.length-1];
-  const latestSets=(latest.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
-  const maxW=latestSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
-  const totalVol=latestSets.reduce((v,s)=>v+num(s.reps)*num(s.weight),0);
-  const reps=latestSets.map(s=>num(s.reps));
-  let advice=`📌 <b>Última sesión:</b> ${dateKey(latest.l.date)} · ${maxW} kg máximo · volumen ${Math.round(totalVol)} kg. <b>Referencia por series:</b> ${reps.join(' / ')} reps.`;
-  if(recent.length>=2){
-    const prev=recent[recent.length-2];
-    const prevSets=(prev.e.sets||[]).filter(s=>num(s.reps)>0).slice(0,3);
-    const currentReps=reps.reduce((a,b)=>a+b,0);
-    const prevReps=prevSets.reduce((a,s)=>a+num(s.reps),0);
-    const currentVol=latestSets.reduce((v,s)=>v+num(s.reps)*num(s.weight),0);
-    const prevVol=prevSets.reduce((v,s)=>v+num(s.reps)*num(s.weight),0);
-    const currentMax=maxW;
-    const prevMax=prevSets.reduce((m,s)=>Math.max(m,num(s.weight)),0);
-    if(currentReps>prevReps || currentVol>prevVol || currentMax>prevMax) advice+=' <b>Comparación:</b> mejora respecto a la sesión anterior.';
-    else if(currentReps===prevReps && currentVol===prevVol && currentMax===prevMax) advice+=' <b>Comparación:</b> resultado similar al de la sesión anterior.';
-    else advice+=' <b>Comparación:</b> resultado inferior a la sesión anterior; valora cansancio y técnica.';
-  } else advice+=' Todavía no hay otra sesión para comparar.';
-  const fb=latest.e.feedback||{};
-  if(fb.pain==='yes') advice+=' 🔴 <b>Precaución:</b> indicaste molestias en la última sesión; no fuerces si reaparecen.';
-  else if(fb.technique==='poor') advice+=' 🟠 <b>Precaución:</b> prioriza la técnica antes de aumentar la carga.';
-  else if(fb.effort==='hard'||fb.recovery==='poor') advice+=' 🟠 <b>Precaución:</b> la sesión fue exigente o la recuperación fue insuficiente.';
-  advice+=' <small>El objetivo concreto para la próxima sesión aparece debajo.</small>';
-  return advice;
+  // Se elimina el recuadro repetitivo de última sesión; se conservan
+  // el historial, los objetivos y los controles de carga.
+  return '';
 }
 
 function copyLastSets(prefix){
@@ -5781,32 +5754,32 @@ function reportRoutine(day){
     bucket.records.push(record);
   });
   let html=`<h3 style="margin:6px 0 10px;color:var(--green)">${esc(labels[day]||'RUTINA')}</h3>
-  <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.82rem">
+  <div style="width:100%;max-width:100%;overflow-x:hidden"><table style="width:100%;max-width:100%;table-layout:fixed;border-collapse:collapse;font-size:.82rem">
   <thead><tr>
-  <th style="text-align:left;padding:8px;border-bottom:1px solid var(--bor)">Fecha</th>
-  <th style="text-align:left;padding:8px;border-bottom:1px solid var(--bor)">Ejercicio</th>
-  <th style="text-align:center;padding:8px;border-bottom:1px solid var(--bor)">Series</th>
+  <th style="width:74px;text-align:left;padding:5px 3px;border-bottom:1px solid var(--bor)">Fecha</th>
+  <th style="text-align:left;padding:5px 3px;border-bottom:1px solid var(--bor)">Ejercicio</th>
+  <th style="width:116px;text-align:center;padding:5px 2px;border-bottom:1px solid var(--bor)">Series</th>
   </tr></thead><tbody>`;
   dateGroups.forEach(bucket=>{
     bucket.records.forEach((record,index)=>{
       const dateText=new Date(bucket.date+'T12:00:00').toLocaleDateString('es-ES');
-      let setTable=`<div style="display:flex;justify-content:flex-end">
-        <table style="border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid var(--bor);border-radius:9px;background:var(--soft);font-size:.8rem;min-width:138px">
-        <thead><tr><th style="text-align:right;padding:5px 10px;color:#173B24;font-size:.72rem;font-weight:700;background:#9BE7B0;border-bottom:1px solid var(--bor)">Rep</th><th style="text-align:right;padding:5px 10px;color:#173B24;font-size:.72rem;font-weight:700;background:#9BE7B0;border-bottom:1px solid var(--bor)">kg</th></tr></thead><tbody>`;
+      let setTable=`<div style="display:flex;justify-content:center;width:100%;min-width:0">
+        <table style="width:100%;max-width:108px;table-layout:fixed;border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid var(--bor);border-radius:8px;background:var(--soft);font-size:.76rem">
+        <thead><tr><th style="text-align:center;padding:4px 3px;color:#173B24;font-size:.68rem;font-weight:700;background:#9BE7B0;border-bottom:1px solid var(--bor)">Rep</th><th style="text-align:center;padding:4px 3px;color:#173B24;font-size:.68rem;font-weight:700;background:#9BE7B0;border-bottom:1px solid var(--bor)">kg</th></tr></thead><tbody>`;
       for(let idx=0;idx<3;idx++){
         const set=record.sets[idx];
-        setTable+=`<tr style="background:${idx%2===0?'var(--soft)':'var(--panel)'}"><td style="text-align:right;padding:5px 10px;border-bottom:${idx<2?'1px solid var(--bor)':'0'};font-variant-numeric:tabular-nums">${set?set.reps:'—'}</td><td style="text-align:right;padding:5px 10px;border-bottom:${idx<2?'1px solid var(--bor)':'0'};font-variant-numeric:tabular-nums">${set?set.weight:'—'}</td></tr>`;
+        setTable+=`<tr style="background:${idx%2===0?'var(--soft)':'var(--panel)'}"><td style="text-align:right;padding:5px 10px;border-bottom:${idx<2?'1px solid var(--bor)':'0'};font-variant-numeric:tabular-nums">${set?set.reps:'—'}</td><td style="text-align:center;padding:4px 3px;border-bottom:${idx<2?'1px solid var(--bor)':'0'};font-variant-numeric:tabular-nums">${set?set.weight:'—'}</td></tr>`;
       }
       setTable+='</tbody></table></div>';
       html+=`<tr>
-        ${index===0?`<td rowspan="${bucket.records.length}" style="padding:8px;border-bottom:1px solid var(--bor);white-space:nowrap;vertical-align:middle">${dateText}</td>`:''}
-        <td style="padding:8px;border-bottom:1px solid var(--bor);vertical-align:middle">
+        ${index===0?`<td rowspan="${bucket.records.length}" style="padding:5px 3px;border-bottom:1px solid var(--bor);white-space:nowrap;vertical-align:middle;font-size:.72rem">${dateText}</td>`:''}
+        <td style="padding:5px 3px;border-bottom:1px solid var(--bor);vertical-align:middle">
           <div style="display:flex;align-items:center;gap:9px;min-width:0">
-            ${(()=>{const gif=getMonitorExerciseGif(record.name);return gif?`<img src="${esc(gif)}" alt="" loading="lazy" style="width:72px;height:66px;object-fit:contain;flex:0 0 72px;border:1px solid var(--bor);border-radius:6px;background:#111" onerror="this.style.display='none'">`:''})()}
-            <span>${esc(record.name)}</span>
+            ${(()=>{const gif=getMonitorExerciseGif(record.name);return gif?`<img src="${esc(gif)}" alt="" loading="lazy" style="width:54px;height:54px;object-fit:contain;flex:0 0 54px;border:1px solid var(--bor);border-radius:6px;background:#111" onerror="this.style.display='none'">`:''})()}
+            <span style="min-width:0;overflow-wrap:anywhere">${esc(record.name)}</span>
           </div>
         </td>
-        <td style="padding:5px 8px;border-bottom:1px solid var(--bor);vertical-align:middle">${setTable}</td>
+        <td style="padding:4px 2px;border-bottom:1px solid var(--bor);vertical-align:middle;overflow:hidden">${setTable}</td>
       </tr>`;
     });
   });
