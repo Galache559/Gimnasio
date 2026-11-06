@@ -2854,7 +2854,7 @@ if(Number(day)>=5){
     const titleRow=document.createElement('div');
     titleRow.className='superPairTitles';
     pairCards.forEach((card,i)=>{
-      const name=card.querySelector('.exhead span:nth-child(2)')?.textContent || `Ejercicio ${p+i+1}`;
+      const name=card.querySelector('.exhead .exerciseName')?.textContent || `Ejercicio ${p+i+1}`;
       const cell=document.createElement('div');
       cell.textContent=name;
       titleRow.appendChild(cell);
@@ -2945,6 +2945,14 @@ if(Number(day)>=5){
     // Controles individuales: se colocan en dos columnas, una por ejercicio.
     const individualControls=document.createElement('div');
     individualControls.className='superPairIndividualControls';
+
+    // Conserva los botones originales: cada uno ya conoce su ejercicio,
+    // grupo, índice y función de guardado exactos.
+    const saveHolder=document.createElement('div');
+    saveHolder.className='superPairHiddenRemainder';
+    saveHolder.style.display='none';
+    layout.appendChild(saveHolder);
+
     // Valoración común y controles generales: se muestran una sola vez por pareja.
     pairCards.forEach((card,idx)=>{
       card.classList.add('superPairExerciseDetails');
@@ -2969,7 +2977,7 @@ if(Number(day)>=5){
       specific.className='superPairControls';
       const controlTitle=document.createElement('div');
       controlTitle.className='superPairExerciseControlTitle';
-      controlTitle.textContent=card.querySelector('.exhead span:nth-child(2)')?.textContent || `Ejercicio ${p+idx+1}`;
+      controlTitle.textContent=card.querySelector('.exhead .exerciseName')?.textContent || `Ejercicio ${p+idx+1}`;
       specific.appendChild(controlTitle);
       ['.smartActions','.rm','.vol'].forEach(sel=>{
         card.querySelectorAll(sel).forEach(el=>specific.appendChild(el));
@@ -2978,7 +2986,10 @@ if(Number(day)>=5){
 
       card.querySelector('.superRestControls')?.remove();
       const individualSave=card.querySelector('.save-ex');
-      if(individualSave) individualSave.style.display='none';
+      if(individualSave){
+        individualSave.style.display='none';
+        saveHolder.appendChild(individualSave);
+      }
       card.querySelector('.nextExercise')?.remove();
       card.querySelector('.row')?.remove();
 
@@ -3051,15 +3062,26 @@ function saveSuperPair(pairIndex){
   const pairs=[...document.querySelectorAll('#form .superPairLayout')];
   const pair=pairs[pairIndex];
   if(!pair)return;
+
   const saveButtons=[...pair.querySelectorAll('.superPairHiddenRemainder .save-ex')];
-  if(!saveButtons.length){
-    alert('No se han encontrado los ejercicios de esta superserie.');
+  const pairButton=pair.querySelector('.superPairSharedControls .save-ex');
+
+  if(saveButtons.length!==2){
+    alert(`No se han encontrado los dos botones originales de guardado (encontrados: ${saveButtons.length}). No se ha guardado la pareja.`);
     return;
   }
-  // Guardar ambos movimientos por separado conserva sus datos e historial individual.
-  saveButtons.forEach(btn=>btn.click());
-}
 
+  // Ejecuta el guardado individual original de cada ejercicio.
+  saveButtons.forEach(btn=>btn.click());
+
+  // Los botones originales quedan ocultos dentro del diseño de pareja.
+  // Reflejar aquí el resultado para que el usuario vea la confirmación.
+  const bothSaved=saveButtons.every(btn=>btn.classList.contains('saved'));
+  if(pairButton && bothSaved){
+    pairButton.classList.add('saved');
+    pairButton.textContent='✓ SUPERSERIE GUARDADA';
+  }
+}
 function goNextSuperPair(btn){
   const current=btn.closest('.superPairLayout');
   let next=current?.nextElementSibling;
@@ -5737,7 +5759,32 @@ function reportRoutine(day){
           reps:num(set.reps),
           weight:num(set.weight)
         })).filter(set=>set.reps>0).slice(0,3);
-        if(sets.length) records.push({date,name,sets});
+        if(sets.length){
+          // Conservar la procedencia del ejercicio en su grupo real de la superserie.
+          // La imagen se recupera de la configuración de ESA rutina y grupo,
+          // nunca de una búsqueda global por nombre.
+          const routineGroups=routine?.[day]?.groups||[];
+          const routineGroup=
+            (Number.isInteger(Number(group.groupIndex)) ? routineGroups[Number(group.groupIndex)] : null)
+            || routineGroups.find(g=>String(g.name||'').trim()===String(group.name||'').trim())
+            || routineGroups.find(g=>(g.exercises||[]).some(raw=>
+              exerciseNameKey(typeof raw==='string'?raw:(raw?.name||raw?.exercise||''))===key
+            ));
+          let routineExerciseIndex=-1;
+          if(routineGroup){
+            routineExerciseIndex=(routineGroup.exercises||[]).findIndex(raw=>
+              exerciseNameKey(typeof raw==='string'?raw:(raw?.name||raw?.exercise||''))===key
+            );
+          }
+          const storedGif=String(
+            ex.gif||ex.image||ex.gifUrl||ex.imageUrl||
+            (routineExerciseIndex>=0 ? routineGroup?.images?.[routineExerciseIndex] : '')||''
+          ).trim();
+          const gif=routineGroup
+            ? getRoutineExerciseGif(routineGroup.name,name,storedGif)
+            : '';
+          records.push({date,name,sets,gif});
+        }
       });
     });
   });
@@ -5775,7 +5822,7 @@ function reportRoutine(day){
         ${index===0?`<td rowspan="${bucket.records.length}" style="padding:5px 3px;border-bottom:1px solid var(--bor);white-space:nowrap;vertical-align:middle;font-size:.72rem">${dateText}</td>`:''}
         <td style="padding:5px 3px;border-bottom:1px solid var(--bor);vertical-align:middle">
           <div style="display:flex;align-items:center;gap:9px;min-width:0">
-            ${(()=>{const gif=getMonitorExerciseGif(record.name);return gif?`<img src="${esc(gif)}" alt="" loading="lazy" style="width:54px;height:54px;object-fit:contain;flex:0 0 54px;border:1px solid var(--bor);border-radius:6px;background:#111" onerror="this.style.display='none'">`:''})()}
+            ${record.gif?`<img src="${esc(record.gif)}" alt="" loading="lazy" style="width:54px;height:54px;object-fit:contain;flex:0 0 54px;border:1px solid var(--bor);border-radius:6px;background:#111" onerror="this.style.display='none'">`:''}
             <span style="min-width:0;overflow-wrap:anywhere">${esc(record.name)}</span>
           </div>
         </td>
